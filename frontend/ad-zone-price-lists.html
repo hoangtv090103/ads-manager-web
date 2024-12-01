@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách bảng giá vùng quảng cáo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            width: 90%;
+            margin: auto;
+        }
+
+        .header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .dropdown {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 300px;
+            margin-left: 15px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .table th,
+        .table td {
+            border: 1px solid #ddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        .table th {
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+
+        .table td {
+            vertical-align: top;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #007bff;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(20px);
+        }
+
+        .status {
+            text-align: center;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .status.running {
+            background-color: #d4edda;
+            color: #28a745;
+        }
+
+        .status.paused {
+            background-color: #f8d7da;
+            color: #dc3545;
+        }
+
+        .price-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .price-info span {
+            font-size: 14px;
+        }
+
+        .price-info .sell-price {
+            color: #28a745;
+        }
+
+        .price-info .buy-price {
+            color: #dc3545;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">Danh sách bảng giá vùng quảng cáo</div>
+        <button class="btn-primary" onclick="createPricing()">Tạo bảng giá</button>
+        <select class="dropdown" id="website-dropdown" onchange="handleWebsiteSelection()">
+            <option value="" selected disabled>Website - Publisher</option>
+            <option value="website1">Phunutoday.vn - zmedia@gmail.com</option>
+            <option value="website2">AnotherWebsite.vn - user@gmail.com</option>
+        </select>
+        <table id="pricing-table" class="table" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Stt</th>
+                    <th>Bật/tắt</th>
+                    <th>Vùng quảng cáo</th>
+                    <th>Loại QC</th>
+                    <th>Trạng thái giá</th>
+                    <th>Loại giá</th>
+                    <th>Mobile Banner Card (VND)</th>
+                    <th>Interactive Banner (VND)</th>
+                    <th>Flying Carpet (VND)</th>
+                    <th>In Read Ecommerce (VND)</th>
+                    <th>Post In Read (VND)</th>
+                    <th>Catfish Ecom (VND)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </td>
+                    <td>Phunutoday - InRead E-com<br>375×600</td>
+                    <td style="text-align: center;">Ecommerce</td>
+                    <td><span class="status running">Đang chạy</span></td>
+                    <td>
+                        <div class="price-info">
+                            <span class="sell-price">Giá bán</span>
+                            <span class="buy-price">Giá mua</span>
+                        </div>
+                    </td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>CPM 21,600</td>
+                    <td>--</td>
+                    <td>--</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </td>
+                    <td>Phunutoday - Flying Carpet<br>375×810</td>
+                    <td style="text-align: center;">Ecommerce</td>
+                    <td><span class="status running">Đang chạy</span></td>
+                    <td>
+                        <div class="price-info">
+                            <span class="sell-price">Giá bán</span>
+                            <span class="buy-price">Giá mua</span>
+                        </div>
+                    </td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>CPM 21,600</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function handleWebsiteSelection() {
+            const dropdown = document.getElementById("website-dropdown");
+            const selectedValue = dropdown.value;
+
+            const pricingTable = document.getElementById("pricing-table");
+
+            if (selectedValue) {
+                pricingTable.style.display = "table";
+            }
+        }
+
+        function createPricing() {
+            alert("Chức năng tạo bảng giá đang phát triển.");
+        }
+    </script>
+</body>
+
+</html>

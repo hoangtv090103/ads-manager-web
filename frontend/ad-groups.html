@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách nhóm quảng cáo - Novanet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./styles.css">
+    <style>
+        .table-container {
+            overflow-x: auto;
+            margin-top: 24px;
+        }
+
+        .ad-groups-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        .ad-groups-table th,
+        .ad-groups-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .ad-groups-table th {
+            background: #F8F9FA;
+            color: #4F4F4F;
+            font-weight: 500;
+            text-align: left;
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 24px 0;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .action-left {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .action-right {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 8px 12px 8px 36px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            width: 240px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #828282;
+        }
+
+        .date-range {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: #E3F2FD;
+            color: #0061C1;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .action-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .action-left,
+            .action-right {
+                flex-direction: column;
+            }
+
+            .search-box input {
+                width: 100%;
+            }
+
+            .date-range {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #0061C1;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(20px);
+        }
+
+        .main-content {
+            padding: 24px;
+            background: #F5F5F5;
+        }
+
+        .create-button {
+            background: #0061C1;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .search-box {
+            position: relative;
+            margin-left: 16px;
+        }
+
+        .search-box input {
+            padding: 8px 12px 8px 36px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            width: 240px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #828282;
+        }
+
+        .filters {
+            display: flex;
+            gap: 16px;
+        }
+
+        .filters select,
+        .filters button {
+            padding: 8px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            background: white;
+            min-width: 160px;
+        }
+
+        .table-container {
+            margin: 0 -24px;
+            overflow-x: auto;
+        }
+
+        .ad-groups-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .ad-groups-table th {
+            background: #F8F9FA;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 500;
+            color: #4F4F4F;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .ad-groups-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: #E3F2FD;
+            color: #0061C1;
+            font-size: 12px;
+            display: inline-block;
+        }
+
+        .table-footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 24px;
+            color: #4F4F4F;
+            font-size: 14px;
+            border-top: 1px solid #E0E0E0;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 300px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            z-index: 1000;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .dropdown-header {
+            padding: 16px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .dropdown-header input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+        }
+
+        .dropdown-list {
+            padding: 8px 0;
+        }
+
+        .dropdown-item {
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+
+        .dropdown-item:hover {
+            background-color: #F5F5F5;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Toggle Menu Button -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="../assets/novanet-logo.png" alt="Novanet" class="logo">
+            <span class="logo-text">NOVANET</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="/frontend/campaigns.html" class="nav-item">
+                <i class="fas fa-layer-group"></i>
+                <span>Quản lý chiến dịch</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-box"></i>
+                    <span>Quản lý sản phẩm</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/product-groups.html">• Danh sách nhóm SP</a>
+                    <a href="/frontend/products.html">• Danh sách SP</a>
+                    <a href="/frontend/data-sources.html">• Nguồn cấp dữ liệu</a>
+                </div>
+            </div>
+
+            <a href="/frontend/remarking-target.html" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Quản lý đối tượng</span>
+            </a>
+
+            <a href="/frontend/deposit.html" class="nav-item">
+                <i class="fas fa-wallet"></i>
+                <span>Nạp tiền tài khoản</span>
+            </a>
+
+            <a href="/frontend/deposit-history.html" class="nav-item">
+                <i class="fas fa-history"></i>
+                <span>Lịch sử nạp tiền</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Báo cáo</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/reports/website">• Báo cáo website</a>
+                    <a href="/reports/zone">• Báo cáo vùng</a>
+                    <a href="/reports/publisher">• Báo cáo publisher</a>
+                    <a href="/reports/ad-format">• Báo cáo định dạng quảng cáo</a>
+                </div>
+            </div>
+
+            <a href="/publishers" class="nav-item">
+                <i class="fas fa-users-cog"></i>
+                <span>Danh sách Publisher</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-globe"></i>
+                    <span>Quản lý website</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <div class="submenu">
+                        <a href="/frontend/price-lists.html">• Danh sách bảng giá</a>
+                        <a href="/frontend/websites.html">• Danh sách website</a>
+                        <a href="/frontend/ad-zones.html">• Danh sách vùng QC</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="main-content">
+        <div class="content-wrapper">
+            <div class="header-breadcrumb">
+                <i class="fas fa-layer-group"></i>
+                <span>/ Quản lý chiến dịch</span>
+            </div>
+
+            <h1 class="page-title">Danh sách nhóm quảng cáo</h1>
+
+            <div class="tabs">
+                <a href="/frontend/campaigns.html" class="tab-item">Chiến dịch</a>
+                <a href="/frontend/ad-groups.html" class="tab-item active">Nhóm quảng cáo</a>
+                <a href="/frontend/ads.html" class="tab-item">Tin quảng cáo</a>
+            </div>
+
+            <div class="action-bar">
+                <div style="display: flex; align-items: center;">
+                    <button class="create-button">
+                        <i class="fas fa-plus"></i>
+                        Tạo nhóm quảng cáo
+                    </button>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Tìm kiếm">
+                    </div>
+                </div>
+
+                <div class="filters">
+                    <select>
+                        <option>Loại QC</option>
+                        <option>Display Ads</option>
+                        <option>Ecommerce</option>
+                    </select>
+                    <select>
+                        <option>Trạng thái</option>
+                        <option>Đang chạy</option>
+                        <option>Tạm dừng</option>
+                    </select>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="date" style="min-width: 140px;">
+                        <input type="date" style="min-width: 140px;">
+                    </div>
+                    <button style="display: flex; align-items: center; gap: 8px;">
+                        Tùy chỉnh cột <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="ad-groups-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;"><input type="checkbox"></th>
+                            <th style="width: 60px;">Stt</th>
+                            <th style="width: 80px;">Bật/tắt</th>
+                            <th>Tên nhóm</th>
+                            <th>Chiến dịch QC</th>
+                            <th style="width: 120px;">Trạng thái</th>
+                            <th style="width: 120px;">Loại QC</th>
+                            <th style="width: 120px; text-align: right;">Tổng chi phí</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adGroupsTableBody"></tbody>
+                </table>
+            </div>
+
+            <div class="table-footer">
+                <div>Số nhóm quảng cáo: <span id="total-groups" style="font-weight: 500;">
+                        <!-- Total groups will be updated by script -->
+                    </span></div>
+                <div>Tổng chi phí: <span id="total-cost" style="font-weight: 500;">
+                        <!-- Total cost will be updated by script -->
+                    </span></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./script.js"></script>
+
+    <script>
+        async function fetchAdGroups() {
+            baseUrl = 'http://127.0.0.1:5000/api/v1';
+            const response = await fetch(`${baseUrl}/ads-groups`);
+            const groups = await response.json();
+
+            renderAdGroups(groups);
+        }
+
+        function renderAdGroups(groups) {
+            const totalGroups = groups.length;
+            document.getElementById('total-groups').textContent = totalGroups;
+
+            const tbody = document.getElementById('adGroupsTableBody');
+            tbody.innerHTML = '';
+
+            groups.forEach((group, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="checkbox"></td>
+                    <td>${index + 1}</td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" ${group.active ? 'checked' : ''}>
+                            <span class="slider round"></span>
+                        </label>
+                    </td>
+                    <td style="color: #2F80ED; cursor: pointer;">${group.ten_nhom}</td>
+                    <td>${group.ten_chi_tieu}</td>
+                    <td><span class="status-badge">${group.ten_trang_thai}</span></td>
+                    <td>${group.ten_loai_quang_cao}</td>
+                    <td style="text-align: right;">${group.tong_chi_phi}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Mock data for testing
+        const mockGroups = [
+            {
+                active: true,
+                name: 'Nhomtest1',
+                campaign: 'cdtest1',
+                type: 'Ecommerce',
+                cost: '-'
+            },
+            {
+                active: true,
+                name: 'Nhóm 12',
+                campaign: 'Chiến dịch 12',
+                type: 'Display ads',
+                cost: '-'
+            },
+            {
+                active: true,
+                name: 'Nhóm 0',
+                campaign: 'Chiến dịch 0',
+                type: 'Display ads',
+                cost: '-'
+            }
+            // Add more mock data as needed
+        ];
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchAdGroups();
+        });
+
+        async function fetchCampaigns() {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/v1/campaigns');
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching campaigns:', error);
+                return [];
+            }
+        }
+
+        function createDropdown(campaigns) {
+            const dropdownContent = document.createElement('div');
+            dropdownContent.className = 'dropdown-content';
+
+            // Header với ô tìm kiếm
+            const header = document.createElement('div');
+            header.className = 'dropdown-header';
+            header.innerHTML = `
+                <div style="margin-bottom: 12px; font-weight: 500;">Chọn chiến dịch</div>
+                <input type="text" placeholder="Tìm kiếm chiến dịch" onkeyup="filterCampaigns(this.value)">
+            `;
+
+            // Danh sách chiến dịch
+            const list = document.createElement('div');
+            list.className = 'dropdown-list';
+            list.id = 'campaignsList';
+
+            // Check if campaigns is an array and not empty
+            if (Array.isArray(campaigns) && campaigns.length > 0) {
+                campaigns.forEach((campaign, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'dropdown-item';
+                    item.textContent = campaign.ten_chien_dich;
+                    item.onclick = () => {
+                        if (campaign.ten_loai_quang_cao === 'ecommerce') {
+                            // store campaign_id in session storage
+                            sessionStorage.setItem('campaign_id', campaign.camp_id);
+                            window.location.href = `/frontend/ecommerce-ad-group-create.html`;
+                        } else if (campaign.ten_loai_quang_cao === 'display_ads') {
+                            window.location.href = `/frontend/ad-group-create.html?campaign_id=${campaign.camp_id}`;
+                        } else {
+                            window.location.href = `/frontend/ad-group-create.html?campaign_id=${campaign.camp_id}`;
+                        }
+                    };
+                    list.appendChild(item);
+                });
+            } else {
+                const noData = document.createElement('div');
+                noData.className = 'dropdown-item';
+                noData.textContent = 'Không có chiến dịch nào';
+                list.appendChild(noData);
+            }
+
+            dropdownContent.appendChild(header);
+            dropdownContent.appendChild(list);
+            return dropdownContent;
+        }
+
+        function filterCampaigns(searchText) {
+            const items = document.querySelectorAll('.dropdown-item');
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(searchText.toLowerCase())) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function selectCampaign(campaign) {
+            // Chuyển đến trang tạo nhóm quảng cáo với campaign_id
+            window.location.href = `/frontend/ad-group-create.html?campaign_id=${campaign.camp_id}`;
+        }
+
+        // Thêm event listener cho nút tạo nhóm quảng cáo
+        document.querySelector('.create-button').addEventListener('click', async function (e) {
+            e.stopPropagation();
+
+            // Xóa dropdown cũ nếu có
+            const oldDropdown = document.querySelector('.dropdown-content');
+            if (oldDropdown) {
+                oldDropdown.remove();
+            }
+
+            const data = await fetchCampaigns();
+            const dropdown = createDropdown(data.campaigns);
+            this.parentElement.appendChild(dropdown);
+
+            // Show dropdown
+            setTimeout(() => {
+                dropdown.classList.add('show');
+            }, 0);
+        });
+
+        // Đóng dropdown khi click ra ngoài
+        document.addEventListener('click', function (e) {
+            const dropdown = document.querySelector('.dropdown-content');
+            if (dropdown && !dropdown.contains(e.target) && !e.target.matches('.create-button')) {
+                dropdown.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+
+</html>

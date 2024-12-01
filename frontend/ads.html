@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tin quảng cáo - Novanet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./styles.css">
+    <style>
+        .table-container {
+            overflow-x: auto;
+            margin-top: 24px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .ads-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1600px;
+        }
+
+        .ads-table th,
+        .ads-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #E0E0E0;
+            font-size: 14px;
+        }
+
+        .ads-table th {
+            background: #F8F9FA;
+            color: #4F4F4F;
+            font-weight: 500;
+            text-align: left;
+        }
+
+        .table-footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px;
+            background: white;
+            border-top: 1px solid #E0E0E0;
+            margin-top: -8px;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            padding: 8px 12px;
+            margin-left: 16px;
+            background: white;
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            margin-left: 8px;
+            width: 200px;
+        }
+
+        .create-button {
+            background: #2F80ED;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .create-button:hover {
+            background: #2666BE;
+        }
+
+        .demo-link {
+            color: #2F80ED;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .demo-link:hover {
+            text-decoration: underline;
+        }
+
+        .url-cell {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .click-rate {
+            color: #828282;
+            font-size: 13px;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 24px 40px;
+            background-color: #F5F5F5;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: margin-left 0.3s ease;
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin: 24px 0;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .action-left,
+        .action-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .ads-table {
+            width: 100%;
+            min-width: 1600px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+
+            .action-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .action-left,
+            .action-right {
+                width: 100%;
+            }
+
+            .action-right {
+                justify-content: flex-start;
+            }
+
+            .search-box input {
+                width: 100%;
+            }
+
+            select,
+            button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .action-left,
+            .action-right {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .table-footer {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 12px;
+            }
+
+            .page-title {
+                font-size: 20px;
+            }
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: white;
+            min-width: 300px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            z-index: 1000;
+            margin-top: 8px;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .dropdown-header {
+            padding: 16px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .dropdown-header input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+
+        .dropdown-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            cursor: pointer;
+        }
+
+        .dropdown-item:hover {
+            background-color: #F5F5F5;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1200px) {
+            .main-content {
+                margin-left: 200px;
+                padding: 20px;
+            }
+
+            .table-container {
+                margin-top: 16px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 1000;
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 1001;
+                background: white;
+                border: 1px solid #E0E0E0;
+                border-radius: 4px;
+                padding: 8px;
+                cursor: pointer;
+            }
+
+            .action-bar {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .action-left,
+            .action-right {
+                width: 100%;
+            }
+
+            .action-right>div {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .action-right select,
+            .action-right button {
+                width: 100%;
+            }
+
+            .search-box {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .search-box input {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 8px;
+            }
+
+            .tab-item {
+                padding: 8px 16px;
+            }
+
+            .page-title {
+                font-size: 20px;
+            }
+
+            .table-footer {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .dropdown-content {
+                width: 100%;
+                min-width: unset;
+                left: 0;
+                right: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 12px;
+            }
+
+            .action-bar {
+                gap: 12px;
+            }
+
+            .create-button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .table-container {
+                margin-top: 12px;
+                border-radius: 4px;
+            }
+
+            .ads-table th,
+            .ads-table td {
+                padding: 8px;
+                font-size: 13px;
+            }
+        }
+
+        /* Thêm styles cho menu toggle button */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 1001;
+            background: #0061C1;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            background: #0056ac;
+        }
+
+        .menu-toggle i {
+            font-size: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex;
+            }
+
+            .main-content {
+                padding-top: 64px;
+                /* Thêm padding-top để tránh content bị che bởi menu toggle */
+            }
+        }
+
+        /* Hiệu ứng xoay icon khi sidebar active */
+        .sidebar-active~.menu-toggle i {
+            transform: rotate(180deg);
+            transition: transform 0.3s ease;
+        }
+
+        /* Chỉnh sửa transition cho sidebar */
+        .sidebar {
+            transition: transform 0.3s ease;
+        }
+
+        /* Thêm class để xử lý hiển thị sidebar khi click menu */
+        .sidebar-active {
+            transform: translateX(0) !important;
+        }
+
+        /* Overlay khi sidebar hiện trên mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* Responsive breakpoints */
+        :root {
+            --mobile: 480px;
+            --tablet: 768px;
+            --laptop: 1024px;
+            --desktop: 1200px;
+        }
+
+        /* Base styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #F5F5F5;
+            display: flex;
+        }
+
+        /* Sidebar Responsive */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: white;
+            border-right: 1px solid #E0E0E0;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        /* Main Content Responsive */
+        .main-content {
+            margin-left: 250px;
+            padding: 20px 40px;
+            width: calc(100% - 250px);
+            transition: margin-left 0.3s ease;
+        }
+
+        /* Action Bar Responsive */
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .action-left,
+        .action-right {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        /* Table Responsive */
+        .table-container {
+            overflow-x: auto;
+            margin: 0 -20px;
+            padding: 0 20px;
+        }
+
+        .ads-table {
+            width: 100%;
+            min-width: 1200px;
+            border-collapse: collapse;
+        }
+
+        /* Toggle Menu Button */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: #0061C1;
+            color: white;
+            border: none;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Responsive Media Queries */
+        @media (max-width: 1024px) {
+            .main-content {
+                padding: 20px;
+            }
+
+            .action-bar {
+                flex-direction: column;
+            }
+
+            .action-right {
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+
+            .tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+                margin: 0 -20px;
+                padding: 0 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .action-left,
+            .action-right {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .action-right select,
+            .action-right button {
+                width: 100%;
+            }
+
+            .user-info {
+                flex-direction: column;
+                align-items: flex-end;
+            }
+
+            .create-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Overlay khi sidebar hiện trên mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Toggle Menu Button -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+        <span class="menu-text">Menu</span>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="../assets/novanet-logo.png" alt="Novanet" class="logo">
+            <span class="logo-text">NOVANET</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="/frontend/campaigns.html" class="nav-item">
+                <i class="fas fa-layer-group"></i>
+                <span>Quản lý chiến dịch</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-box"></i>
+                    <span>Quản lý sản phẩm</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/product-groups.html">• Danh sách nhóm SP</a>
+                    <a href="/frontend/products.html">• Danh sách SP</a>
+                    <a href="/frontend/data-sources.html">• Nguồn cấp dữ liệu</a>
+                </div>
+            </div>
+
+            <a href="/frontend/remarking-target.html" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Quản lý đối tượng</span>
+            </a>
+
+            <a href="/frontend/deposit.html" class="nav-item">
+                <i class="fas fa-wallet"></i>
+                <span>Nạp tiền tài khoản</span>
+            </a>
+
+            <a href="/frontend/deposit-history.html" class="nav-item">
+                <i class="fas fa-history"></i>
+                <span>Lch sử nạp tiền</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Báo cáo</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/reports/website">• Báo cáo website</a>
+                    <a href="/reports/zone">• Báo cáo vùng</a>
+                    <a href="/reports/publisher">• Báo cáo publisher</a>
+                    <a href="/reports/ad-format">• Báo cáo định dạng quảng cáo</a>
+                </div>
+            </div>
+
+            <a href="/publishers" class="nav-item">
+                <i class="fas fa-users-cog"></i>
+                <span>Danh sách Publisher</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-globe"></i>
+                    <span>Quản lý website</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/price-lists.html">• Danh sách bảng giá</a>
+                    <a href="/frontend/websites.html">• Danh sách website</a>
+                    <a href="/frontend/ad-zones.html">• Danh sách vùng QC</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="header-breadcrumb">
+            <i class="fas fa-layer-group"></i>
+            <span>/ Quản lý chiến dịch</span>
+        </div>
+
+        <h1 class="page-title">Danh sách quảng cáo</h1>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <a href="/frontend/campaigns.html" class="tab-item">Chiến dịch</a>
+            <a href="/frontend/ad-groups.html" class="tab-item">Nhóm quảng cáo</a>
+            <a href="/frontend/ads.html" class="tab-item active">Tin quảng cáo</a>
+        </div>
+
+        <!-- Action Bar -->
+        <div class="action-bar">
+            <div class="action-left">
+                <button class="create-button">
+                    <i class="fas fa-plus"></i> Tạo tin quảng cáo
+                </button>
+                <!-- Dropdown will be inserted here -->
+            </div>
+
+            <div class="action-right">
+                <div style="display: flex; gap: 16px;">
+                    <select style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px; width: 160px;">
+                        <option>Loại QC</option>
+                        <option>Display Ads</option>
+                        <option>Ecommerce</option>
+                        <option>Native Ads</option>
+                    </select>
+                    <select style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px; width: 160px;">
+                        <option>Trạng thái</option>
+                        <option>Tất cả</option>
+                        <option>Chưa chạy</option>
+                        <option>Đang chạy</option>
+                        <option>Tạm dừng</option>
+                        <option>Lỗi</option>
+                        <option>Hoàn thành</option>
+                        <option>Chưa hoàn thành</option>
+                    </select>
+                    <button
+                        style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px; background: white; display: flex; align-items: center; gap: 8px;">
+                        Tùy chỉnh cột <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="ads-table">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox"></th>
+                        <th>STT</th>
+                        <th>Bật/tắt</th>
+                        <th>Tên QC | Chiến dịch | Nhóm</th>
+                        <th>Định dạng</th>
+                        <th>URL đích</th>
+                        <th>Trạng thái</th>
+                        <th>Chi phí (VNĐ)</th>
+                        <th>Lượt xem</th>
+                        <th>Lượt nhấn</th>
+                        <th>CTR</th>
+                        <th>CPC (VNĐ)</th>
+                        <th>CPM (VNĐ)</th>
+                        <th>SL mua hàng</th>
+                        <th>% chuyển đổi mua hàng</th>
+                        <th>CPS (VNĐ)</th>
+                        <th>Video view 3s</th>
+                    </tr>
+                </thead>
+                <tbody id="adsTable">
+                    <!-- Data will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-footer">
+            <div>Số tin quảng cáo: <span id="total-ads" style="font-weight: 500;"></span></div>
+            <div>Tổng chi phí: <span id="total-cost" style="font-weight: 500;"></span></div>
+        </div>
+    </div>
+
+    <script src="./script.js"></script>
+    <script>
+        const baseUrl = 'http://127.0.0.1:5000/api/v1';
+
+        function renderAds(ads) {
+            const adsTable = document.getElementById('adsTable');
+            adsTable.innerHTML = '';
+
+            let totalAds = ads.length;
+            let totalCost = ads.reduce((sum, ad) => sum + ad.banner_standard, 0);
+
+            document.getElementById('total-ads').textContent = totalAds;
+            document.getElementById('total-cost').textContent = totalCost;
+
+            ads.forEach((ad, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="checkbox"></td>
+                    <td>${index + 1}</td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" ${ad.active ? 'checked' : ''}>
+                            <span class="slider round"></span>
+                        </label>
+                    </td>
+                    <td style="color: #2F80ED; cursor: pointer;">
+                        ${ad.ten_tin_quang_cao}<br>
+                        ${ad.ads_group_id} | ${ad.ads_id}
+                    </td>
+                    <td>${ad.dinh_dang_banner}</td>
+                    <td>${ad.link_dich}</td>
+                    <td><span class="status-badge ${ad.status_id.toLowerCase()}">${ad.status_id}</span></td>
+                    <td style="text-align: right;">${ad.banner_standard}</td>
+                    <td style="text-align: right;">${ad.dang_tai_tep}</td>
+                    <td style="text-align: right;">${ad.kich_thuoc_cho_phep}</td>
+                    <td style="text-align: right;">-</td>
+                    <td style="text-align: right;">-</td>
+                    <td style="text-align: right;">-</td>
+                    <td style="text-align: right;">-</td>
+                    <td style="text-align: right;">-</td>
+                    <td style="text-align: right;">-</td>
+                    <td style="text-align: right;">-</td>
+                `;
+                adsTable.appendChild(row);
+            });
+        }
+
+        async function fetchAds() {
+            const url = `${baseUrl}/ads`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            renderAds(data);
+        }
+
+        async function fetchAdGroups() {
+            try {
+                const response = await fetch(`${baseUrl}/ads-groups`, {
+                    headers: {
+                        'Access-Control-Allow-Origin': '*'
+                    }
+                });
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching ad groups:', error);
+                return [];
+            }
+        }
+
+        function createDropdown(adGroups) {
+            const dropdownContent = document.createElement('div');
+            dropdownContent.className = 'dropdown-content';
+
+            // Header với ô tìm kiếm
+            const header = document.createElement('div');
+            header.className = 'dropdown-header';
+            header.innerHTML = `
+                <div style="margin-bottom: 12px; font-weight: 500;">Chọn nhóm quảng cáo</div>
+                <input type="text" placeholder="Tìm kiếm nhóm quảng cáo" onkeyup="filterAdGroups(this.value)">
+            `;
+
+            // Danh sách nhóm quảng cáo
+            const list = document.createElement('div');
+            list.className = 'dropdown-list';
+            list.id = 'adGroupsList';
+
+            if (Array.isArray(adGroups) && adGroups.length > 0) {
+                adGroups.forEach(group => {
+                    const item = document.createElement('div');
+                    item.className = 'dropdown-item';
+                    item.textContent = group.ten_nhom;
+                    item.onclick = () => selectAdGroup(group);
+                    list.appendChild(item);
+                });
+            } else {
+                const noData = document.createElement('div');
+                noData.className = 'dropdown-item';
+                noData.textContent = 'Không có nhóm quảng cáo nào';
+                list.appendChild(noData);
+            }
+
+            dropdownContent.appendChild(header);
+            dropdownContent.appendChild(list);
+            return dropdownContent;
+        }
+
+        function filterAdGroups(searchText) {
+            const items = document.querySelectorAll('.dropdown-item');
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(searchText.toLowerCase())) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function selectAdGroup(group) {
+            if (!group) return;
+            if (group.ten_loai_quang_cao === 'ecommerce') {
+                window.location.href = `/frontend/ecommerce-ads-create.html`;
+            } else if (group.ten_loai_quang_cao === 'native_ads') {
+                window.location.href = `/frontend/native-ads-create.html`;
+            } else {
+                window.location.href = `/frontend/display-ads-create.html`;
+            }
+        }
+
+        // Thêm event listener cho nút tạo tin quảng cáo
+        document.querySelector('.create-button').addEventListener('click', async function (e) {
+            e.stopPropagation();
+
+            // Xóa dropdown cũ nếu có
+            const oldDropdown = document.querySelector('.dropdown-content');
+            if (oldDropdown) {
+                oldDropdown.remove();
+            }
+
+            const adGroups = await fetchAdGroups();
+            const dropdown = createDropdown(adGroups);
+            this.parentElement.appendChild(dropdown);
+
+            // Show dropdown
+            setTimeout(() => {
+                dropdown.classList.add('show');
+            }, 0);
+        });
+
+        // Đóng dropdown khi click ra ngoài
+        document.addEventListener('click', function (e) {
+            const dropdown = document.querySelector('.dropdown-content');
+            if (dropdown && !dropdown.contains(e.target) && !e.target.matches('.create-button')) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            fetchAds();
+        });
+
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+
+            sidebar.classList.toggle('sidebar-active');
+
+            if (!overlay) {
+                const newOverlay = document.createElement('div');
+                newOverlay.className = 'sidebar-overlay';
+                document.body.appendChild(newOverlay);
+
+                newOverlay.addEventListener('click', () => {
+                    sidebar.classList.remove('sidebar-active');
+                    newOverlay.classList.remove('active');
+                });
+            }
+
+            overlay?.classList.toggle('active');
+        }
+
+        // Add resize listener to handle sidebar visibility
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 992) {
+                const sidebar = document.querySelector('.sidebar');
+                const overlay = document.querySelector('.sidebar-overlay');
+
+                sidebar.classList.remove('sidebar-active');
+                overlay?.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+
+</html>

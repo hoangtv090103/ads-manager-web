@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách sản phẩm - Novanet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./styles.css">
+    <style>
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .stat-title {
+            color: #4F4F4F;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .stat-percentage {
+            color: #828282;
+            font-size: 12px;
+        }
+
+        .blue {
+            color: #0061C1;
+        }
+
+        .green {
+            color: #219653;
+        }
+
+        .orange {
+            color: #F2994A;
+        }
+
+        .gray {
+            color: #828282;
+        }
+
+        .red {
+            color: #EB5757;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+        }
+
+        .products-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .products-table th,
+        .products-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .products-table th {
+            background: #F8F9FA;
+            color: #4F4F4F;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .status-active {
+            background: #E8F5E9;
+            color: #219653;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 36px;
+            height: 20px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #E0E0E0;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.toggle-slider {
+            background-color: #0061C1;
+        }
+
+        input:checked+.toggle-slider:before {
+            transform: translateX(16px);
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .search-box {
+            position: relative;
+            margin-left: 16px;
+        }
+
+        .search-box input {
+            padding: 8px 16px 8px 32px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            width: 300px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4F4F4F;
+        }
+
+        .filter-button {
+            padding: 8px 16px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            background: white;
+            color: #4F4F4F;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .date-range {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .date-range input {
+            padding: 8px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            width: 120px;
+        }
+
+        .detail-link {
+            color: #2F80ED;
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        .campaign-detail {
+            color: #828282;
+            font-size: 12px;
+        }
+
+        .view-more {
+            color: #2F80ED;
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #0061C1;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background: #0056ac;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Toggle Menu Button -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="../assets/novanet-logo.png" alt="Novanet" class="logo">
+            <span class="logo-text">NOVANET</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="/frontend/campaigns.html" class="nav-item">
+                <i class="fas fa-layer-group"></i>
+                <span>Quản lý chiến dịch</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-box"></i>
+                    <span>Quản lý sản phẩm</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/product-groups.html">• Danh sách nhóm SP</a>
+                    <a href="/frontend/products.html">• Danh sách SP</a>
+                    <a href="/frontend/data-sources.html">• Nguồn cấp dữ liệu</a>
+                </div>
+            </div>
+
+            <a href="/frontend/remarking-target.html" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Quản lý đối tượng</span>
+            </a>
+
+            <a href="/frontend/deposit.html" class="nav-item">
+                <i class="fas fa-wallet"></i>
+                <span>Nạp tiền tài khoản</span>
+            </a>
+
+            <a href="/frontend/deposit-history.html" class="nav-item">
+                <i class="fas fa-history"></i>
+                <span>Lịch sử nạp tiền</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Báo cáo</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/reports/website">• Báo cáo website</a>
+                    <a href="/reports/zone">• Báo cáo vùng</a>
+                    <a href="/reports/publisher">• Báo cáo publisher</a>
+                    <a href="/reports/ad-format">• Báo cáo định dạng quảng cáo</a>
+                </div>
+            </div>
+
+            <a href="/publishers" class="nav-item">
+                <i class="fas fa-users-cog"></i>
+                <span>Danh sách Publisher</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-globe"></i>
+                    <span>Quản lý website</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/price-lists.html">• Danh sách bảng giá</a>
+                    <a href="/frontend/websites.html">• Danh sách website</a>
+                    <a href="/frontend/ad-zones.html">• Danh sách vùng QC</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="main-content">
+        <div class="breadcrumb">
+            <i class="fas fa-box"></i>
+            <span>/ Quản lý sản phẩm / Danh sách sản phẩm</span>
+        </div>
+
+        <h1>Danh sách sản phẩm</h1>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-title">Tổng số sản phẩm</div>
+                <div id="totalProducts" class="stat-value blue">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Sản phẩm thực chạy</div>
+                <div id="activeProducts" class="stat-value green">0</div>
+                <div class="stat-percentage">0%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Sản phẩm hết hàng</div>
+                <div id="outOfStockProducts" class="stat-value orange">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Sản phẩm đã tắt</div>
+                <div id="inactiveProducts" class="stat-value gray">0</div>
+                <div class="stat-percentage">0%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Sản phẩm bị lỗi dữ liệu</div>
+                <div id="errorProducts" class="stat-value red">0</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="action-bar">
+                <div style="display: flex; align-items: center;">
+                    <button class="btn-primary" onclick="addProduct()">
+                        <i class="fas fa-plus"></i>
+                        Thêm sản phẩm
+                    </button>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Tìm kiếm sản phẩm, id sản phẩm...">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 16px;">
+                    <button class="filter-button">
+                        <i class="fas fa-filter"></i>
+                        Lọc
+                    </button>
+                    <div class="date-range">
+                        <input type="text" placeholder="Ngày bắt đầu">
+                        <span>-</span>
+                        <input type="text" placeholder="Ngày kết thúc">
+                    </div>
+                </div>
+            </div>
+
+            <table class="products-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40px;"><input type="checkbox"></th>
+                        <th>STT</th>
+                        <th>Bật/tắt</th>
+                        <th>Hình ảnh sản phẩm</th>
+                        <th>Tiêu đề</th>
+                        <th>Chiến dịch QC</th>
+                        <th>Trạng thái</th>
+                        <th>Tình trạng</th>
+                        <th>Chi phí</th>
+                        <th>Lượt xem</th>
+                        <th>Lượt nhấn</th>
+                        <th>CTR (%)</th>
+                    </tr>
+                </thead>
+                <tbody id="productsTableBody">
+                    <!-- Products will be rendered here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="./script.js"></script>
+    <script>
+        const baseUrl = 'http://127.0.0.1:5000/api/v1';
+
+        async function fetchProducts() {
+            try {
+                const response = await fetch(`${baseUrl}/products`);
+                const data = await response.json();
+                renderProducts(data);
+                updateStats(data);
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            }
+        }
+
+        function updateStats(data) {
+            const totalProducts = data.length;
+            const activeProducts = data.filter(p => p.tinh_trang_san_pham === 'Thực chạy').length;
+            const outOfStockProducts = data.filter(p => p.tinh_trang_san_pham === 'Hết hàng').length;
+            const inactiveProducts = data.filter(p => !p.active).length;
+            const errorProducts = data.filter(p => p.tinh_trang_san_pham === 'Lỗi').length;
+
+            document.querySelector('.stats-container').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-title">Tổng số sản phẩm</div>
+                    <div id="totalProducts" class="stat-value blue">${totalProducts}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Sản phẩm thực chạy</div>
+                    <div id="activeProducts" class="stat-value green">${activeProducts}</div>
+                    <div class="stat-percentage">${Math.round(activeProducts / totalProducts * 100)}%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Sản phẩm hết hàng</div>
+                    <div id="outOfStockProducts" class="stat-value orange">${outOfStockProducts}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Sản phẩm đã tắt</div>
+                    <div id="inactiveProducts" class="stat-value gray">${inactiveProducts}</div>
+                    <div class="stat-percentage">${Math.round(inactiveProducts / totalProducts * 100)}%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Sản phẩm bị lỗi dữ liệu</div>
+                    <div id="errorProducts" class="stat-value red">${errorProducts}</div>
+                </div>
+            `;
+        }
+
+        function renderProducts(products) {
+            const tbody = document.getElementById('productsTableBody');
+            tbody.innerHTML = '';
+
+            const activeProducts = products.filter(p => p.tinh_trang_san_pham === 'Thực chạy').length;
+            const outOfStockProducts = products.filter(p => p.tinh_trang_san_pham === 'Hết hàng').length;
+            const inactiveProducts = products.filter(p => !p.active).length;
+            const errorProducts = products.filter(p => p.tinh_trang_san_pham === 'Lỗi').length;
+
+            products.forEach((product, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="checkbox"></td>
+                    <td>${index + 1}</td>
+                    <td>
+                        <label class="toggle-switch">
+                            <input type="checkbox" ${product.active ? 'checked' : ''} 
+                                   onchange="toggleProduct(${product.product_id}, this.checked)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </td>
+                    <td>
+                        <img src="data:image/jpeg;base64,${product.hinh_anh_san_pham}" 
+                             alt="${product.ten_san_pham}" 
+                             style="width: 60px; height: 60px; object-fit: cover;">
+                    </td>
+                    <td>
+                        <div>${product.ten_san_pham}</div>
+                        <a href="#" class="detail-link">Chi tiết</a>
+                    </td>
+                    <td>
+                        ${product.campaign_name || 'test cd ecom'}
+                        <div class="campaign-detail">CD testP</div>
+                        <a href="#" class="view-more">Xem thêm</a>
+                    </td>
+                    <td><span class="status-badge status-active">${product.tinh_trang_san_pham}</span></td>
+                    <td>${product.loai_san_pham}</td>
+                    <td style="text-align: right;">${product.gia.toLocaleString()}</td>
+                    <td style="text-align: right;">${product.luot_xem || '-'}</td>
+                    <td style="text-align: right;">${product.luot_nhan || '-'}</td>
+                    <td style="text-align: right;">${product.ctr || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function toggleProduct(productId, active) {
+            try {
+                const response = await fetch(`${baseUrl}/products/${productId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ active })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update product status');
+                }
+
+                // Refresh data after successful update
+                fetchProducts();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra khi cập nhật trạng thái sản phẩm');
+            }
+        }
+
+        // Initial load
+        document.addEventListener('DOMContentLoaded', fetchProducts);
+    </script>
+</body>
+
+</html>

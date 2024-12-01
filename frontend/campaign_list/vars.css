@@ -1,0 +1,41 @@
+/* Figma Styles of your File */
+:root {
+  /* Colors */
+  --main-color: #0061c1;
+  --second-color: #001f4c;
+  --bg-color: #f8fbff;
+  --gray-1: #333333;
+  --gray-2: #4f4f4f;
+  --gray-3: #828282;
+  --gray-4: #bdbdbd;
+  --gray-5: #e0e0e0;
+  --gray-6: #f2f2f2;
+  --red: #eb5757;
+  --orange: #f2994a;
+  --yeallow: #f2c94c;
+  --green: #219653;
+  --blue: #2f80ed;
+  --purple: #9b51e0;
+  --gradient-1: linear-gradient(
+    88.07deg,
+    rgba(0, 97, 193, 1) 0%,
+    rgba(0, 128, 255, 1) 100%
+  );
+  --loading-effect: linear-gradient(
+    90deg,
+    rgba(241, 239, 239, 1) 0%,
+    rgba(249, 248, 248, 1) 53.125%,
+    rgba(231, 229, 229, 1) 99.21576380729675%
+  );
+  --orange-gradient: linear-gradient(
+    180deg,
+    rgba(255, 61, 0, 1) 0%,
+    rgba(255, 119, 20, 1) 100%
+  );
+
+  /* Fonts */
+  /* Effects */
+  --shadow-1-box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.05);
+  --shadow-2-box-shadow: 4px 4px 15px 0px rgba(0, 0, 0, 0.1);
+  --glass-box-shadow: inset 4px 4px 10px 0px rgba(0, 0, 0, 0.21);
+}
