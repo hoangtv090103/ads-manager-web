@@ -4,40 +4,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh sách Domain Website - Novanet</title>
+    <title>Danh sách Publisher - Novanet</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <style>
-        /* Base styles */
+        :root {
+            --mobile: 480px;
+            --tablet: 768px;
+            --laptop: 1024px;
+            --desktop: 1200px;
+        }
+
         body {
             margin: 0;
             padding: 0;
             font-family: 'Inter', sans-serif;
             background-color: #F5F5F5;
             display: flex;
+            overflow: hidden;
+            height: 100vh;
         }
 
-        /* Main content */
         .main-content {
             margin-left: 250px;
             padding: 24px 40px;
             width: calc(100% - 250px);
-            transition: margin-left 0.3s ease;
+            overflow-y: auto;
+            height: 100vh;
         }
 
-        /* Search box */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .action-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .btn-primary {
+            background: #0061C1;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .search-box {
             position: relative;
-            flex: 1;
+            width: 300px;
         }
 
         .search-box input {
             width: 100%;
-            padding: 8px 12px;
+            padding: 8px 12px 8px 36px;
             border: 1px solid #E0E0E0;
             border-radius: 4px;
-            padding-left: 36px;
+            font-size: 14px;
         }
 
         .search-box i {
@@ -45,31 +85,9 @@
             left: 12px;
             top: 50%;
             transform: translateY(-50%);
-            color: #828282;
+            color: #9E9E9E;
         }
 
-        /* Action bar */
-        .action-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 24px 0;
-            gap: 16px;
-        }
-
-        .action-left {
-            display: flex;
-            gap: 16px;
-            align-items: center;
-        }
-
-        .action-right {
-            display: flex;
-            gap: 16px;
-            align-items: center;
-        }
-
-        /* Table styles */
         .table-container {
             background: white;
             border-radius: 8px;
@@ -79,7 +97,6 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 800px;
         }
 
         th,
@@ -87,37 +104,19 @@
             padding: 12px 16px;
             text-align: left;
             border-bottom: 1px solid #E0E0E0;
+            font-size: 14px;
         }
 
         th {
             background: #F8F9FA;
-            color: #4F4F4F;
             font-weight: 500;
-            white-space: nowrap;
+            color: #333;
         }
 
-        /* Button styles */
-        .create-button {
-            background: #0061C1;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .create-button i {
-            font-size: 14px;
-        }
-
-        /* Status toggle */
         .switch {
             position: relative;
             display: inline-block;
-            width: 36px;
+            width: 40px;
             height: 20px;
         }
 
@@ -134,7 +133,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #ccc;
+            background-color: #E0E0E0;
             transition: .4s;
             border-radius: 34px;
         }
@@ -156,7 +155,44 @@
         }
 
         input:checked+.slider:before {
-            transform: translateX(16px);
+            transform: translateX(20px);
+        }
+
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            background: #E8F5E9;
+            color: #2E7D32;
+            display: inline-block;
+        }
+
+        .domain-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .domain-link {
+            color: #0061C1;
+            text-decoration: none;
+        }
+
+        .view-more {
+            color: #0061C1;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-view-website {
+            background: white;
+            border: 1px solid #0061C1;
+            color: #0061C1;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -241,90 +277,45 @@
             </div>
         </nav>
     </div>
-    <div class="container">
-        <div class="main-content">
-            <h1 class="page-title">Danh sách Domain Website</h1>
+    <div class="main-content">
+        <div class="header">
+            <h1 class="page-title">Danh sách Publisher</h1>
+        </div>
 
-            <div class="action-bar">
-                <div class="action-left">
-                    <button class="create-button">
-                        <i class="fas fa-plus"></i>
-                        Thêm website
-                    </button>
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Tìm kiếm theo Email publisher, Domain website">
-                    </div>
-                </div>
-                <div class="action-right">
-                    <select style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px;">
-                        <option value="all">Trạng thái</option>
-                        <option value="running">Đang chạy</option>
-                        <option value="stopped">Tạm dừng</option>
-                    </select>
-                </div>
+        <div class="action-bar">
+            <button class="btn-primary" onclick="window.location.href='/frontend/publisher-create.html'">
+                <i class="fas fa-plus"></i>
+                Tạo publisher
+            </button>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Tìm kiếm theo publisher, website">
             </div>
+            <button class="btn-view-website">Xem website</button>
+        </div>
 
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 60px">Stt</th>
-                            <th style="width: 100px">Bật/tắt QC</th>
-                            <th>Domain website / URL</th>
-                            <th>Publisher</th>
-                            <th>Trạng thái</th>
-                            <th style="width: 100px">SL Vùng</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>
-                                <label class="switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                            </td>
-                            <td>
-                                <span class="display-text">vieclamnew.com</span>
-                                <input class="edit-input" type="text" value="vieclamnew.com">
-                                <span class="edit-icon" onclick="toggleEditMode(this)">✏️</span>
-                                <div class="action-buttons">
-                                    <button class="save-button" onclick="saveEdit(this)">Lưu</button>
-                                    <button class="cancel-button" onclick="cancelEdit(this)">Hủy</button>
-                                </div>
-                            </td>
-                            <td>Báo Lao động gen x<br>laodonggenx@gmail.com<br>0965823614</td>
-                            <td>Đang chạy</td>
-                            <td>1</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 40px">STT</th>
+                        <th style="width: 60px">Mã/khóa</th>
+                        <th>Họ tên</th>
+                        <th>Email</th>
+                        <th>Số điện thoại</th>
+                        <th>Trạng thái</th>
+                        <th>Domain Website</th>
+                        <th>Ngày tạo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Row data will be inserted here -->
+                </tbody>
+            </table>
         </div>
     </div>
 
     <script src="./script.js"></script>
-    <script>
-        function toggleEditMode(icon) {
-            const parentTd = icon.parentElement;
-            parentTd.classList.add("edit-mode");
-        }
-
-        function saveEdit(button) {
-            const parentTd = button.closest("td");
-            const input = parentTd.querySelector(".edit-input");
-            const displayText = parentTd.querySelector(".display-text");
-            displayText.textContent = input.value;
-            parentTd.classList.remove("edit-mode");
-        }
-
-        function cancelEdit(button) {
-            const parentTd = button.closest("td");
-            parentTd.classList.remove("edit-mode");
-        }
-    </script>
 </body>
 
 </html>

@@ -4,89 +4,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tạo nhóm sản phẩm - Novanet</title>
+    <title>Tạo mới Publisher - Novanet</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <style>
+        .main-content {
+            margin-left: 250px;
+            padding: 24px 40px;
+            background-color: #F5F5F5;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #4F4F4F;
+            font-size: 14px;
+            margin-bottom: 24px;
+            height: 20px;
+        }
+
         .form-container {
             background: white;
             border-radius: 8px;
             padding: 32px;
-            margin-top: 24px;
+            height: calc(100vh - 120px);
+            overflow-y: auto;
         }
 
-        .form-group {
+        .page-title {
+            font-size: 20px;
+            font-weight: 500;
+            color: #333;
             margin-bottom: 24px;
         }
 
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
+        .form-section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 500;
             color: #333;
-            font-weight: 500;
+            margin-bottom: 20px;
         }
 
-        .form-input {
-            width: 100%;
+        .form-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .input-group input {
             padding: 8px 12px;
             border: 1px solid #E0E0E0;
             border-radius: 4px;
             font-size: 14px;
         }
 
-        .form-select {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #E0E0E0;
-            border-radius: 4px;
-            font-size: 14px;
-            background-color: white;
+        .input-group input[type="password"] {
+            padding-right: 40px;
         }
 
-        .table-container {
-            margin-top: 24px;
-            border: 1px solid #E0E0E0;
-            border-radius: 4px;
+        .password-input {
+            position: relative;
         }
 
-        .table-header {
-            background: #F8F9FA;
-            padding: 12px;
-            font-weight: 500;
-            border-bottom: 1px solid #E0E0E0;
-        }
-
-        .table-content {
-            padding: 24px;
-            text-align: center;
-            color: #828282;
-        }
-
-        .btn-create {
-            background: #0061C1;
-            color: white;
-            border: none;
-            padding: 8px 24px;
-            border-radius: 4px;
+        .password-input i {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9E9E9E;
             cursor: pointer;
-            font-weight: 500;
         }
 
-        .btn-cancel {
-            background: white;
-            color: #4F4F4F;
-            border: 1px solid #E0E0E0;
-            padding: 8px 24px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-left: 16px;
+        .status-group {
+            display: flex;
+            gap: 24px;
+            align-items: center;
         }
 
-        .form-actions {
-            margin-top: 32px;
+        .radio-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .radio-group input[type="radio"] {
+            accent-color: #0061C1;
+        }
+
+        .action-buttons {
             display: flex;
             gap: 16px;
+            margin-top: 32px;
+        }
+
+        .btn {
+            padding: 8px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            border: 1px solid #0061C1;
+        }
+
+        .btn-save {
+            background: white;
+            color: #0061C1;
+        }
+
+        .btn-save-create {
+            background: #0061C1;
+            color: white;
         }
     </style>
 </head>
@@ -171,96 +217,77 @@
             </div>
         </nav>
     </div>
-
-
     <div class="main-content">
         <div class="breadcrumb">
-            <i class="fas fa-box"></i>
-            <span>/ Quản lý sản phẩm / Tạo nhóm sản phẩm</span>
+            <i class="fas fa-th"></i>
+            <span>/ Quản lý publisher / Tạo publisher</span>
         </div>
 
         <div class="form-container">
-            <h1 style="margin-bottom: 24px;">Tạo nhóm sản phẩm</h1>
+            <h1 class="page-title">Tạo mới Publisher</h1>
 
-            <form id="createProductGroupForm">
+            <div class="form-section">
+                <h2 class="section-title">Thông tin Publisher</h2>
                 <div class="form-group">
-                    <label class="form-label">Tên nhóm sản phẩm</label>
-                    <input type="text" class="form-input" name="ten_nhom" placeholder="Nhập tên nhóm sản phẩm">
+                    <div class="input-group">
+                        <label>Tên Publisher</label>
+                        <input type="text" placeholder="Nhập tên Publisher">
+                    </div>
+                    <div class="input-group">
+                        <label>Email</label>
+                        <input type="email" placeholder="Nhập email">
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Nguồn dữ liệu</label>
-                    <select class="form-select" name="nguon_du_lieu">
-                        <option value="">Chọn nguồn dữ liệu</option>
-                        <option value="Toyota">Toyota</option>
-                        <option value="Bảo Xuân">Bảo Xuân</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Phân loại theo</label>
-                    <select class="form-select" name="phan_loai">
-                        <option value="">Chọn phân loại</option>
-                    </select>
-                </div>
-
-                <div class="table-container">
-                    <div class="table-header">
-                        <div style="display: flex; justify-content: space-between;">
-                            <div>Loại sản phẩm</div>
-                            <div>Số lượng</div>
-                            <div>Chọn</div>
+                    <div class="input-group">
+                        <label>Số điện thoại</label>
+                        <input type="tel" placeholder="Nhập số điện thoại">
+                    </div>
+                    <div class="input-group">
+                        <label>Trạng thái</label>
+                        <div class="status-group">
+                            <label class="radio-group">
+                                <input type="radio" name="status" checked>
+                                <span>Hoạt động</span>
+                            </label>
+                            <label class="radio-group">
+                                <input type="radio" name="status">
+                                <span>Tạm khóa</span>
+                            </label>
                         </div>
                     </div>
-                    <div class="table-content">
-                        <img src="../assets/no-data.svg" alt="No Data" style="margin-bottom: 16px;">
-                        <div>No Data</div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2 class="section-title">Mật khẩu</h2>
+                <div class="form-group">
+                    <div class="input-group">
+                        <label>Mật khẩu</label>
+                        <div class="password-input">
+                            <input type="password" placeholder="Nhập mật khẩu">
+                            <i class="far fa-eye"></i>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Nhập lại mật khẩu</label>
+                        <div class="password-input">
+                            <input type="password" placeholder="Nhập mật khẩu">
+                            <i class="far fa-eye"></i>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="form-actions">
-                    <button type="submit" class="btn-create">Tạo nhóm</button>
-                    <button type="button" class="btn-cancel"
-                        onclick="window.location.href='/frontend/product-groups.html'">Huỷ</button>
-                </div>
-            </form>
+            <div class="action-buttons">
+                <button class="btn btn-save">Lưu</button>
+                <button class="btn btn-save-create">Lưu và tạo website</button>
+            </div>
         </div>
     </div>
 
     <script src="./script.js"></script>
-
-    <script>
-        const baseUrl = 'http://127.0.0.1:5000/api/v1';
-
-        document.getElementById('createProductGroupForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const data = {
-                ten_nhom: formData.get('ten_nhom'),
-                nguon_du_lieu: formData.get('nguon_du_lieu'),
-                phan_loai: formData.get('phan_loai')
-            };
-
-            try {
-                const response = await fetch(`${baseUrl}/product-groups`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                if (response.ok) {
-                    window.location.href = '/frontend/product-groups.html';
-                } else {
-                    throw new Error('Failed to create product group');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Có lỗi xảy ra khi tạo nhóm sản phẩm');
-            }
-        });
-    </script>
 </body>
 
 </html>
