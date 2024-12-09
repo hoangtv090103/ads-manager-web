@@ -149,8 +149,23 @@
 </head>
 
 <body>
-    <div class="container">
-        <div class="header">Danh sách bảng giá vùng quảng cáo</div>
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header-content">
+            <div class="breadcrumb">
+                <i class="fas fa-globe"></i>
+                <span>/ Quản lý website / Danh sách bảng giá vùng quảng cáo</span>
+            </div>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-name">BA team</div>
+                    <div class="user-email">bateam@gmail.com</div>
+                </div>
+                <img src="../assets/avatar.jpg" alt="User Avatar" class="user-avatar">
+            </div>
+        </div>
+
+        <h1 class="page-title">Danh sách bảng giá vùng quảng cáo</h1>
         <button class="btn-primary" onclick="createPricing()">Tạo bảng giá</button>
         <select class="dropdown" id="website-dropdown" onchange="handleWebsiteSelection()">
             <option value="" selected disabled>Website - Publisher</option>

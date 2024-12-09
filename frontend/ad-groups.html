@@ -9,26 +9,32 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <style>
-        .table-container {
-            overflow-x: auto;
-            margin-top: 24px;
-        }
-
         .ad-groups-table {
             width: 100%;
-            min-width: 800px;
+            min-width: 1200px;
+            border-collapse: collapse;
         }
 
-        .dropdown-content {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            min-width: 300px;
-            box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
-            border-radius: 4px;
-            z-index: 1000;
-            max-height: 400px;
-            overflow-y: auto;
+        .frozen-column {
+            position: sticky;
+            left: 0;
+            background: #F8F9FA;
+            z-index: 1;
+        }
+
+        .frozen-column:last-of-type {
+            border-right: 2px solid #E0E0E0;
+        }
+
+        .ad-groups-table tbody td:nth-child(-n+3) {
+            position: sticky;
+            left: 0;
+            background: white;
+            z-index: 1;
+        }
+
+        .ad-groups-table tbody td:nth-child(3) {
+            border-right: 2px solid #E0E0E0;
         }
     </style>
 </head>
@@ -116,12 +122,22 @@
         </nav>
     </div>
     <div class="main-content">
-        <div class="content-wrapper">
-            <div class="header-breadcrumb">
+        <!-- Header -->
+        <div class="header-content">
+            <div class="breadcrumb">
                 <i class="fas fa-layer-group"></i>
                 <span>/ Quản lý chiến dịch</span>
             </div>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-name">BA team</div>
+                    <div class="user-email">bateam@gmail.com</div>
+                </div>
+                <img src="../assets/avatar.jpg" alt="User Avatar" class="user-avatar">
+            </div>
+        </div>
 
+        <div class="content-wrapper">
             <h1 class="page-title">Danh sách nhóm quảng cáo</h1>
 
             <div class="tabs">
@@ -131,8 +147,11 @@
             </div>
 
             <div class="action-bar">
-                <div style="display: flex; align-items: center;">
-                    <button class="create-button">
+                <div class="action-left">
+                    <select class="filter-select">
+                        <option value="">Chọn khách hàng</option>
+                    </select>
+                    <button class="btn-primary">
                         <i class="fas fa-plus"></i>
                         Tạo nhóm quảng cáo
                     </button>
@@ -141,24 +160,18 @@
                         <input type="text" placeholder="Tìm kiếm">
                     </div>
                 </div>
-
-                <div class="filters">
-                    <select>
+                <div class="action-right">
+                    <select class="filter-select">
                         <option>Loại QC</option>
-                        <option>Display Ads</option>
-                        <option>Ecommerce</option>
                     </select>
-                    <select>
+                    <select class="filter-select">
                         <option>Trạng thái</option>
-                        <option>Đang chạy</option>
-                        <option>Tạm dừng</option>
                     </select>
-                    <div style="display: flex; gap: 8px;">
-                        <input type="date" style="min-width: 140px;">
-                        <input type="date" style="min-width: 140px;">
-                    </div>
-                    <button style="display: flex; align-items: center; gap: 8px;">
-                        Tùy chỉnh cột <i class="fas fa-chevron-down"></i>
+                    <input type="date" class="filter-select">
+                    <input type="date" class="filter-select">
+                    <button class="btn-secondary">
+                        <i class="fas fa-cog"></i>
+                        Tùy chỉnh cột
                     </button>
                 </div>
             </div>
@@ -167,14 +180,23 @@
                 <table class="ad-groups-table">
                     <thead>
                         <tr>
-                            <th style="width: 40px;"><input type="checkbox"></th>
-                            <th style="width: 60px;">Stt</th>
-                            <th style="width: 80px;">Bật/tắt</th>
-                            <th>Tên nhóm</th>
+                            <th class="frozen-column"><input type="checkbox"></th>
+                            <th class="frozen-column">STT</th>
+                            <th class="frozen-column">Tên nhóm</th>
                             <th>Chiến dịch QC</th>
-                            <th style="width: 120px;">Trạng thái</th>
-                            <th style="width: 120px;">Loại QC</th>
-                            <th style="width: 120px; text-align: right;">Tổng chi phí</th>
+                            <th>Trạng thái</th>
+                            <th>Loại QC</th>
+                            <th>Tổng chi phí (VND)</th>
+                            <th>Lượt xem</th>
+                            <th>Lượt nhấn</th>
+                            <th>CTR (%)</th>
+                            <th>CPC (VND)</th>
+                            <th>CPM (VND)</th>
+                            <th>Video view 3s</th>
+                            <th>SL mua hàng</th>
+                            <th>% chuyển đổi mua hàng</th>
+                            <th>CPS (VND)</th>
+                            <th>Bắt đầu/kết thúc</th>
                         </tr>
                     </thead>
                     <tbody id="adGroupsTableBody"></tbody>
@@ -182,12 +204,8 @@
             </div>
 
             <div class="table-footer">
-                <div>Số nhóm quảng cáo: <span id="total-groups" style="font-weight: 500;">
-                        <!-- Total groups will be updated by script -->
-                    </span></div>
-                <div>Tổng chi phí: <span id="total-cost" style="font-weight: 500;">
-                        <!-- Total cost will be updated by script -->
-                    </span></div>
+                <div>Số nhóm quảng cáo: <span id="totalGroups">0</span></div>
+                <div>Tổng chi phí: <span id="totalCost">0 VND</span></div>
             </div>
         </div>
     </div>
@@ -205,7 +223,7 @@
 
         function renderAdGroups(groups) {
             const totalGroups = groups.length;
-            document.getElementById('total-groups').textContent = totalGroups;
+            document.getElementById('totalGroups').textContent = totalGroups;
 
             const tbody = document.getElementById('adGroupsTableBody');
             tbody.innerHTML = '';
@@ -215,17 +233,21 @@
                 tr.innerHTML = `
                     <td><input type="checkbox"></td>
                     <td>${index + 1}</td>
-                    <td>
-                        <label class="switch">
-                            <input type="checkbox" ${group.active ? 'checked' : ''}>
-                            <span class="slider round"></span>
-                        </label>
-                    </td>
                     <td style="color: #2F80ED; cursor: pointer;">${group.ten_nhom}</td>
                     <td>${group.ten_chi_tieu}</td>
                     <td><span class="status-badge">${group.ten_trang_thai}</span></td>
                     <td>${group.ten_loai_quang_cao}</td>
                     <td style="text-align: right;">${group.tong_chi_phi}</td>
+                    <td>${group.luot_xem}</td>
+                    <td>${group.luot_nhan}</td>
+                    <td>${group.ctr}</td>
+                    <td>${group.cpc}</td>
+                    <td>${group.cpm}</td>
+                    <td>${group.video_view_3s}</td>
+                    <td>${group.sl_mua_hang}</td>
+                    <td>${group.percent_chuyen_doi_mua_hang}</td>
+                    <td>${group.cps}</td>
+                    <td>${group.bat_dau_ket_thuc}</td>
                 `;
                 tbody.appendChild(tr);
             });

@@ -208,48 +208,56 @@
 
     <!-- Main Content -->
     <div class="main-content">
-        <div class="content-wrapper">
-            <div class="header-breadcrumb">
+        <!-- Header -->
+        <div class="header-content">
+            <div class="breadcrumb">
                 <i class="fas fa-box"></i>
-                <span>/ Quản lý sản phẩm</span>
+                <span>/ Quản lý sản phẩm / Nhóm sản phẩm</span>
             </div>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-name">BA team</div>
+                    <div class="user-email">bateam@gmail.com</div>
+                </div>
+                <img src="../assets/avatar.jpg" alt="User Avatar" class="user-avatar">
+            </div>
+        </div>
 
-            <h1 class="page-title">Nhóm sản phẩm</h1>
+        <h1 class="page-title">Nhóm sản phẩm</h1>
 
-            <div class="action-bar">
-                <div class="action-left">
-                    <button class="btn-primary" onclick="createProductGroup()">
-                        <i class="fas fa-plus"></i>
-                        Tạo nhóm sản phẩm
-                    </button>
-                    <div class="search-box">
-                        <i class="fas fa-search"
-                            style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: #4F4F4F;"></i>
-                        <input type="text" placeholder="Tìm kiếm" style="padding-left: 32px;">
-                    </div>
+        <div class="action-bar">
+            <div class="action-left">
+                <button class="btn-primary" onclick="createProductGroup()">
+                    <i class="fas fa-plus"></i>
+                    Tạo nhóm sản phẩm
+                </button>
+                <div class="search-box">
+                    <i class="fas fa-search"
+                        style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: #4F4F4F;"></i>
+                    <input type="text" placeholder="Tìm kiếm" style="padding-left: 32px;">
                 </div>
             </div>
+        </div>
 
-            <div class="table-container">
-                <table class="product-groups-table">
-                    <thead>
-                        <tr>
-                            <th>STT</th>
-                            <th>Nhóm sản phẩm</th>
-                            <th>Số lượng</th>
-                            <th>Cập nhật</th>
-                            <th>Nguồn dữ liệu</th>
-                            <th>Nhóm QC đang chạy</th>
-                        </tr>
-                    </thead>
-                    <tbody id="productGroupsTable"></tbody>
-                </table>
-            </div>
+        <div class="table-container">
+            <table class="product-groups-table">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Nhóm sản phẩm</th>
+                        <th>Số lượng</th>
+                        <th>Cập nhật</th>
+                        <th>Nguồn dữ liệu</th>
+                        <th>Nhóm QC đang chạy</th>
+                    </tr>
+                </thead>
+                <tbody id="productGroupsTable"></tbody>
+            </table>
+        </div>
 
-            <!-- Footer -->
-            <div class="table-footer">
-                <div>Số nhóm sản phẩm: <span id="total-groups" style="font-weight: 500;">0</span></div>
-            </div>
+        <!-- Footer -->
+        <div class="table-footer">
+            <div>Số nhóm sản phẩm: <span id="total-groups" style="font-weight: 500;">0</span></div>
         </div>
     </div>
 

@@ -182,39 +182,53 @@
             </div>
         </nav>
     </div>
-    <div class="container">
-        <div class="header">
-            <h1>Danh sách vùng quảng cáo</h1>
-            <div class="breadcrumb">/ Quản lý website / Danh sách vùng quảng cáo</div>
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header-content">
+            <div class="breadcrumb">
+                <i class="fas fa-globe"></i>
+                <span>/ Quản lý website / Danh sách vùng quảng cáo</span>
+            </div>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-name">BA team</div>
+                    <div class="user-email">bateam@gmail.com</div>
+                </div>
+                <img src="../assets/avatar.jpg" alt="User Avatar" class="user-avatar">
+            </div>
         </div>
-        <div class="toolbar">
-            <button class="btn btn-primary">Tạo vùng quảng cáo</button>
-            <select class="dropdown">
-                <option>Chọn Website domain</option>
-                <option value="website1">Website 1</option>
-                <option value="website2">Website 2</option>
-            </select>
+
+        <h1 class="page-title">Danh sách vùng quảng cáo</h1>
+        <div class="container">
+            <div class="toolbar">
+                <button class="btn btn-primary">Tạo vùng quảng cáo</button>
+                <select class="dropdown">
+                    <option>Chọn Website domain</option>
+                    <option value="website1">Website 1</option>
+                    <option value="website2">Website 2</option>
+                </select>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Stt</th>
+                        <th>Tên vùng QC/ Kích thước (px)</th>
+                        <th>Định dạng</th>
+                        <th>Lấy mã</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="4" class="empty">
+                            <div class="empty-content">
+                                <img src="empty-image.png" alt="Empty" />
+                                <p>Bạn cần chọn 1 Website để hiển thị thông tin vùng quảng cáo</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Stt</th>
-                    <th>Tên vùng QC/ Kích thước (px)</th>
-                    <th>Định dạng</th>
-                    <th>Lấy mã</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td colspan="4" class="empty">
-                        <div class="empty-content">
-                            <img src="empty-image.png" alt="Empty" />
-                            <p>Bạn cần chọn 1 Website để hiển thị thông tin vùng quảng cáo</p>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
     </div>
     <script src="script.js"></script>
     <script>
