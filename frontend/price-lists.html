@@ -9,22 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-            background-color: #F8F9FA;
-            overflow: hidden;
-            height: 100vh;
-        }
-
-        .main-content {
-            margin-left: 250px;
-            padding: 24px 40px;
-            height: calc(100vh - 48px);
-            overflow-y: auto;
-        }
-
         .tabs {
             display: flex;
             gap: 32px;
@@ -199,6 +183,25 @@
 
         input:checked+.slider:before {
             transform: translateX(20px);
+        }
+
+        .zone-size {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .price-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .price-info .sell-price {
+            color: #28a745;
+        }
+
+        .price-info .buy-price {
+            color: #dc3545;
         }
 
         .zone-size {

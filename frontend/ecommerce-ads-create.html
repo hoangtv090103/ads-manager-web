@@ -9,120 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <style>
-        .main-content {
-            margin-left: 250px;
-            padding: 24px 40px;
-            background-color: #F5F5F5;
-            min-height: 100vh;
-        }
-
-        .form-container {
-            background: white;
-            border-radius: 8px;
-            padding: 32px;
-            max-width: 800px;
-        }
-
-        .form-title {
-            font-size: 24px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 32px;
-        }
-
-        .form-section {
-            margin-bottom: 24px;
-        }
-
-        .section-title {
-            font-size: 16px;
-            font-weight: 500;
-            color: #333;
-            margin-bottom: 16px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #4F4F4F;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #E0E0E0;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        .form-select {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #E0E0E0;
-            border-radius: 4px;
-            font-size: 14px;
-            background: white;
-        }
-
-        .ad-format-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 16px;
-            margin-top: 16px;
-        }
-
-        .ad-format-option {
-            border: 1px solid #E0E0E0;
-            border-radius: 4px;
-            padding: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .ad-format-option:hover {
-            border-color: #2F80ED;
-        }
-
-        .ad-format-option.selected {
-            border-color: #2F80ED;
-            background: rgba(47, 128, 237, 0.1);
-        }
-
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 16px;
-            margin-top: 32px;
-        }
-
-        .btn-create {
-            background: #2F80ED;
-            color: white;
-            border: none;
-            padding: 8px 24px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn-cancel {
-            background: white;
-            border: 1px solid #E0E0E0;
-            padding: 8px 24px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .helper-text {
-            font-size: 12px;
-            color: #828282;
-            margin-top: 4px;
-        }
-
         .ad-format-list {
             display: flex;
             flex-direction: column;
@@ -136,19 +22,6 @@
             padding: 12px;
             border: 1px solid #E0E0E0;
             border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .ad-format-item:hover {
-            border-color: #2F80ED;
-            background: rgba(47, 128, 237, 0.05);
-        }
-
-        .ad-format-item input[type="radio"] {
-            margin-top: 3px;
-        }
-
-        .ad-format-item label {
             cursor: pointer;
         }
 
@@ -159,48 +32,6 @@
             width: 100%;
         }
 
-        .ad-format-item input[type="radio"]:checked~.format-details {
-            display: block;
-        }
-
-        .upload-group {
-            margin-bottom: 20px;
-        }
-
-        .upload-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .upload-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: white;
-            border: 1px solid #E0E0E0;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .format-info {
-            margin-top: 4px;
-            font-size: 12px;
-            color: #828282;
-        }
-
-        .toggle-options {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin-top: 16px;
-        }
-
-        .toggle-option {
-            margin-bottom: 8px;
-        }
-
         .warning-message {
             display: flex;
             align-items: center;
@@ -209,193 +40,6 @@
             background: #FFF4E5;
             border-radius: 4px;
             margin: 8px 0;
-        }
-
-        .warning-message i {
-            color: #F2994A;
-        }
-
-        .warning-message span {
-            color: #664D03;
-            font-size: 14px;
-        }
-
-        .slider {
-            position: relative;
-            display: inline-block;
-            width: 40px;
-            height: 20px;
-        }
-
-        .slider input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider-toggle {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 20px;
-        }
-
-        .slider-toggle:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 2px;
-            bottom: 2px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        .slider input:checked+.slider-toggle {
-            background-color: #2F80ED;
-        }
-
-        .slider input:checked+.slider-toggle:before {
-            transform: translateX(20px);
-        }
-
-        .preview {
-            margin-top: 12px;
-            max-width: 375px;
-        }
-
-        .preview img {
-            max-width: 100%;
-            border-radius: 4px;
-        }
-
-        .preview video {
-            max-width: 100%;
-            border-radius: 4px;
-        }
-
-        .file-name {
-            font-size: 14px;
-            color: #4F4F4F;
-            margin-top: 4px;
-        }
-
-        .error-message {
-            color: #EB5757;
-            font-size: 12px;
-            margin-top: 4px;
-        }
-
-        .ad-format-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .ad-format-item {
-            border: 1px solid #E0E0E0;
-            border-radius: 8px;
-            padding: 16px;
-            cursor: pointer;
-        }
-
-        .ad-format-item:hover {
-            border-color: #2F80ED;
-        }
-
-        .ad-format-item input[type="radio"] {
-            margin-right: 8px;
-        }
-
-        .toggle-options {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin-top: 16px;
-            padding-left: 24px;
-        }
-
-        .toggle-option {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 36px;
-            height: 20px;
-            flex-shrink: 0;
-        }
-
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #E0E0E0;
-            transition: .4s;
-            border-radius: 20px;
-        }
-
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 2px;
-            bottom: 2px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        .toggle-switch input:checked+.toggle-slider {
-            background-color: #2F80ED;
-        }
-
-        .toggle-switch input:checked+.toggle-slider:before {
-            transform: translateX(16px);
-        }
-
-        .warning-message {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            padding: 12px;
-            background: #FFF4E5;
-            border-radius: 4px;
-            margin: 8px 0;
-        }
-
-        .warning-message i {
-            color: #F2994A;
-            margin-top: 3px;
-        }
-
-        @media (max-width: 768px) {
-            .ad-format-item {
-                padding: 12px;
-            }
-
-            .toggle-options {
-                padding-left: 16px;
-            }
         }
     </style>
 </head>
@@ -623,7 +267,7 @@
 
                                     <div class="warning-message">
                                         <i class="fas fa-exclamation-triangle"></i>
-                                        <span>Khi sử dụng mẫu banner có sẵn của Novanet thì sẽ không hiển thị phần
+                                        <span>Khi sử dụng mẫu banner có sẵn của Novanet thì sẽ không hi���n thị phần
                                             banner mở rộng</span>
                                     </div>
 
@@ -687,7 +331,7 @@
                                             <input type="checkbox" name="show_promotion">
                                             <span class="toggle-slider"></span>
                                         </label>
-                                        <span>Hiển th�� giá khuyến mại và % giảm giá</span>
+                                        <span>Hiển thị giá khuyến mại và % giảm giá</span>
                                     </div>
 
                                     <div class="toggle-option">

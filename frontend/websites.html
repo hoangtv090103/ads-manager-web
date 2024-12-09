@@ -158,6 +158,32 @@
         input:checked+.slider:before {
             transform: translateX(16px);
         }
+
+        .website-table {
+            width: 100%;
+            min-width: 800px;
+        }
+
+        .domain-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .edit-mode .display-text,
+        .edit-mode .edit-icon {
+            display: none;
+        }
+
+        .edit-input,
+        .action-buttons {
+            display: none;
+        }
+
+        .edit-mode .edit-input,
+        .edit-mode .action-buttons {
+            display: block;
+        }
     </style>
 </head>
 
@@ -189,7 +215,7 @@
                 <div class="submenu">
                     <a href="/frontend/product-groups.html">• Danh sách nhóm SP</a>
                     <a href="/frontend/products.html">• Danh sách SP</a>
-                    <a href="/frontend/data-sources.html">• Nguồn cấp dữ liệu</a>
+                    <a href="/frontend/data-sources.html">• Nguồn cấp d��� liệu</a>
                 </div>
             </div>
 

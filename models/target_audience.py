@@ -65,7 +65,7 @@ class TargetAudience:
             SELECT ta.*, tas.ten_trang_thai
             FROM target_audience ta
             LEFT JOIN target_audience_status tas ON ta.ta_status_id = tas.ta_status_id
-            WHERE ta.status = TRUE
+            WHERE ta.active = TRUE
             ORDER BY ta.created_at DESC
             ''')
             rows = cursor.fetchall()
@@ -77,7 +77,7 @@ class TargetAudience:
             cursor = conn.cursor()
             cursor.execute('''
             SELECT * FROM target_audience 
-            WHERE ta_id = %s AND status = TRUE
+            WHERE ta_id = %s AND active = TRUE
             ''', (ta_id,))
             row = cursor.fetchone()
             if not row:
@@ -106,7 +106,7 @@ class TargetAudience:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-            UPDATE target_audience SET status = FALSE 
+            UPDATE target_audience SET active = FALSE 
             WHERE ta_id = %s
             ''', (ta_id,))
             conn.commit()

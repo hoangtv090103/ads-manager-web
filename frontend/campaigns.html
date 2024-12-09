@@ -9,179 +9,33 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="./styles.css">
   <style>
-    /* Responsive breakpoints */
-    :root {
-      --mobile: 480px;
-      --tablet: 768px;
-      --laptop: 1024px;
-      --desktop: 1200px;
-    }
-
-    /* Base styles */
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', sans-serif;
-      background-color: #F5F5F5;
-      display: flex;
-      overflow: hidden;
-      height: 100vh;
-    }
-
-    /* Sidebar Responsive */
-    .sidebar {
-      width: 250px;
-      height: 100vh;
-      background: white;
-      border-right: 1px solid #E0E0E0;
-      position: fixed;
-      left: 0;
-      top: 0;
-      overflow-y: auto;
-      transition: transform 0.3s ease;
-      z-index: 1000;
-    }
-
-    /* Main Content Responsive */
-    .main-content {
-      margin-left: 250px;
-      padding: 20px 40px;
-      width: calc(100% - 250px);
-      transition: margin-left 0.3s ease;
-      overflow-y: auto;
-      height: 100vh;
-    }
-
-    /* Action Bar Responsive */
-    .action-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .action-left,
-    .action-right {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    /* Table Responsive */
-    .table-container {
-      overflow-x: auto;
-      margin: 0 -20px;
-      padding: 0 20px;
-      max-height: calc(100vh - 250px);
-      overflow-y: auto;
-    }
-
     .campaign-table {
       width: 100%;
       min-width: 1200px;
       border-collapse: collapse;
     }
 
-    /* Toggle Menu Button */
-    .menu-toggle {
-      display: none;
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      z-index: 1001;
-      background: #0061C1;
-      color: white;
-      border: none;
-      padding: 8px;
-      border-radius: 4px;
-      cursor: pointer;
+    .frozen-column {
+      position: sticky;
+      left: 0;
+      background: #F8F9FA;
+      z-index: 1;
     }
 
-    /* Responsive Media Queries */
-    @media (max-width: 1024px) {
-      .main-content {
-        padding: 20px;
-      }
-
-      .action-bar {
-        flex-direction: column;
-      }
-
-      .action-right {
-        justify-content: flex-start;
-      }
+    .frozen-column:last-of-type {
+      border-right: 2px solid #E0E0E0;
     }
 
-    @media (max-width: 768px) {
-      .sidebar {
-        transform: translateX(-100%);
-      }
-
-      .sidebar.active {
-        transform: translateX(0);
-      }
-
-      .main-content {
-        margin-left: 0;
-        width: 100%;
-        padding: 20px;
-      }
-
-      .menu-toggle {
-        display: block;
-      }
-
-      .header-content {
-        flex-direction: column;
-        gap: 16px;
-        align-items: flex-start;
-      }
-
-      .tabs {
-        overflow-x: auto;
-        white-space: nowrap;
-        margin: 0 -20px;
-        padding: 0 20px;
-      }
+    .campaign-table tbody td:nth-child(-n+3) {
+      position: sticky;
+      left: 0;
+      background: white;
+      z-index: 1;
     }
 
-    @media (max-width: 480px) {
-
-      .action-left,
-      .action-right {
-        flex-direction: column;
-        width: 100%;
-      }
-
-      .search-input {
-        width: 100%;
-      }
-
-      .filters select,
-      .filters button {
-        width: 100%;
-      }
-
-      .user-info {
-        flex-direction: column;
-        align-items: flex-end;
-      }
+    .campaign-table tbody td:nth-child(3) {
+      border-right: 2px solid #E0E0E0;
     }
-
-    /* Dark mode support
-    @media (prefers-color-scheme: dark) {
-      body {
-        background-color: #1a1a1a;
-        /* color: #ffffff; */
-    /* }
-
-      .sidebar,
-      .main-content {
-        background-color: #2d2d2d; */
-    /* } */
-
-    /* Add more dark mode styles as needed */
-    /* } */
   </style>
 </head>
 
@@ -304,6 +158,11 @@
       <!-- Action Bar -->
       <div class="action-bar">
         <div class="action-left">
+          <div class="filter-group">
+            <select id="customerFilter" class="form-select">
+              <option value="">Chọn khách hàng</option>
+            </select>
+          </div>
           <button onclick="window.location.href='campaign-create.html'"
             style="background: #0061C1; color: white; border: none; border-radius: 4px; padding: 8px 16px; display: flex; align-items: center; gap: 8px;">
             <i class="fas fa-plus"></i> Tạo chiến dịch
@@ -334,10 +193,89 @@
               <option>Hoàn thành</option>
               <option>Chưa hoàn thành</option>
             </select>
-            <button
-              style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px; background: white; display: flex; align-items: center; gap: 8px;">
-              Tùy chỉnh cột <i class="fas fa-chevron-down"></i>
-            </button>
+            <div class="customize-column-dropdown">
+                <button class="customize-column-btn">
+                    <i class="fas fa-columns"></i>
+                    Tùy chỉnh cột
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="customize-column-menu">
+                    <h3>Chọn chỉ số hiển thị</h3>
+                    
+                    <div class="customize-column-section">
+                        <h4>Chỉ số chung</h4>
+                        <div class="column-option">
+                            <input type="checkbox" id="col-total-cost" checked>
+                            <label for="col-total-cost">Tổng chi phí</label>
+                        </div>
+                        <div class="column-option">
+                            <input type="checkbox" id="col-views" checked>
+                            <label for="col-views">Lượt xem</label>
+                        </div>
+                        <div class="column-option">
+                            <input type="checkbox" id="col-clicks" checked>
+                            <label for="col-clicks">Lượt nhấn</label>
+                        </div>
+                        <div class="column-option">
+                            <input type="checkbox" id="col-ctr" checked>
+                            <label for="col-ctr">CTR</label>
+                        </div>
+                        <div class="column-option">
+                            <input type="checkbox" id="col-cpc" checked>
+                            <label for="col-cpc">CPC</label>
+                        </div>
+                        <div class="column-option">
+                            <input type="checkbox" id="col-cpm" checked>
+                            <label for="col-cpm">CPM</label>
+                        </div>
+                    </div>
+
+                    <div class="customize-column-section">
+                        <h4>Video view</h4>
+                        <div class="column-option">
+                            <input type="checkbox" id="col-video-view-3s" checked>
+                            <label for="col-video-view-3s">Video view 3s</label>
+                        </div>
+                        <div class="column-option">
+                            <input type="checkbox" id="col-video-25">
+                            <label for="col-video-25">Video watches at 25%</label>
+                        </div>
+                        <div class="column-option">
+                            <input type="checkbox" id="col-video-50">
+                            <label for="col-video-50">Video watches at 50%</label>
+                        </div>
+                        <div class="column-option">
+                            <input type="checkbox" id="col-video-75">
+                            <label for="col-video-75">Video watches at 75%</label>
+                        </div>
+                        <div class="column-option">
+                            <input type="checkbox" id="col-video-100">
+                            <label for="col-video-100">Video watches at 100%</label>
+                        </div>
+                    </div>
+
+                    <div class="customize-column-section">
+                        <h4>Ecommerce</h4>
+                        <div class="column-option">
+                            <input type="checkbox" id="col-purchases" checked>
+                            <label for="col-purchases">SL mua hàng</label>
+                        </div>
+                        <div class="column-option">
+                            <input type="checkbox" id="col-conversion" checked>
+                            <label for="col-conversion">% chuyển đổi mua hàng</label>
+                        </div>
+                        <div class="column-option">
+                            <input type="checkbox" id="col-cps" checked>
+                            <label for="col-cps">CPS</label>
+                        </div>
+                    </div>
+
+                    <div class="customize-column-footer">
+                        <button class="btn-reset" id="resetColumns">Đặt lại</button>
+                        <button class="btn-apply" id="applyColumns">Hoàn tất</button>
+                    </div>
+                </div>
+            </div>
           </div>
         </div>
       </div>
@@ -347,98 +285,95 @@
         <table class="campaign-table">
           <thead>
             <tr style="background: #F8F9FA;">
-              <th class="frozen-column"
-                style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+              <th class="frozen-column" style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
                 <input type="checkbox" style="margin-right: 8px;">
               </th>
-              <th class="frozen-column"
-                style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+              <th class="frozen-column" style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
                 STT
               </th>
-              <th class="frozen-column"
-                style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+              <th class="frozen-column" style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
                 Bật/tắt
               </th>
-              <th
-                style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+              <th class="frozen-column" style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
                 Tiêu đề
               </th>
-              <th
-                style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+              <th class="frozen-column" style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
                 Trạng thái
               </th>
-              <th
-                style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+              <th class="frozen-column" style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
                 Loại QC
               </th>
-              <th
-                style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
-                Ngân sách (VNĐ)
-                <div style="font-weight: normal; font-size: 12px;">Ngày</div>
-                <div style="font-weight: normal; font-size: 12px;">Tổng</div>
-              </th>
-              <th
-                style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+              <th class="total-cost-cell" style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
                 Tổng chi phí (VNĐ)
                 <div style="font-weight: normal; font-size: 12px;">Ngày</div>
                 <div style="font-weight: normal; font-size: 12px;">Tổng</div>
               </th>
-              <th
-                style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+              <th class="views-cell" style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
                 Lượt xem
                 <div style="font-weight: normal; font-size: 12px;">Ngày</div>
                 <div style="font-weight: normal; font-size: 12px;">Tổng</div>
               </th>
-              <th
-                style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+              <th class="clicks-cell" style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
                 Lượt nhấn
                 <div style="font-weight: normal; font-size: 12px;">Ngày</div>
                 <div style="font-weight: normal; font-size: 12px;">Tổng</div>
               </th>
-              <th
-                style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+              <th class="ctr-cell" style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
                 CTR (%)
                 <div style="font-weight: normal; font-size: 12px;">Ngày</div>
                 <div style="font-weight: normal; font-size: 12px;">Tổng</div>
               </th>
-              <th
-                style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+              <th class="cpc-cell" style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
                 CPC (VNĐ)
                 <div style="font-weight: normal; font-size: 12px;">Ngày</div>
                 <div style="font-weight: normal; font-size: 12px;">Tổng</div>
               </th>
-              <th
-                style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+              <th class="cpm-cell" style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
                 CPM (VNĐ)
                 <div style="font-weight: normal; font-size: 12px;">Ngày</div>
                 <div style="font-weight: normal; font-size: 12px;">Tổng</div>
               </th>
-              <th
-                style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
-                SL mua hàng
-                <div style="font-weight: normal; font-size: 12px;">Ngày</div>
-                <div style="font-weight: normal; font-size: 12px;">Tổng</div>
-              </th>
-              <th
-                style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
-                % chuyển đổi mua hàng
-                <div style="font-weight: normal; font-size: 12px;">Ngày</div>
-                <div style="font-weight: normal; font-size: 12px;">Tổng</div>
-              </th>
-              <th
-                style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
-                CPS (VNĐ)
-                <div style="font-weight: normal; font-size: 12px;">Ngày</div>
-                <div style="font-weight: normal; font-size: 12px;">Tổng</div>
-              </th>
-              <th
-                style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+              <th class="video-view-3s-cell" style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
                 Video view 3s
                 <div style="font-weight: normal; font-size: 12px;">Ngày</div>
                 <div style="font-weight: normal; font-size: 12px;">Tổng</div>
               </th>
-              <th
-                style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+              <th class="video-25-cell" style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0; display: none;">
+                Video watches at 25%
+                <div style="font-weight: normal; font-size: 12px;">Ngày</div>
+                <div style="font-weight: normal; font-size: 12px;">Tổng</div>
+              </th>
+              <th class="video-50-cell" style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0; display: none;">
+                Video watches at 50%
+                <div style="font-weight: normal; font-size: 12px;">Ngày</div>
+                <div style="font-weight: normal; font-size: 12px;">Tổng</div>
+              </th>
+              <th class="video-75-cell" style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0; display: none;">
+                Video watches at 75%
+                <div style="font-weight: normal; font-size: 12px;">Ngày</div>
+                <div style="font-weight: normal; font-size: 12px;">Tổng</div>
+              </th>
+              <th class="video-100-cell" style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0; display: none;">
+                Video watches at 100%
+                <div style="font-weight: normal; font-size: 12px;">Ngày</div>
+                <div style="font-weight: normal; font-size: 12px;">Tổng</div>
+              </th>
+              <th class="purchases-cell" style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                SL mua hàng
+                <div style="font-weight: normal; font-size: 12px;">Ngày</div>
+                <div style="font-weight: normal; font-size: 12px;">Tổng</div>
+              </th>
+              <th class="conversion-cell" style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                % chuyển đổi mua hàng
+                <div style="font-weight: normal; font-size: 12px;">Ngày</div>
+                <div style="font-weight: normal; font-size: 12px;">Tổng</div>
+              </th>
+              <th class="cps-cell" style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                CPS (VNĐ)
+                <div style="font-weight: normal; font-size: 12px;">Ngày</div>
+                <div style="font-weight: normal; font-size: 12px;">Tổng</div>
+              </th>
+              <th class="frozen-column" style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
                 Bắt đầu/kết thúc
               </th>
             </tr>
@@ -519,10 +454,6 @@
             <div>${formatCurrency(campaign.tong_ngan_sach)}</div>
           </td>
           <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
-            <div>${formatCurrency(campaign.chi_phi_ngay)}</div>
-            <div>${formatCurrency(campaign.tong_chi_phi)}</div>
-          </td>
-          <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
             <div>${formatNumber(campaign.luot_xem_ngay)}</div>
             <div>${formatNumber(campaign.tong_luot_xem)}</div>
           </td>
@@ -541,18 +472,6 @@
           <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
             <div>${formatCurrency(campaign.cpm_ngay)}</div>
             <div>${formatCurrency(campaign.cpm_tong)}</div>
-          </td>
-          <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
-            <div>${formatNumber(campaign.sl_mua_hang_ngay)}</div>
-            <div>${formatNumber(campaign.sl_mua_hang_tong)}</div>
-          </td>
-          <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
-            <div>${formatNumber(campaign.ti_le_chuyen_doi_ngay)}%</div>
-            <div>${formatNumber(campaign.ti_le_chuyen_doi_tong)}%</div>
-          </td>
-          <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
-            <div>${formatCurrency(campaign.cps_ngay)}</div>
-            <div>${formatCurrency(campaign.cps_tong)}</div>
           </td>
           <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
             <div>${formatNumber(campaign.video_view_3s_ngay)}</div>
@@ -602,6 +521,56 @@
 
     document.addEventListener('DOMContentLoaded', function () {
       fetchCampaigns();
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const customizeBtn = document.querySelector('.customize-column-btn');
+        const customizeMenu = document.querySelector('.customize-column-menu');
+        const resetBtn = document.getElementById('resetColumns');
+        const applyBtn = document.getElementById('applyColumns');
+        
+        // Toggle dropdown
+        customizeBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            customizeMenu.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!customizeMenu.contains(e.target) && !customizeBtn.contains(e.target)) {
+                customizeMenu.classList.remove('show');
+            }
+        });
+
+        // Handle column visibility
+        function updateColumnVisibility() {
+            const checkboxes = document.querySelectorAll('.column-option input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                const columnId = checkbox.id.replace('col-', '');
+                const cells = document.querySelectorAll(`.${columnId}-cell`);
+                cells.forEach(cell => {
+                    cell.style.display = checkbox.checked ? 'table-cell' : 'none';
+                });
+            });
+        }
+
+        // Reset columns
+        resetBtn.addEventListener('click', function() {
+            const checkboxes = document.querySelectorAll('.column-option input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+            });
+            updateColumnVisibility();
+        });
+
+        // Apply changes
+        applyBtn.addEventListener('click', function() {
+            updateColumnVisibility();
+            customizeMenu.classList.remove('show');
+        });
+
+        // Initial column setup
+        updateColumnVisibility();
     });
   </script>
 </body>

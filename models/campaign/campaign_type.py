@@ -38,9 +38,9 @@ class CampaignType:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-                SELECT camp_type_id, ten_loai_chien_dich, created_at, updated_at, status
+                SELECT camp_type_id, ten_loai_chien_dich, created_at, updated_at, active
                 FROM campaign_type 
-                WHERE status = TRUE
+                WHERE active = TRUE
             ''')
             rows = cursor.fetchall()
             return [dict(zip([column[0] for column in cursor.description], row)) for row in rows]
@@ -50,9 +50,9 @@ class CampaignType:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-                SELECT camp_type_id, ten_loai_chien_dich, created_at, updated_at, status
+                SELECT camp_type_id, ten_loai_chien_dich, created_at, updated_at, active
                 FROM campaign_type 
-                WHERE camp_type_id = %s AND status = TRUE
+                WHERE camp_type_id = %s AND active = TRUE
             ''', (camp_type_id,))
             row = cursor.fetchone()
             if not row:
@@ -75,7 +75,7 @@ class CampaignType:
                 query = f'''
                 UPDATE campaign_type 
                 SET {', '.join(update_fields)}, updated_at = CURRENT_TIMESTAMP
-                WHERE camp_type_id = %s AND status = TRUE
+                WHERE camp_type_id = %s AND active = TRUE
                 '''
                 params.append(camp_type_id)
 
@@ -87,7 +87,8 @@ class CampaignType:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-            UPDATE campaign_type SET status = FALSE 
+            UPDATE campaign_type SET active = FALSE 
             WHERE camp_type_id = %s
             ''', (camp_type_id,))
             conn.commit()
+

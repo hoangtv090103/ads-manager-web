@@ -9,46 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <style>
-        .main-content {
-            margin-left: 250px;
-            padding: 24px 40px;
-            background-color: #F8F9FA;
-            min-height: 100vh;
-        }
-
-        .form-container {
-            background: white;
-            border-radius: 8px;
-            padding: 24px;
-            max-width: 800px;
-        }
-
-        .form-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 24px;
-        }
-
-        .form-group {
-            margin-bottom: 24px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 500;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #E0E0E0;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
         .upload-container {
             border: 2px dashed #E0E0E0;
             border-radius: 8px;
@@ -56,11 +16,6 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
-        }
-
-        .upload-container:hover {
-            border-color: #0061C1;
-            background: #F8F9FA;
         }
 
         .upload-icon {
@@ -77,85 +32,6 @@
         .upload-hint {
             color: #828282;
             font-size: 12px;
-        }
-
-        .tab-container {
-            display: flex;
-            gap: 24px;
-            margin-bottom: 24px;
-            border-bottom: 1px solid #E0E0E0;
-        }
-
-        .tab {
-            padding: 12px 0;
-            color: #4F4F4F;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .tab.active {
-            color: #0061C1;
-            font-weight: 500;
-        }
-
-        .tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: #0061C1;
-        }
-
-        .btn-container {
-            display: flex;
-            gap: 16px;
-            margin-top: 32px;
-        }
-
-        .btn-primary {
-            background: #0061C1;
-            color: white;
-            border: none;
-            padding: 8px 24px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .btn-secondary {
-            background: white;
-            color: #4F4F4F;
-            border: 1px solid #E0E0E0;
-            padding: 8px 24px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        #fileList {
-            margin-top: 16px;
-            text-align: left;
-        }
-
-        .file-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px;
-            background: #F8F9FA;
-            border-radius: 4px;
-            margin-bottom: 8px;
-        }
-
-        .file-name {
-            flex: 1;
-            color: #333;
-        }
-
-        .remove-file {
-            color: #EB5757;
-            cursor: pointer;
         }
     </style>
 </head>

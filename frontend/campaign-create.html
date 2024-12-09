@@ -82,7 +82,7 @@
 
         .ad-type {
             padding: 8px 16px;
-            border: 1px solid var(--gray-5);
+            border: 1px solid var(--border-color);
             border-radius: 4px;
             cursor: pointer;
             transition: all 0.3s;
@@ -94,13 +94,7 @@
             border-color: var(--primary-color);
         }
 
-        .budget-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-            margin-bottom: 24px;
-        }
-
+        .budget-section,
         .date-section {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -163,6 +157,33 @@
                 flex-direction: column;
             }
         }
+
+        .required:after {
+            content: " *";
+            color: red;
+        }
+
+        .date-picker-container {
+            display: flex;
+            gap: 16px;
+        }
+
+        .date-input-group {
+            position: relative;
+            flex: 1;
+        }
+
+        .date-input-group i {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        #dataSourceSection {
+            display: block;
+        }
     </style>
 </head>
 
@@ -194,7 +215,7 @@
                 <div class="submenu">
                     <a href="/frontend/product-groups.html">• Danh sách nhóm SP</a>
                     <a href="/frontend/products.html">• Danh sách SP</a>
-                    <a href="/frontend/data-sources.html">• Nguồn cấp dữ liệu</a>
+                    <a href="/frontend/data-sources.html">• Nguồn cấp d liệu</a>
                 </div>
             </div>
 
@@ -254,72 +275,54 @@
         </div>
 
         <div class="form-container">
-            <h1 class="form-title">Tạo chiến dịch</h1>
+            <h2 class="form-title">Tạo chiến dịch mới</h2>
+            
+            <!-- Add customer account selection -->
+            <div class="form-group">
+                <label class="form-label required">Tài khoản khách hàng</label>
+                <select class="form-input" id="customerAccount" required>
+                    <option value="">Chọn tài khoản khách hàng</option>
+                </select>
+            </div>
 
-            <form id="createForm">
-                <div class="form-section">
-                    <h2 class="section-title">Tạo chiến dịch</h2>
-                    <div class="form-group">
-                        <label class="form-label">Tên chiến dịch</label>
-                        <input type="text" name="name" class="form-input" required>
+            <div class="form-group">
+                <label class="form-label required">Tên chiến dịch</label>
+                <input type="text" class="form-input" id="campaignName" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label required">Loại chiến dịch</label>
+                <div class="ad-types">
+                    <div class="ad-type" data-type="display">Display</div>
+                    <div class="ad-type" data-type="native">Native</div>
+                    <div class="ad-type" data-type="other">Khác</div>
+                </div>
+            </div>
+
+            <!-- Data source section - hidden for Display and Native -->
+            <div class="form-group" id="dataSourceSection">
+                <label class="form-label required">Nguồn dữ liệu</label>
+                <select class="form-input" id="dataSource">
+                    <option value="">Chọn nguồn dữ liệu</option>
+                </select>
+            </div>
+
+            <!-- Date picker with dropdown below icon -->
+            <div class="form-group">
+                <label class="form-label required">Thời gian</label>
+                <div class="date-picker-container">
+                    <div class="date-input-group">
+                        <input type="text" class="form-input" id="startDate" required>
+                        <i class="fas fa-calendar" id="startDateIcon"></i>
                     </div>
-
-                    <div class="form-section">
-                        <h3>Loại chiến dịch</h3>
-                        <div class="campaign-type-selector">
-                            <label class="radio-option">
-                                <input type="radio" name="campaign_type" value="ecommerce" required>
-                                <span>Ecommerce</span>
-                                <small>Quảng cáo sản phẩm trên các website thương mại điện tử</small>
-                            </label>
-                            
-                            <label class="radio-option">
-                                <input type="radio" name="campaign_type" value="display">
-                                <span>Display Ads</span>
-                                <small>Quảng cáo hình ảnh, banner trên các website</small>
-                            </label>
-                            
-                            <label class="radio-option">
-                                <input type="radio" name="campaign_type" value="native">
-                                <span>Native Ads</span>
-                                <small>Quảng cáo dưới dạng bài viết, nội dung</small>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Nguồn dữ liệu</label>
-                        <select name="data_source" class="form-input" required></select>
-                    </div>
-
-                    <div class="budget-section">
-                        <div class="form-group">
-                            <label class="form-label">Tổng ngân sách</label>
-                            <input type="number" name="total_budget" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Ngân sách hàng ngày</label>
-                            <input type="number" name="daily_budget" class="form-input" required>
-                        </div>
-                    </div>
-
-                    <div class="date-section">
-                        <div class="form-group">
-                            <label class="form-label">Ngày bắt đầu</label>
-                            <input type="date" name="start_date" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Ngày kết thúc</label>
-                            <input type="date" name="end_date" class="form-input">
-                        </div>
+                    <div class="date-input-group">
+                        <input type="text" class="form-input" id="endDate" required>
+                        <i class="fas fa-calendar" id="endDateIcon"></i>
                     </div>
                 </div>
+            </div>
 
-                <div class="form-actions">
-                    <button type="button" class="btn-cancel">Hủy</button>
-                    <button type="submit" class="btn-create">Tạo chiến dịch</button>
-                </div>
-            </form>
+            <button type="submit" class="create-button">Tạo chiến dịch</button>
         </div>
     </div>
 </body>
@@ -373,6 +376,55 @@
     });
 
     document.getElementById('createForm').addEventListener('submit', onSubmit);
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Campaign type logic
+        const adTypes = document.querySelectorAll('.ad-type');
+        const dataSourceSection = document.getElementById('dataSourceSection');
+
+        adTypes.forEach(type => {
+            type.addEventListener('click', function() {
+                // Remove active class from all types
+                adTypes.forEach(t => t.classList.remove('active'));
+                // Add active class to clicked type
+                this.classList.add('active');
+                
+                // Hide data source for Display and Native
+                const campaignType = this.getAttribute('data-type');
+                if (campaignType === 'display' || campaignType === 'native') {
+                    dataSourceSection.style.display = 'none';
+                } else {
+                    dataSourceSection.style.display = 'block';
+                }
+            });
+        });
+
+        // Form validation
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const requiredFields = form.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.classList.add('error');
+                } else {
+                    field.classList.remove('error');
+                }
+            });
+            
+            if (!isValid) {
+                alert('Vui lòng điền đầy đủ thông tin bắt buộc');
+                return;
+            }
+            
+            // Proceed with form submission
+            // Add your submission logic here
+        });
+    });
 </script>
 
 </html>

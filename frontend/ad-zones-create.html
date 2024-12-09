@@ -67,14 +67,37 @@
             font-size: 14px;
         }
 
-        .format-section {
-            margin-top: 24px;
+        .tab-container {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #E0E0E0;
         }
 
-        .format-title {
-            font-size: 14px;
-            color: #333;
-            margin-bottom: 16px;
+        .tab {
+            padding: 12px 0;
+            color: #4F4F4F;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .tab.active {
+            color: #0061C1;
+            font-weight: 500;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #0061C1;
+        }
+
+        .format-section {
+            margin-top: 24px;
         }
 
         .format-grid {
@@ -87,13 +110,6 @@
             border: 1px solid #E0E0E0;
             padding: 12px;
             border-radius: 4px;
-        }
-
-        .format-item label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
         }
 
         .backup-ads {
@@ -170,12 +186,6 @@
             margin-bottom: 12px;
             color: #333;
         }
-
-        .format-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-        }
     </style>
 </head>
 
@@ -229,7 +239,7 @@
             <div class="nav-group">
                 <div class="nav-item" onclick="toggleSubmenu(this)">
                     <i class="fas fa-chart-bar"></i>
-                    <span>Báo cáo</span>
+                    <span>B��o cáo</span>
                     <i class="fas fa-chevron-right dropdown-arrow"></i>
                 </div>
                 <div class="submenu">
