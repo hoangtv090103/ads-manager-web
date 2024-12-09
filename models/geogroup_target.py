@@ -1,6 +1,5 @@
 from configs.db import get_db_connection
 
-
 class GeoGroupTarget:
     def __init__(self, geogroup_id=None, ten_nhom_dia_ly=""):
         self.geogroup_id = geogroup_id

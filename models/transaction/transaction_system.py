@@ -1,6 +1,5 @@
 from configs.db import get_db_connection
 
-
 class TransactionSystem:
     def __init__(self, tran_id=None, customer_id=None, so_tien_nap=0.0, thoi_gian_nap=None, ghi_chu=""):
         self.tran_id = tran_id

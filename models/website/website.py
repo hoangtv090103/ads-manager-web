@@ -1,15 +1,18 @@
 from configs.db import get_db_connection
 
-
 class Website:
     def __init__(self, website_id=None, domain_website="", link_url="",
-                 tong_so_luong_vung=0, publisher_id=None, webstatus_id=None):
+                 tong_so_luong_vung=0, publisher_id=None, webstatus_id=None,
+                 created_at=None, updated_at=None, active=True):
         self.website_id = website_id
         self.domain_website = domain_website
         self.link_url = link_url
         self.tong_so_luong_vung = tong_so_luong_vung
         self.publisher_id = publisher_id
         self.webstatus_id = webstatus_id
+        self.created_at = created_at
+        self.updated_at = updated_at
+        self.active = active
 
     @staticmethod
     def create_table():
@@ -18,18 +21,18 @@ class Website:
             cursor.execute('''
             CREATE TABLE IF NOT EXISTS website (
                 website_id SERIAL PRIMARY KEY,
-                domain_website VARCHAR(50),
-                link_url VARCHAR(100),
-                tong_so_luong_vung INTEGER,
-                publisher_id INTEGER,
-                webstatus_id INTEGER,
+                domain_website VARCHAR(255),
+                link_url VARCHAR(255),
+                tong_so_luong_vung INTEGER DEFAULT 0,
+                publisher_id INTEGER NOT NULL,
+                webstatus_id INTEGER NOT NULL,
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE,
                 FOREIGN KEY (publisher_id) REFERENCES publisher(publisher_id)
-                    ON DELETE CASCADE,
+                    ON DELETE SET NULL,
                 FOREIGN KEY (webstatus_id) REFERENCES website_status(webstatus_id)
-                    ON DELETE CASCADE
+                    ON DELETE SET NULL
             )
             ''')
             conn.commit()
@@ -39,7 +42,7 @@ class Website:
             cursor = conn.cursor()
             cursor.execute('''
             INSERT INTO website (domain_website, link_url, tong_so_luong_vung, publisher_id, webstatus_id)
-            VALUES (?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s)
             ''', (self.domain_website, self.link_url, self.tong_so_luong_vung, self.publisher_id, self.webstatus_id))
             conn.commit()
 

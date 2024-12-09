@@ -141,6 +141,47 @@
             color: #4F4F4F;
             cursor: pointer;
         }
+
+        .url-group {
+            margin-bottom: 16px;
+        }
+
+        .url-input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .condition-select {
+            width: 100px;
+        }
+
+        .behavior-options {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .behavior-item {
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            padding: 16px;
+        }
+
+        .sub-options {
+            margin-left: 24px;
+            margin-top: 8px;
+            color: #828282;
+        }
+
+        .sub-options.disabled {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .option-item {
+            margin: 8px 0;
+        }
     </style>
 </head>
 
@@ -374,6 +415,27 @@
 
         // Initialize page
         document.addEventListener('DOMContentLoaded', loadTargetAudiences);
+
+        function addUrlInput() {
+            const urlGroup = document.querySelector('.url-group');
+            const newInput = document.createElement('div');
+            newInput.className = 'url-input-group';
+            newInput.innerHTML = `
+                <select class="condition-select">
+                    <option value="and">Và</option>
+                    <option value="or">Hoặc</option>
+                </select>
+                <input type="text" class="form-input" placeholder="Nhập URL trang web">
+                <button class="btn-remove" onclick="removeUrlInput(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            urlGroup.appendChild(newInput);
+        }
+
+        function removeUrlInput(button) {
+            button.closest('.url-input-group').remove();
+        }
     </script>
 </body>
 

@@ -1,12 +1,11 @@
 from configs.db import get_db_connection
 
-
 class Customer:
     def __init__(self, customer_id=None, ho_va_ten="", ngay_sinh=None, gioi_tinh=None,
                  ten_doanh_nghiep="", dia_chi_doanh_nghiep="", country_id=None,
                  city_id=None, district_id=None, website_doanh_nghiep="",
                  so_dien_thoai="", email_doanh_nghiep="", ma_remarketing="",
-                 active=True):
+                 created_at=None, updated_at=None, status=True):
         self.customer_id = customer_id
         self.ho_va_ten = ho_va_ten
         self.ngay_sinh = ngay_sinh
@@ -20,7 +19,9 @@ class Customer:
         self.so_dien_thoai = so_dien_thoai
         self.email_doanh_nghiep = email_doanh_nghiep
         self.ma_remarketing = ma_remarketing
-        self.active = active
+        self.created_at = created_at
+        self.updated_at = updated_at
+        self.status = status
 
     @staticmethod
     def create_table():
@@ -29,27 +30,27 @@ class Customer:
             cursor.execute('''
             CREATE TABLE IF NOT EXISTS customer (
                 customer_id SERIAL PRIMARY KEY,
-                ho_va_ten VARCHAR(50),
+                ho_va_ten VARCHAR(100),
                 ngay_sinh DATE,
-                gioi_tinh BOOLEAN,
-                ten_doanh_nghiep VARCHAR(50),
-                dia_chi_doanh_nghiep VARCHAR(100),
+                gioi_tinh INTEGER,
+                ten_doanh_nghiep VARCHAR(200),
+                dia_chi_doanh_nghiep TEXT,
                 country_id INTEGER,
                 city_id INTEGER,
                 district_id INTEGER,
-                website_doanh_nghiep VARCHAR(100),
-                so_dien_thoai VARCHAR(12),
-                email_doanh_nghiep VARCHAR(50),
-                ma_remarketing VARCHAR(10),
+                website_doanh_nghiep VARCHAR(255),
+                so_dien_thoai VARCHAR(20),
+                email_doanh_nghiep VARCHAR(100),
+                ma_remarketing VARCHAR(100),
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE,
                 FOREIGN KEY (country_id) REFERENCES country(country_id)
-                    ON DELETE CASCADE,
+                    ON DELETE SET NULL,
                 FOREIGN KEY (city_id) REFERENCES city(city_id)
-                    ON DELETE CASCADE,
+                    ON DELETE SET NULL,
                 FOREIGN KEY (district_id) REFERENCES district(district_id)
-                    ON DELETE CASCADE
+                    ON DELETE SET NULL
             )
             ''')
             conn.commit()

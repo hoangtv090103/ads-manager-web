@@ -1,5 +1,4 @@
 from configs.db import get_db_connection
-
 class SanPhamDichVuCam:
     def __init__(self, spcam_id=None, ten_san_pham=""):
         self.spcam_id = spcam_id

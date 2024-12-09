@@ -1,9 +1,8 @@
 from configs.db import get_db_connection
 
-
 class ProductStatus:
-    def __init__(self, status_id=None, ten_trang_thai=""):
-        self.status_id = status_id
+    def __init__(self, product_status_id=None, ten_trang_thai=""):
+        self.product_status_id = product_status_id
         self.ten_trang_thai = ten_trang_thai
 
     @staticmethod
@@ -12,7 +11,7 @@ class ProductStatus:
             cursor = conn.cursor()
             cursor.execute('''
             CREATE TABLE IF NOT EXISTS product_status (
-                status_id SERIAL PRIMARY KEY,
+                product_status_id SERIAL PRIMARY KEY,
                 ten_trang_thai VARCHAR(50),
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
@@ -31,11 +30,11 @@ class ProductStatus:
             conn.commit()
 
     @staticmethod
-    def get_all_statuses():
+    def get_all():
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-            SELECT status_id, ten_trang_thai, created_at, updated_at, active FROM product_status WHERE active = true
+            SELECT product_status_id, ten_trang_thai, created_at, updated_at, active FROM product_status WHERE active = true
             ''')
             rows = cursor.fetchall()
             return [dict(zip([column[0] for column in cursor.description], row)) for row in rows]
@@ -43,11 +42,18 @@ class ProductStatus:
     def update(self):
         with get_db_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute('''
-            UPDATE product_status
-            SET ten_trang_thai = ?
-            WHERE status_id = ?
-            ''', (self.ten_trang_thai, self.status_id))
+            if self.product_status_id:
+                cursor.execute('''
+                UPDATE product_status
+                SET ten_trang_thai = %s, 
+                updated_at = CURRENT_TIMESTAMP
+                WHERE product_status_id = %s
+                ''', (self.ten_trang_thai, self.product_status_id))
+            else:
+                cursor.execute('''
+                INSERT INTO product_status (ten_trang_thai)
+                VALUES (%s)
+                ''', (self.ten_trang_thai,))
             conn.commit()
 
     @staticmethod
@@ -55,6 +61,6 @@ class ProductStatus:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-            UPDATE product_status SET active = 0 WHERE status_id = ?
+            UPDATE product_status SET active = 0 WHERE status_id = %s
             ''', (status_id,))
             conn.commit()

@@ -264,20 +264,25 @@
                         <input type="text" name="name" class="form-input" required>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Loại chiến dịch</label>
-                        <div class="campaign-types">
-                            <label class="campaign-type">
-                                <input type="radio" name="ad_type" value="ecommerce" checked>
+                    <div class="form-section">
+                        <h3>Loại chiến dịch</h3>
+                        <div class="campaign-type-selector">
+                            <label class="radio-option">
+                                <input type="radio" name="campaign_type" value="ecommerce" required>
                                 <span>Ecommerce</span>
+                                <small>Quảng cáo sản phẩm trên các website thương mại điện tử</small>
                             </label>
-                            <label class="campaign-type">
-                                <input type="radio" name="ad_type" value="display">
-                                <span>Display ads</span>
+                            
+                            <label class="radio-option">
+                                <input type="radio" name="campaign_type" value="display">
+                                <span>Display Ads</span>
+                                <small>Quảng cáo hình ảnh, banner trên các website</small>
                             </label>
-                            <label class="campaign-type">
-                                <input type="radio" name="ad_type" value="native">
-                                <span>Native ads</span>
+                            
+                            <label class="radio-option">
+                                <input type="radio" name="campaign_type" value="native">
+                                <span>Native Ads</span>
+                                <small>Quảng cáo dưới dạng bài viết, nội dung</small>
                             </label>
                         </div>
                     </div>

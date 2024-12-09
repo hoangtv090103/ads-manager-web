@@ -8,7 +8,7 @@ product_fields = {
     'mo_ta_san_pham': fields.String,
     'lien_ket_san_pham': fields.String,
     'hinh_anh_san_pham': fields.Raw,
-    'productstatus_id': fields.Integer,
+    'product_status_id': fields.Integer,
     'tinh_trang_san_pham': fields.String,
     'gia': fields.Float,
     'gia_khuyen_mai': fields.Float,

@@ -1,6 +1,5 @@
 from configs.db import get_db_connection
 
-
 class AgeTarget:
     def __init__(self, age_id=None, ten_do_tuoi=""):
         self.age_id = age_id

@@ -1,6 +1,5 @@
 from configs.db import get_db_connection
 
-
 class Role:
     ADMIN = 1
     USER = 2
@@ -34,7 +33,6 @@ class Role:
                     ''',
                     [
                         ('Admin', 'Quản trị viên hệ thống'),
-                        ('User', 'Người dùng'),
                         ('Customer', 'Khách hàng'),
                         ('Publisher', 'Nhà quảng cáo')
                     ]

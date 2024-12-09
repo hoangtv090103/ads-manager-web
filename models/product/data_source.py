@@ -1,5 +1,4 @@
 from configs.db import get_db_connection
-from datetime import datetime
 
 
 class DataSource:

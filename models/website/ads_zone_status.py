@@ -1,5 +1,4 @@
 from configs.db import get_db_connection
-
 class AdsZoneStatus:
     def __init__(self, zonestatus_id=None, ten_trang_thai=""):
         self.zonestatus_id = zonestatus_id

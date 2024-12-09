@@ -1,6 +1,5 @@
 from configs.db import get_db_connection
 
-
 class PriceStatus:
     def __init__(self, pricestatus_id=None, ten_trang_thai=""):
         self.pricestatus_id = pricestatus_id

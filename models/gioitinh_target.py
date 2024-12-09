@@ -1,6 +1,5 @@
 from configs.db import get_db_connection
 
-
 class GioiTinhTarget:
     def __init__(self, gioitinh_id=None, ten_gioi_tinh=""):
         self.gioitinh_id = gioitinh_id

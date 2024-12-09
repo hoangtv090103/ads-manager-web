@@ -1,9 +1,9 @@
 from configs.db import get_db_connection
-from models.auth.auth import Auth
 
 
 class User:
-    def __init__(self, user_id=None, username="", email="", password="", role_id=0):
+    def __init__(self, user_id=None, username="", email="", password="",
+                 role_id=None, created_at=None, updated_at=None, active=True):
         self.user_id = user_id
         self.username = username
         self.email = email

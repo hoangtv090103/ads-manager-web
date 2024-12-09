@@ -619,6 +619,105 @@
         .sidebar-overlay.active {
             display: block;
         }
+
+        /* Thêm CSS mới */
+        .dropdown-container {
+            position: relative;
+        }
+
+        .dropdown-content {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 8px;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            min-width: 300px;
+            z-index: 1000;
+        }
+
+        .dropdown-header {
+            padding: 16px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .dropdown-header input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .dropdown-header input:focus {
+            border-color: #2F80ED;
+        }
+
+        .dropdown-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: #F5F5F5;
+        }
+
+        /* Sửa lại action-bar để tránh overflow */
+        .action-bar {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin: 24px 0;
+            gap: 16px;
+        }
+
+        .action-left {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Animation cho dropdown */
+        .dropdown-content {
+            display: none;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.2s, transform 0.2s;
+        }
+
+        .dropdown-content.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dropdown-content {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: calc(100% - 32px);
+                max-width: 400px;
+                margin: 0;
+            }
+
+            .dropdown-content.show {
+                transform: translate(-50%, -50%);
+            }
+        }
     </style>
 </head>
 
@@ -722,10 +821,12 @@
         <!-- Action Bar -->
         <div class="action-bar">
             <div class="action-left">
-                <button class="create-button">
-                    <i class="fas fa-plus"></i> Tạo tin quảng cáo
-                </button>
-                <!-- Dropdown will be inserted here -->
+                <div class="dropdown-container">
+                    <button class="create-button">
+                        <i class="fas fa-plus"></i> Tạo tin quảng cáo
+                    </button>
+                    <!-- Dropdown sẽ được thêm vào đây -->
+                </div>
             </div>
 
             <div class="action-right">

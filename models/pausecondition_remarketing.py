@@ -1,5 +1,4 @@
 from configs.db import get_db_connection
-
 class PauseConditionRemarketing:
     def __init__(self, condition_id=None, ten_loai_nham_chon="", nham_chon_tu_dong=""):
         self.condition_id = condition_id

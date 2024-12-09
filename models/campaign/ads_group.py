@@ -1,37 +1,32 @@
 from configs.db import get_db_connection
 
-
 class AdsGroup:
-    def __init__(self, ads_group_id=None, camp_id=None, ads_group_status_id=None, ads_type_id=None, ten_nhom="",
-                 tong_chi_phi=0.0, luot_xem=0, luot_nhan=0, ctr=0.0, cpc=0.0, cpm=0.0, so_luong_mua_hang=0,
-                 conversion_rate=0.0, cps=0.0, video_view_3s=0, video_watches_25=0, video_watches_50=0,
-                 video_watches_75=0, video_watches_100=0, product_group_id=None, ta_id=None, nham_chon_dia_ly="",
-                 nham_chon_gioi_tinh="", nham_chon_do_tuoi="", website_id=None):
+    def __init__(self, ads_group_id=None, camp_id=None, ads_group_status_id=None,
+                 ten_nhom="", nham_chon_all_san_pham=False, nham_chon_doi_tuong=False,
+                 nham_chon_dia_ly="", gioi_tinh_khong_xac_dinh=False,
+                 gioi_tinh_nam=False, gioi_tinh_nu=False,
+                 tuoi_less_than_18=False, tuoi_from_18_to_24=False,
+                 tuoi_from_25_to_34=False, tuoi_from_35_to_50=False,
+                 tuoi_more_than_50=False, created_at=None, updated_at=None,
+                 status=True):
         self.ads_group_id = ads_group_id
         self.camp_id = camp_id
         self.ads_group_status_id = ads_group_status_id
-        self.ads_type_id = ads_type_id
         self.ten_nhom = ten_nhom
-        self.tong_chi_phi = tong_chi_phi
-        self.luot_xem = luot_xem
-        self.luot_nhan = luot_nhan
-        self.ctr = ctr
-        self.cpc = cpc
-        self.cpm = cpm
-        self.so_luong_mua_hang = so_luong_mua_hang
-        self.conversion_rate = conversion_rate
-        self.cps = cps
-        self.video_view_3s = video_view_3s
-        self.video_watches_25 = video_watches_25
-        self.video_watches_50 = video_watches_50
-        self.video_watches_75 = video_watches_75
-        self.video_watches_100 = video_watches_100
-        self.product_group_id = product_group_id
-        self.ta_id = ta_id
+        self.nham_chon_all_san_pham = nham_chon_all_san_pham
+        self.nham_chon_doi_tuong = nham_chon_doi_tuong
         self.nham_chon_dia_ly = nham_chon_dia_ly
-        self.nham_chon_gioi_tinh = nham_chon_gioi_tinh
-        self.nham_chon_do_tuoi = nham_chon_do_tuoi
-        self.website_id = website_id
+        self.gioi_tinh_khong_xac_dinh = gioi_tinh_khong_xac_dinh
+        self.gioi_tinh_nam = gioi_tinh_nam
+        self.gioi_tinh_nu = gioi_tinh_nu
+        self.tuoi_less_than_18 = tuoi_less_than_18
+        self.tuoi_from_18_to_24 = tuoi_from_18_to_24
+        self.tuoi_from_25_to_34 = tuoi_from_25_to_34
+        self.tuoi_from_35_to_50 = tuoi_from_35_to_50
+        self.tuoi_more_than_50 = tuoi_more_than_50
+        self.created_at = created_at
+        self.updated_at = updated_at
+        self.status = status
 
     @staticmethod
     def create_table():
@@ -40,44 +35,26 @@ class AdsGroup:
             cursor.execute('''
             CREATE TABLE IF NOT EXISTS ads_group (
                 ads_group_id SERIAL PRIMARY KEY,
-                camp_id INTEGER,
-                ads_group_status_id INTEGER,
-                ads_type_id INTEGER,
-                ten_nhom VARCHAR(50),
-                tong_chi_phi FLOAT,
-                luot_xem INTEGER,
-                luot_nhan INTEGER,
-                ctr FLOAT,
-                cpc FLOAT,
-                cpm FLOAT,
-                so_luong_mua_hang INTEGER,
-                conversion_rate FLOAT,
-                cps FLOAT,
-                video_view_3s INTEGER,
-                video_watches_25 INTEGER,
-                video_watches_50 INTEGER,
-                video_watches_75 INTEGER,
-                video_watches_100 INTEGER,
-                product_group_id INTEGER,
-                ta_id INTEGER,
-                nham_chon_dia_ly VARCHAR(30),
-                nham_chon_gioi_tinh VARCHAR(10),
-                nham_chon_do_tuoi VARCHAR(20),
-                website_id INTEGER,
+                camp_id INTEGER NOT NULL,
+                ads_group_status_id INTEGER NOT NULL,
+                ten_nhom VARCHAR(100),
+                nham_chon_all_san_pham BOOLEAN DEFAULT FALSE,
+                nham_chon_doi_tuong BOOLEAN DEFAULT FALSE,
+                nham_chon_dia_ly VARCHAR(255),
+                gioi_tinh_khong_xac_dinh BOOLEAN DEFAULT FALSE,
+                gioi_tinh_nam BOOLEAN DEFAULT FALSE,
+                gioi_tinh_nu BOOLEAN DEFAULT FALSE,
+                tuoi_less_than_18 BOOLEAN DEFAULT FALSE,
+                tuoi_from_18_to_24 BOOLEAN DEFAULT FALSE,
+                tuoi_from_25_to_34 BOOLEAN DEFAULT FALSE,
+                tuoi_from_35_to_50 BOOLEAN DEFAULT FALSE,
+                tuoi_more_than_50 BOOLEAN DEFAULT FALSE,
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE,
                 FOREIGN KEY (camp_id) REFERENCES campaign(camp_id)
                     ON DELETE CASCADE,
                 FOREIGN KEY (ads_group_status_id) REFERENCES ads_group_status(ads_group_status_id)
-                    ON DELETE CASCADE,
-                FOREIGN KEY (ads_type_id) REFERENCES ads_type(ads_type_id)
-                    ON DELETE CASCADE,
-                FOREIGN KEY (product_group_id) REFERENCES product_group(group_id)
-                    ON DELETE CASCADE,
-                FOREIGN KEY (ta_id) REFERENCES target_audience(ta_id)
-                    ON DELETE CASCADE,
-                FOREIGN KEY (website_id) REFERENCES website(website_id)
                     ON DELETE CASCADE
             )
             ''')
@@ -87,13 +64,13 @@ class AdsGroup:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-            INSERT INTO ads_group (camp_id, ads_group_status_id, ads_type_id, ten_nhom, tong_chi_phi, luot_xem, luot_nhan, ctr, cpc, cpm, so_luong_mua_hang, conversion_rate, cps, video_view_3s, video_watches_25, video_watches_50, video_watches_75, video_watches_100, product_group_id, ta_id, nham_chon_dia_ly, nham_chon_gioi_tinh, nham_chon_do_tuoi, website_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (self.camp_id, self.ads_group_status_id, self.ads_type_id, self.ten_nhom,
-                  self.tong_chi_phi, self.luot_xem, self.luot_nhan, self.ctr, self.cpc, self.cpm,
-                  self.so_luong_mua_hang, self.conversion_rate, self.cps, self.video_view_3s, self.video_watches_25,
-                  self.video_watches_50, self.video_watches_75, self.video_watches_100, self.product_group_id,
-                  self.ta_id, self.nham_chon_dia_ly, self.nham_chon_gioi_tinh, self.nham_chon_do_tuoi, self.website_id))
+            INSERT INTO ads_group (camp_id, ads_group_status_id, ten_nhom, nham_chon_all_san_pham, nham_chon_doi_tuong, nham_chon_dia_ly, gioi_tinh_khong_xac_dinh, gioi_tinh_nam, gioi_tinh_nu, tuoi_less_than_18, tuoi_from_18_to_24, tuoi_from_25_to_34, tuoi_from_35_to_50, tuoi_more_than_50)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (self.camp_id, self.ads_group_status_id, self.ten_nhom,
+                  self.nham_chon_all_san_pham, self.nham_chon_doi_tuong, self.nham_chon_dia_ly,
+                  self.gioi_tinh_khong_xac_dinh, self.gioi_tinh_nam, self.gioi_tinh_nu,
+                  self.tuoi_less_than_18, self.tuoi_from_18_to_24, self.tuoi_from_25_to_34,
+                  self.tuoi_from_35_to_50, self.tuoi_more_than_50))
             conn.commit()
 
     @staticmethod
@@ -132,16 +109,14 @@ class AdsGroup:
             cursor = conn.cursor()
             cursor.execute('''
             UPDATE ads_group
-            SET camp_id = ?, ads_group_status_id = ?, ads_type_id = ?, ten_nhom = ?, tong_chi_phi = ?, luot_xem = ?, luot_nhan = ?, ctr = ?, cpc = ?, cpm = ?, so_luong_mua_hang = ?, conversion_rate = ?, cps = ?, video_view_3s = ?, video_watches_25 = ?, video_watches_50 = ?, video_watches_75 = ?, video_watches_100 = ?, product_group_id = ?, ta_id = ?, nham_chon_dia_ly = ?, nham_chon_gioi_tinh = ?, nham_chon_do_tuoi = ?, website_id = ?
+            SET camp_id = ?, ads_group_status_id = ?, ten_nhom = ?, nham_chon_all_san_pham = ?, nham_chon_doi_tuong = ?, nham_chon_dia_ly = ?, gioi_tinh_khong_xac_dinh = ?, gioi_tinh_nam = ?, gioi_tinh_nu = ?, tuoi_less_than_18 = ?, tuoi_from_18_to_24 = ?, tuoi_from_25_to_34 = ?, tuoi_from_35_to_50 = ?, tuoi_more_than_50 = ?
             WHERE ads_group_id = ?
             ''', (
-                self.camp_id, self.ads_group_status_id, self.ads_type_id, self.ten_nhom, self.tong_chi_phi,
-                self.luot_xem,
-                self.luot_nhan, self.ctr, self.cpc, self.cpm, self.so_luong_mua_hang, self.conversion_rate, self.cps,
-                self.video_view_3s, self.video_watches_25, self.video_watches_50, self.video_watches_75,
-                self.video_watches_100, self.product_group_id, self.ta_id, self.nham_chon_dia_ly,
-                self.nham_chon_gioi_tinh,
-                self.nham_chon_do_tuoi, self.website_id, self.ads_group_id))
+                self.camp_id, self.ads_group_status_id, self.ten_nhom,
+                self.nham_chon_all_san_pham, self.nham_chon_doi_tuong, self.nham_chon_dia_ly,
+                self.gioi_tinh_khong_xac_dinh, self.gioi_tinh_nam, self.gioi_tinh_nu,
+                self.tuoi_less_than_18, self.tuoi_from_18_to_24, self.tuoi_from_25_to_34,
+                self.tuoi_from_35_to_50, self.tuoi_more_than_50, self.ads_group_id))
             conn.commit()
 
     @staticmethod

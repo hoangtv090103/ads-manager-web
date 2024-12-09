@@ -1,6 +1,5 @@
 from configs.db import get_db_connection
 
-
 class WebsitePrice:
     def __init__(self, price_id=None, pub_id=None, website_id=None, 
                  pricetype_id=None, pricestatus_id=None, thoi_gian_ap_dung=None,

@@ -4,13 +4,13 @@ import io
 
 
 class Product:
-    def __init__(self, product_id=None, ten_san_pham="", mo_ta_san_pham="", lien_ket_san_pham="", hinh_anh_san_pham=None, productstatus_id="", tinh_trang_san_pham="", gia=0.0, gia_khuyen_mai=0.0, loai_san_pham="", customer_id=""):
+    def __init__(self, product_id=None, ten_san_pham="", mo_ta_san_pham="", lien_ket_san_pham="", hinh_anh_san_pham=None, product_status_id="", tinh_trang_san_pham="", gia=0.0, gia_khuyen_mai=0.0, loai_san_pham="", customer_id=""):
         self.product_id = product_id
         self.ten_san_pham = ten_san_pham
         self.mo_ta_san_pham = mo_ta_san_pham
         self.lien_ket_san_pham = lien_ket_san_pham
         self.hinh_anh_san_pham = hinh_anh_san_pham
-        self.productstatus_id = productstatus_id
+        self.product_status_id = product_status_id
         self.tinh_trang_san_pham = tinh_trang_san_pham
         self.gia = gia
         self.gia_khuyen_mai = gia_khuyen_mai
@@ -28,7 +28,7 @@ class Product:
                     mo_ta_san_pham VARCHAR(50),
                     lien_ket_san_pham VARCHAR(50),
                     hinh_anh_san_pham BYTEA,
-                    productstatus_id INTEGER,
+                    product_status_id INTEGER,
                     tinh_trang_san_pham VARCHAR(50),
                     gia FLOAT,
                     gia_khuyen_mai FLOAT,
@@ -37,7 +37,7 @@ class Product:
                     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                     active BOOLEAN DEFAULT TRUE,
-                    FOREIGN KEY (productstatus_id) REFERENCES product_status(status_id)
+                    FOREIGN KEY (product_status_id) REFERENCES product_status(product_status_id)
                         ON DELETE CASCADE,
                     FOREIGN KEY (customer_id) REFERENCES customer(customer_id)
                         ON DELETE CASCADE
@@ -49,9 +49,9 @@ class Product:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-            INSERT INTO product (product_id, ten_san_pham, mo_ta_san_pham, lien_ket_san_pham, hinh_anh_san_pham, productstatus_id, tinh_trang_san_pham, gia, gia_khuyen_mai, loai_san_pham, customer_id)
+            INSERT INTO product (product_id, ten_san_pham, mo_ta_san_pham, lien_ket_san_pham, hinh_anh_san_pham, product_status_id, tinh_trang_san_pham, gia, gia_khuyen_mai, loai_san_pham, customer_id)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (self.product_id, self.ten_san_pham, self.mo_ta_san_pham, self.lien_ket_san_pham, self.hinh_anh_san_pham, self.productstatus_id, self.tinh_trang_san_pham, self.gia, self.gia_khuyen_mai, self.loai_san_pham, self.customer_id))
+            ''', (self.product_id, self.ten_san_pham, self.mo_ta_san_pham, self.lien_ket_san_pham, self.hinh_anh_san_pham, self.product_status_id, self.tinh_trang_san_pham, self.gia, self.gia_khuyen_mai, self.loai_san_pham, self.customer_id))
             conn.commit()
 
     @staticmethod
@@ -79,9 +79,9 @@ class Product:
             cursor = conn.cursor()
             cursor.execute('''
             UPDATE product
-            SET ten_san_pham = ?, mo_ta_san_pham = ?, lien_ket_san_pham = ?, hinh_anh_san_pham = ?, productstatus_id = ?, tinh_trang_san_pham = ?, gia = ?, gia_khuyen_mai = ?, loai_san_pham = ?, customer_id = ?
+            SET ten_san_pham = ?, mo_ta_san_pham = ?, lien_ket_san_pham = ?, hinh_anh_san_pham = ?, product_status_id = ?, tinh_trang_san_pham = ?, gia = ?, gia_khuyen_mai = ?, loai_san_pham = ?, customer_id = ?
             WHERE product_id = ?
-            ''', (self.ten_san_pham, self.mo_ta_san_pham, self.lien_ket_san_pham, self.hinh_anh_san_pham, self.productstatus_id, self.tinh_trang_san_pham, self.gia, self.gia_khuyen_mai, self.loai_san_pham, self.customer_id, self.product_id))
+            ''', (self.ten_san_pham, self.mo_ta_san_pham, self.lien_ket_san_pham, self.hinh_anh_san_pham, self.product_status_id, self.tinh_trang_san_pham, self.gia, self.gia_khuyen_mai, self.loai_san_pham, self.customer_id, self.product_id))
             conn.commit()
 
     @staticmethod

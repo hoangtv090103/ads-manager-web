@@ -1,6 +1,5 @@
 from configs.db import get_db_connection
 
-
 class AdsGroupStatus:
     def __init__(self, ads_group_status_id=None, ten_trang_thai=""):
         self.ads_group_status_id = ads_group_status_id

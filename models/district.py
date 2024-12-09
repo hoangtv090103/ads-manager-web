@@ -1,11 +1,14 @@
 from configs.db import get_db_connection
 
-
 class District:
-    def __init__(self, district_id=None, ten_quan_huyen="", city_id=""):
+    def __init__(self, district_id=None, ten_quan_huyen="", city_id=None,
+                 created_at=None, updated_at=None, status=True):
         self.district_id = district_id
         self.ten_quan_huyen = ten_quan_huyen
         self.city_id = city_id
+        self.created_at = created_at
+        self.updated_at = updated_at
+        self.status = status
 
     @staticmethod
     def create_table():
@@ -14,12 +17,12 @@ class District:
             cursor.execute('''
             CREATE TABLE IF NOT EXISTS district (
                 district_id SERIAL PRIMARY KEY,
-                ten_quan_huyen VARCHAR(50),
-                city_id INTEGER,
+                ten_quan_huyen VARCHAR(100) NOT NULL,
+                city_id INTEGER NOT NULL,
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE,
-                FOREIGN KEY (city_id) REFERENCES City(city_id)
+                FOREIGN KEY (city_id) REFERENCES city(city_id)
                     ON DELETE CASCADE
             )
             ''')
@@ -57,5 +60,6 @@ class District:
     def delete_by_id(district_id):
         with get_db_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute('UPDATE district SET active = 0 WHERE district_id = ?', (district_id,))
+            cursor.execute(
+                'UPDATE district SET active = 0 WHERE district_id = ?', (district_id,))
             conn.commit()

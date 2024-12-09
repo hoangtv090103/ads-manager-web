@@ -1,9 +1,8 @@
 from configs.db import get_db_connection
-
 class PriceType:
-    def __init__(self, pricetype_id=None, ten_loai_bang_gia=""):
-        self.pricetype_id = pricetype_id
-        self.ten_loai_bang_gia = ten_loai_bang_gia
+    def __init__(self, price_type_id=None, price_type_name=""):
+        self.price_type_id = price_type_id
+        self.price_type_name = price_type_name
 
     @staticmethod
     def create_table():
@@ -11,8 +10,8 @@ class PriceType:
             cursor = conn.cursor()
             cursor.execute('''
             CREATE TABLE IF NOT EXISTS price_type (
-                pricetype_id SERIAL PRIMARY KEY,
-                ten_loai_bang_gia VARCHAR(50),
+                price_type_id SERIAL PRIMARY KEY,
+                price_type_name VARCHAR(50) NOT NULL,
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE
@@ -24,9 +23,9 @@ class PriceType:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-            INSERT INTO price_type (ten_loai_bang_gia) 
+            INSERT INTO price_type (price_type_name) 
             VALUES (?)
-            ''', (self.ten_loai_bang_gia,))
+            ''', (self.price_type_name,))
             conn.commit()
 
     @staticmethod
@@ -44,16 +43,16 @@ class PriceType:
             cursor = conn.cursor()
             cursor.execute('''
             UPDATE price_type
-            SET ten_loai_bang_gia = ?
-            WHERE pricetype_id = ?
-            ''', (self.ten_loai_bang_gia, self.pricetype_id))
+            SET price_type_name = ?
+            WHERE price_type_id = ?
+            ''', (self.price_type_name, self.price_type_id))
             conn.commit()
 
     @staticmethod
-    def delete_by_id(pricetype_id):
+    def delete_by_id(price_type_id):
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-            UPDATE price_type SET active = 0 WHERE pricetype_id = ?
-            ''', (pricetype_id,))
+            UPDATE price_type SET active = 0 WHERE price_type_id = ?
+            ''', (price_type_id,))
             conn.commit()

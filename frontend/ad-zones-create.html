@@ -400,10 +400,10 @@
             }
         };
 
-        document.getElementById('adSize').addEventListener('change', function() {
+        document.getElementById('adSize').addEventListener('change', function () {
             const selectedSize = this.value;
             const formatContainer = document.getElementById('formatContainer');
-            
+
             // Reset all format groups
             document.querySelectorAll('.format-group').forEach(group => {
                 group.style.display = 'none';
@@ -423,7 +423,7 @@
 
                 groupElement.style.display = 'block';
                 const gridElement = groupElement.querySelector('.format-grid');
-                
+
                 items.forEach(format => {
                     const formatItem = document.createElement('div');
                     formatItem.className = 'format-item';

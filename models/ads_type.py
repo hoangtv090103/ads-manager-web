@@ -1,6 +1,5 @@
 from configs.db import get_db_connection
 
-
 class AdsType:
     def __init__(self, ads_type_id=None, ten_loai_quang_cao=""):
         self.ads_type_id = ads_type_id

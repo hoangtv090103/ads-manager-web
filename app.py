@@ -9,6 +9,7 @@ from controllers.website import *
 from controllers.auth import *
 from controllers.product import *
 from controllers.target_audience import *
+from models import create_all_tables
 
 app = Flask(__name__)
 v1 = Blueprint('v1', __name__)
@@ -124,6 +125,6 @@ api.add_resource(TargetAudienceStatusController,
                  '/target-audience-statuses/<int:status_id>'
                  )
 
-
+create_all_tables()
 if __name__ == '__main__':
     app.run(debug=True)

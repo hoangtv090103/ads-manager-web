@@ -1,20 +1,18 @@
 from configs.db import get_db_connection
 
-
 class Campaign:
-    def __init__(self, camp_id='', ten_chien_dich="", ads_type_id='', ads_type="",
-                 ngan_sach_ngay=0.0, tong_chi_phi=0.0, luot_xem=0, luot_nhan=0,
-                 ctr=0.0, cpc=0.0, cpm=0.0, so_luong_mua_hang=0,
-                 conversion_rate=0.0, cps=0.0, videoview3s=0,
-                 videowatchesat25=0, videowatchesat50=0,
-                 videowatchesat75=0, videowatchesat100=0,
-                 ngay_bat_dau='', ngay_ket_thuc='',
-                 data_source_id=''):
+    def __init__(self, camp_id=None, ten_chien_dich="", camp_type_id=None,
+                 campstatus_id=None, source_id=None, ngan_sach_ngay=0,
+                 tong_chi_phi=0, luot_xem=0, luot_nhan=0, ctr=0, cpc=0,
+                 cpm=0, so_luong_mua_hang=0, conversion_rate=0, cps=0,
+                 videoview3s=0, videowatchesat25=0, videowatchesat50=0,
+                 videowatchesat75=0, videowatchesat100=0, ngay_bat_dau=None,
+                 ngay_ket_thuc=None, created_at=None, updated_at=None, status=True):
         self.camp_id = camp_id
         self.ten_chien_dich = ten_chien_dich
-        self.ads_type_id = ads_type_id
-        self.ads_type = ads_type
-        self.data_source_id = data_source_id
+        self.camp_type_id = camp_type_id
+        self.campstatus_id = campstatus_id
+        self.source_id = source_id
         self.ngan_sach_ngay = ngan_sach_ngay
         self.tong_chi_phi = tong_chi_phi
         self.luot_xem = luot_xem
@@ -32,6 +30,9 @@ class Campaign:
         self.videowatchesat100 = videowatchesat100
         self.ngay_bat_dau = ngay_bat_dau
         self.ngay_ket_thuc = ngay_ket_thuc
+        self.created_at = created_at
+        self.updated_at = updated_at
+        self.status = status
 
     @staticmethod
     def create_table():
@@ -40,19 +41,20 @@ class Campaign:
             cursor.execute('''
             CREATE TABLE IF NOT EXISTS campaign (
                 camp_id SERIAL PRIMARY KEY,
-                ten_chien_dich VARCHAR(50),
-                ads_type_id INTEGER,
-                data_source_id INTEGER,
-                ngan_sach_ngay FLOAT,
-                tong_chi_phi FLOAT,
+                ten_chien_dich VARCHAR(100),
+                camp_type_id INTEGER NOT NULL,
+                campstatus_id INTEGER NOT NULL,
+                source_id INTEGER NOT NULL,
+                ngan_sach_ngay DECIMAL(15,2),
+                tong_chi_phi DECIMAL(15,2),
                 luot_xem INTEGER,
                 luot_nhan INTEGER,
-                ctr FLOAT,
-                cpc FLOAT,
-                cpm FLOAT,
+                ctr DECIMAL(5,2),
+                cpc DECIMAL(10,2),
+                cpm DECIMAL(10,2),
                 so_luong_mua_hang INTEGER,
-                conversion_rate FLOAT,
-                cps FLOAT,
+                conversion_rate DECIMAL(5,2),
+                cps DECIMAL(10,2),
                 videoview3s INTEGER,
                 videowatchesat25 INTEGER,
                 videowatchesat50 INTEGER,
@@ -63,9 +65,12 @@ class Campaign:
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE,
-                FOREIGN KEY (ads_type_id) REFERENCES ads_type(ads_type_id),
-                FOREIGN KEY (data_source_id) REFERENCES data_source(data_source_id)
-                ON DELETE CASCADE
+                FOREIGN KEY (camp_type_id) REFERENCES campaign_type(camp_type_id)
+                    ON DELETE CASCADE,
+                FOREIGN KEY (campstatus_id) REFERENCES campaign_status(campstatus_id)
+                    ON DELETE CASCADE,
+                FOREIGN KEY (source_id) REFERENCES data_source(source_id)
+                    ON DELETE CASCADE
             )
             ''')
             conn.commit()

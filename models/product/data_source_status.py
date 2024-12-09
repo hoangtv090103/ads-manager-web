@@ -1,6 +1,5 @@
 from configs.db import get_db_connection
 
-
 class DataSourceStatus:
     def __init__(self, status_id=None, status_name=""):
         self.status_id = status_id

@@ -1,6 +1,5 @@
 from configs.db import get_db_connection
 
-
 class TypeRemarketingTarget:
     def __init__(self, typeremarketing_id=None, ten_loai_nham_chon=""):
         self.typeremarketing_id = typeremarketing_id
