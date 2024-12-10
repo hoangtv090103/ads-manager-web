@@ -1,4 +1,5 @@
 from configs.db import get_db_connection
+from models.auth import Auth
 
 
 class User:
@@ -71,14 +72,17 @@ class User:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("""
-                SELECT user_id FROM users WHERE email = ?
+                SELECT COUNT(*) FROM users WHERE email = %s
             """, (email,))
-            if cursor.fetchone():
+            if cursor.fetchone()[0] > 0:
                 raise Exception("User with this email already exists.")
             else:
                 hashed_password = Auth.hash_password(password)
                 cursor.execute("""
                     INSERT INTO users (username, email, password, role_id)
-                    VALUES (?, ?, ?, ?)
+                    VALUES (%s, %s, %s, %s) RETURNING user_id
                 """, (username, email, hashed_password, role_id))
+                user_id = cursor.fetchone()[0]
                 conn.commit()
+                return user_id
+

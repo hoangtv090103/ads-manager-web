@@ -34,8 +34,7 @@ class Role:
                     ''',
                     [
                         ('Admin', 'Quản trị viên hệ thống'),
-                        ('Customer', 'Khách hàng'),
-                        ('Publisher', 'Nhà quảng cáo')
+                        ('User', 'Người dùng hệ thống')
                     ]
                 )
             conn.commit()
@@ -57,7 +56,7 @@ class Role:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-                SELECT role_id FROM role WHERE name ILIKE %s
+                SELECT role_id FROM role WHERE name ILIKE %s AND active = true
             ''', (name,))
             row = cursor.fetchone()
             if not row:

@@ -69,7 +69,7 @@ class Customer:
                 dia_chi_doanh_nghiep, country_id, city_id, district_id,
                 website_doanh_nghiep, so_dien_thoai, email_doanh_nghiep,
                 ma_remarketing
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ''', (
                 self.customer_id, self.ho_va_ten, self.ngay_sinh, self.user_id, self.gioi_tinh,
                 self.ten_doanh_nghiep, self.dia_chi_doanh_nghiep, self.country_id,
@@ -92,7 +92,7 @@ class Customer:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(
-                'SELECT * FROM customer WHERE email_doanh_nghiep = ? AND active = true',
+                'SELECT * FROM customer WHERE email_doanh_nghiep = %s AND active = true',
                 (email,))
             row = cursor.fetchone()
             return dict(zip([column[0] for column in cursor.description], row)) if row else None
@@ -102,11 +102,11 @@ class Customer:
             cursor = conn.cursor()
             cursor.execute('''
             UPDATE customer
-            SET ho_va_ten = ?, ngay_sinh = ?, gioi_tinh = ?, 
-                ten_doanh_nghiep = ?, dia_chi_doanh_nghiep = ?, 
-                country_id = ?, city_id = ?, district_id = ?, 
-                website_doanh_nghiep = ?, so_dien_thoai = ?, 
-                email_doanh_nghiep = ?, ma_remarketing = ?,
+            SET ho_va_ten = %s, ngay_sinh = %s, gioi_tinh = %s, 
+                ten_doanh_nghiep = %s, dia_chi_doanh_nghiep = %s, 
+                country_id = %s, city_id = %s, district_id = %s, 
+                website_doanh_nghiep = %s, so_dien_thoai = %s, 
+                email_doanh_nghiep = %s, ma_remarketing = %s,
                 updated_at = CURRENT_TIMESTAMP
             WHERE customer_id = ?
             ''', (
@@ -124,5 +124,5 @@ class Customer:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(
-                'UPDATE customer SET active = 0 WHERE customer_id = ?', (customer_id,))
+                'UPDATE customer SET active = false WHERE customer_id = %s', (customer_id,))
             conn.commit()

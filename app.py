@@ -1,4 +1,4 @@
-from flask import Blueprint, Flask
+from flask import Blueprint, Flask, request, jsonify
 from flask_cors import CORS
 from flask_restful import Api
 from controllers.auth.auth_controller import LoginController, RegisterController
@@ -9,22 +9,29 @@ from controllers.website import *
 from controllers.auth import *
 from controllers.product import *
 from controllers.target_audience import *
+from controllers.user_controller import AccountController
 from models import create_all_tables
 
 app = Flask(__name__)
-v1 = Blueprint('v1', __name__)
-api = Api(v1)
 CORS(app, resources={
     r"/api/*": {
-        "origins": [
-            "http://localhost:5000", "http://127.0.0.1:5000",
-            "http://localhost:3000", "http://127.0.0.1:3000",
-            "http://localhost:5500", "http://127.0.0.1:5500"
-        ],
+        "origins": ["http://127.0.0.1:5500", "http://localhost:5500"],
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization"]
+        "allow_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True
     }
 })
+
+v1 = Blueprint('v1', __name__)
+api = Api(v1)
+@v1.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', '*')
+    response.headers.add('Access-Control-Allow-Methods', '*')
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    return response
+
 app.register_blueprint(v1, url_prefix='/api/v1')
 
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -124,6 +131,14 @@ api.add_resource(TargetAudienceStatusController,
                  '/target-audience-statuses',
                  '/target-audience-statuses/<int:status_id>'
                  )
+
+
+# User routes
+api.add_resource(AccountController,
+                 '/accounts',
+                 '/accounts/<int:user_id>'
+                 )
+
 
 create_all_tables()
 if __name__ == '__main__':

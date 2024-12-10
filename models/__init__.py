@@ -48,7 +48,7 @@ from .zone_price_mapping import ZonePriceMapping
 from .global_price import GlobalPrice
 from .product_group_mapping import ProductGroupMapping
 from .ads_group_product_group import AdsGroupProductGroup
-from .ads_group_product_selection import AdsGroupProductSelection
+# from .ads_group_product_selection import AdsGroupProductSelection
 from .ads_group_target_audience import AdsGroupTargetAudience
 from .ads_group_website import AdsGroupWebsite
 from .remarketing_setting import RemarketingSetting
@@ -108,7 +108,7 @@ def create_all_tables():
     GlobalPrice.create_table()
     ProductGroupMapping.create_table()
     AdsGroupProductGroup.create_table()
-    AdsGroupProductSelection.create_table()
+    # AdsGroupProductSelection.create_table()
     AdsGroupTargetAudience.create_table()
     AdsGroupWebsite.create_table()
     RemarketingSetting.create_table()

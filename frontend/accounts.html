@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý phân quyền - Novanet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./styles.css">
+    <style>
+        /* Custom styles for accounts page */
+        .account-table {
+            width: 100%;
+            min-width: 1200px;
+            border-collapse: collapse;
+        }
+
+        .warning-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            text-align: center;
+            min-width: 300px;
+        }
+
+        .warning-popup h3 {
+            margin: 0 0 16px 0;
+            color: #333;
+        }
+
+        .warning-popup .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .edit-icon {
+            color: #2F80ED;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-switch label {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            border-radius: 20px;
+            transition: .4s;
+        }
+
+        .toggle-switch label:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            border-radius: 50%;
+            transition: .4s;
+        }
+
+        .toggle-switch input:checked+label {
+            background-color: #2196F3;
+        }
+
+        .toggle-switch input:checked+label:before {
+            transform: translateX(20px);
+        }
+
+        .status-active {
+            color: #219653;
+            background: #E8F5E9;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .status-inactive {
+            color: #EB5757;
+            background: #FEE8E8;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .account-table td {
+            padding: 12px;
+            vertical-align: middle;
+        }
+
+        .account-table th {
+            padding: 12px;
+            background: #F8F9FA;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Toggle Menu Button -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="../assets/novanet-logo.png" alt="Novanet" class="logo">
+            <span class="logo-text">Ads Manager</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="/frontend/campaigns.html" class="nav-item">
+                <i class="fas fa-layer-group"></i>
+                <span>Quản lý chiến dịch</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-box"></i>
+                    <span>Quản lý sản phẩm</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/product-groups.html">• Danh sách nhóm SP</a>
+                    <a href="/frontend/products.html">• Danh sách SP</a>
+                    <a href="/frontend/data-sources.html">• Nguồn cấp dữ liệu</a>
+                </div>
+            </div>
+
+            <a href="/frontend/remarking-target.html" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Quản lý đối tượng</span>
+            </a>
+
+            <a href="/frontend/deposit.html" class="nav-item">
+                <i class="fas fa-wallet"></i>
+                <span>Nạp tiền tài khoản</span>
+            </a>
+
+            <a href="/frontend/deposit-history.html" class="nav-item">
+                <i class="fas fa-history"></i>
+                <span>Lịch sử nạp tiền</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Báo cáo</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/reports/website">• Báo cáo website</a>
+                    <a href="/reports/zone">• Báo cáo vùng</a>
+                    <a href="/reports/publisher">• Báo cáo publisher</a>
+                    <a href="/reports/ad-format">• Báo cáo định dạng quảng cáo</a>
+                </div>
+            </div>
+
+            <a href="/frontend/publishers.html" class="nav-item">
+                <i class="fas fa-users-cog"></i>
+                <span>Danh sách Publisher</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-globe"></i>
+                    <span>Quản lý website</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/price-lists.html">• Danh sách bảng giá</a>
+                    <a href="/frontend/websites.html">• Danh sách website</a>
+                    <a href="/frontend/ad-zones.html">• Danh sách vùng QC</a>
+                </div>
+            </div>
+            <a href="/frontend/accounts.html" class="nav-item">
+                <i class="fas fa-user-shield"></i>
+                <span>Quản lý phân quyền</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header-content">
+            <div class="breadcrumb">
+                <i class="fas fa-user-shield"></i>
+                <span>/ Quản lý phân quyền</span>
+            </div>
+            <div class="user-info">
+                <div>
+                    <div class="user-name">Lê Bách</div>
+                    <div class="user-role">Admin</div>
+                </div>
+                <img src="../assets/avatar.jpg" alt="User Avatar" class="user-avatar">
+            </div>
+        </div>
+
+        <!-- Account List Section -->
+        <div class="content-section">
+            <h1>Danh sách tài khoản</h1>
+
+            <!-- Action Bar -->
+            <div class="action-bar">
+                <div class="action-left">
+                    <button class="create-button" onclick="window.location.href='account-create.html'">
+                        <i class="fas fa-plus"></i> Tạo tài khoản
+                    </button>
+                    <div class="search-input-group">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Tìm kiếm">
+                    </div>
+                </div>
+
+                <div class="action-right">
+                    <select class="filter-select" name="status">
+                        <option value="">Trạng thái</option>
+                        <option value="true">Đang chạy</option>
+                        <option value="false">Tạm khóa</option>
+                    </select>
+                    <select class="filter-select" name="campaign">
+                        <option value="">Chiến dịch</option>
+                    </select>
+                    <select class="filter-select" name="role">
+                        <option value="">Role user</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Publisher">Publisher</option>
+                        <option value="Khách hàng">Khách hàng</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-container">
+                <table class="account-table">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox"></th>
+                            <th>STT</th>
+                            <th>Kích hoạt</th>
+                            <th>Họ và tên</th>
+                            <th>Email đăng nhập</th>
+                            <th>Trạng thái</th>
+                            <th>Chiến dịch</th>
+                            <th>Role user</th>
+                            <th>Ngày tạo</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="accountTableBody">
+                        <!-- Table rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Table Footer -->
+            <div class="table-footer">
+                <div>Số tài khoản: <span id="total-accounts">15</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warning Popup -->
+    <div class="overlay" id="overlay"></div>
+    <div class="warning-popup" id="warningPopup">
+        <h3>Cảnh báo</h3>
+        <p>Hành động sẽ khiến người dùng không thể truy cập tài khoản<br>bạn vẫn muốn khóa?</p>
+        <div class="buttons">
+            <button class="btn-secondary" onclick="closeWarningPopup()">Hủy</button>
+            <button class="btn-primary" onclick="confirmDeactivate()">Áp dụng</button>
+        </div>
+    </div>
+
+    <script src="./script.js"></script>
+    <script>
+        const baseUrl = 'http://127.0.0.1:5000/api/v1';
+
+        // Add search params to URL
+        async function loadAccounts() {
+            try {
+                const searchValue = document.querySelector('.search-input-group input')?.value || '';
+                const statusFilter = document.querySelector('select[name="status"]')?.value || '';
+                const roleFilter = document.querySelector('select[name="role"]')?.value || '';
+
+                const response = await fetch(`${baseUrl}/accounts`);
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    let filteredData = data.data;
+
+                    // Apply filters
+                    if (searchValue) {
+                        const searchLower = searchValue.toLowerCase();
+                        filteredData = filteredData.filter(account => 
+                            account.full_name.toLowerCase().includes(searchLower) ||
+                            account.email.toLowerCase().includes(searchLower)
+                        );
+                    }
+
+                    if (statusFilter) {
+                        const isActive = statusFilter === 'true';
+                        filteredData = filteredData.filter(account => account.active === isActive);
+                    }
+
+                    if (roleFilter) {
+                        filteredData = filteredData.filter(account => account.user_type === roleFilter);
+                    }
+
+                    displayAccounts(filteredData);
+                    updateTotalAccounts(filteredData.length);
+                } else {
+                    alert('Lỗi khi tải danh sách tài khoản');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Đã xảy ra lỗi khi tải dữ liệu');
+            }
+        }
+
+        function displayAccounts(accounts) {
+            const tbody = document.getElementById('accountTableBody');
+            tbody.innerHTML = '';
+
+            accounts.forEach((account, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="checkbox"></td>
+                    <td>${index + 1}</td>
+                    <td>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="status_${account.user_id}" 
+                                   ${account.active ? 'checked' : ''} 
+                                   onchange="toggleUserStatus(${account.user_id}, this.checked)">
+                            <label for="status_${account.user_id}"></label>
+                        </div>
+                    </td>
+                    <td>${account.full_name}</td>
+                    <td>${account.email}</td>
+                    <td>
+                        <span class="status-${account.active ? 'active' : 'inactive'}">
+                            ${account.active ? 'Đang chạy' : 'Tạm khóa'}
+                        </span>
+                    </td>
+                    <td>20</td>
+                    <td>${account.user_type}</td>
+                    <td>${account.created_at}</td>
+                    <td>
+                        <i class="fas fa-ellipsis-v" style="cursor: pointer;"></i>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateTotalAccounts(total) {
+            document.getElementById('total-accounts').textContent = total;
+        }
+
+        async function toggleUserStatus(userId, newStatus) {
+            if (!newStatus) {
+                showWarningPopup(userId);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${baseUrl}/accounts/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        active: newStatus
+                    })
+                });
+
+                if (response.ok) {
+                    loadAccounts(); // Reload the table
+                } else {
+                    alert('Không thể cập nhật trạng thái tài khoản');
+                    // Reset the toggle
+                    document.getElementById(`status_${userId}`).checked = !newStatus;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Đã xảy ra lỗi khi cập nhật trạng thái');
+                // Reset the toggle
+                document.getElementById(`status_${userId}`).checked = !newStatus;
+            }
+        }
+
+        function showWarningPopup(userId) {
+            const overlay = document.getElementById('overlay');
+            const popup = document.getElementById('warningPopup');
+            overlay.style.display = 'block';
+            popup.style.display = 'block';
+            popup.dataset.userId = userId;
+        }
+
+        function closeWarningPopup() {
+            const overlay = document.getElementById('overlay');
+            const popup = document.getElementById('warningPopup');
+            overlay.style.display = 'none';
+            popup.style.display = 'none';
+            // Reset checkbox state
+            const checkbox = document.getElementById(`status_${popup.dataset.userId}`);
+            if (checkbox) checkbox.checked = true;
+        }
+
+        async function confirmDeactivate() {
+            const popup = document.getElementById('warningPopup');
+            const userId = popup.dataset.userId;
+            
+            try {
+                const response = await fetch(`${baseUrl}/accounts/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        active: false
+                    })
+                });
+
+                if (response.ok) {
+                    loadAccounts(); // Reload the table
+                } else {
+                    alert('Không thể cập nhật trạng thái tài khoản');
+                    // Reset the toggle
+                    document.getElementById(`status_${userId}`).checked = true;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Đã xảy ra lỗi khi cập nhật trạng thái');
+                // Reset the toggle
+                document.getElementById(`status_${userId}`).checked = true;
+            }
+            
+            closeWarningPopup();
+        }
+
+        function editAccount(userId) {
+            window.location.href = `account-edit.html?id=${userId}`;
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load initial data
+            loadAccounts();
+
+            // Add filter handlers
+            document.querySelectorAll('.filter-select').forEach(select => {
+                select.addEventListener('change', () => {
+                    loadAccounts();
+                });
+            });
+
+            // Add search handler with debounce
+            const searchInput = document.querySelector('.search-input-group input');
+            searchInput.addEventListener('input', debounce(() => {
+                loadAccounts();
+            }, 300));
+        });
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    </script>
+</body>
+
+</html>

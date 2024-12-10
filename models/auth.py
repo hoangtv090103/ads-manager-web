@@ -37,3 +37,8 @@ class Auth:
                 or password == hashlib.sha256(hashed_password.encode()).hexdigest():
             return True
         return False
+
+    @staticmethod
+    def hash_password(password):
+        """Hash password using SHA-256"""
+        return hashlib.sha256(password.encode()).hexdigest()
