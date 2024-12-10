@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
+    <script src="./js/auth.js"></script>
     <style>
 
         .product-groups-table {
@@ -269,16 +270,26 @@
     <script>
         const baseUrl = 'http://127.0.0.1:5000/api/v1';
 
+        document.addEventListener('DOMContentLoaded', function() {
+            requireAuth();
+            fetchProductGroups();
+        });
+
         async function fetchProductGroups() {
             try {
-                const response = await fetch(`${baseUrl}/product-groups`);
+                const response = await fetchWithAuth(`${baseUrl}/product-groups`);
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error('Không thể tải dữ liệu nhóm sản phẩm');
                 }
                 const data = await response.json();
                 renderProductGroups(data);
             } catch (error) {
-                console.error('Error fetching product groups:', error);
+                console.error('Error:', error);
+                if (error.message === 'Unauthorized') {
+                    window.location.href = '/frontend/login.html';
+                } else {
+                    alert('Đã xảy ra lỗi khi tải dữ liệu');
+                }
             }
         }
 
@@ -320,14 +331,15 @@
 
         async function searchProductGroups(searchTerm) {
             try {
-                const response = await fetch(`${baseUrl}/product-groups?search=${searchTerm}`);
+                const response = await fetchWithAuth(`${baseUrl}/product-groups?search=${searchTerm}`);
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error('Không thể tìm kiếm nhóm sản phẩm');
                 }
                 const data = await response.json();
                 renderProductGroups(data);
             } catch (error) {
-                console.error('Error searching product groups:', error);
+                console.error('Error:', error);
+                alert('Đã xảy ra lỗi khi tìm kiếm');
             }
         }
 
@@ -340,9 +352,6 @@
                 fetchProductGroups();
             }
         });
-
-        // Initial load
-        document.addEventListener('DOMContentLoaded', fetchProductGroups);
     </script>
 </body>
 

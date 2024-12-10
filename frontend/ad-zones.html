@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
+    <script src="./js/auth.js"></script>
     <style>
         .main-content {
             margin-left: 250px;
@@ -236,41 +237,43 @@
     </div>
     <script src="script.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const dropdown = document.querySelector('.dropdown');
-            const tableBody = document.querySelector('.table tbody');
-
-            dropdown.addEventListener('change', () => {
-                if (dropdown.value !== "Chọn Website domain") {
-                    tableBody.innerHTML = `
-        <tr>
-          <td>1</td>
-          <td>Vùng Quảng Cáo A</td>
-          <td>Banner</td>
-          <td><button class="btn">Lấy mã</button></td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>Vùng Quảng Cáo B</td>
-          <td>Popup</td>
-          <td><button class="btn">Lấy mã</button></td>
-        </tr>
-      `;
-                } else {
-                    tableBody.innerHTML = `
-        <tr>
-          <td colspan="4" class="empty">
-            <div class="empty-content">
-              <img src="empty-image.png" alt="Empty" />
-              <p>Bạn cần chọn 1 Website để hiển thị thông tin vùng quảng cáo</p>
-            </div>
-          </td>
-        </tr>
-      `;
-                }
-            });
+        document.addEventListener('DOMContentLoaded', function() {
+            requireAuth();
+            loadAdZones();
         });
 
+        async function loadAdZones() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/ad-zones`);
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    displayAdZones(data.data);
+                } else {
+                    throw new Error('Không thể tải dữ liệu vùng quảng cáo');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                if (error.message === 'Unauthorized') {
+                    window.location.href = '/frontend/login.html';
+                } else {
+                    alert('Đã xảy ra lỗi khi tải dữ liệu');
+                }
+            }
+        }
+
+        document.querySelector('.dropdown').addEventListener('change', async function() {
+            if (this.value !== "Chọn Website domain") {
+                try {
+                    const response = await fetchWithAuth(`${baseUrl}/ad-zones?website_id=${this.value}`);
+                    const data = await response.json();
+                    displayAdZones(data.data);
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Đã xảy ra lỗi khi tải dữ liệu');
+                }
+            }
+        });
     </script>
 </body>
 

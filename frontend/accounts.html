@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
+    <script src="./js/auth.js"></script>
     <style>
         /* Custom styles for accounts page */
         .account-table {
@@ -315,6 +316,12 @@
     <script>
         const baseUrl = 'http://127.0.0.1:5000/api/v1';
 
+        // Kiểm tra auth khi load trang
+        document.addEventListener('DOMContentLoaded', function() {
+            requireAuth();
+            loadAccounts();
+        });
+
         // Add search params to URL
         async function loadAccounts() {
             try {
@@ -322,7 +329,7 @@
                 const statusFilter = document.querySelector('select[name="status"]')?.value || '';
                 const roleFilter = document.querySelector('select[name="role"]')?.value || '';
 
-                const response = await fetch(`${baseUrl}/accounts`);
+                const response = await fetchWithAuth(`${baseUrl}/accounts`);
                 const data = await response.json();
 
                 if (data.status === 'success') {
@@ -353,7 +360,11 @@
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Đã xảy ra lỗi khi tải dữ liệu');
+                if (error.message === 'Unauthorized') {
+                    window.location.href = '/frontend/login.html';
+                } else {
+                    alert('Đã xảy ra lỗi khi tải dữ liệu');
+                }
             }
         }
 
@@ -397,13 +408,8 @@
         }
 
         async function toggleUserStatus(userId, newStatus) {
-            if (!newStatus) {
-                showWarningPopup(userId);
-                return;
-            }
-
             try {
-                const response = await fetch(`${baseUrl}/accounts/${userId}`, {
+                const response = await fetchWithAuth(`${baseUrl}/accounts/${userId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -413,18 +419,15 @@
                     })
                 });
 
-                if (response.ok) {
-                    loadAccounts(); // Reload the table
-                } else {
-                    alert('Không thể cập nhật trạng thái tài khoản');
-                    // Reset the toggle
-                    document.getElementById(`status_${userId}`).checked = !newStatus;
+                if (!response.ok) {
+                    throw new Error('Không thể cập nhật trạng thái tài khoản');
                 }
+
+                loadAccounts(); // Reload the table
             } catch (error) {
                 console.error('Error:', error);
-                alert('Đã xảy ra lỗi khi cập nhật trạng thái');
-                // Reset the toggle
                 document.getElementById(`status_${userId}`).checked = !newStatus;
+                alert(error.message);
             }
         }
 
@@ -451,7 +454,7 @@
             const userId = popup.dataset.userId;
             
             try {
-                const response = await fetch(`${baseUrl}/accounts/${userId}`, {
+                const response = await fetchWithAuth(`${baseUrl}/accounts/${userId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',

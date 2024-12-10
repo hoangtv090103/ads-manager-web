@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tạo bảng giá website mới - Novanet</title>
+    <title>Tạo bảng giá - Novanet</title>
+    <script src="./js/auth.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
@@ -259,7 +260,7 @@
 
             <a href="/frontend/deposit.html" class="nav-item">
                 <i class="fas fa-wallet"></i>
-                <span>Nạp tiền tài khoản</span>
+                <span>N��p tiền tài khoản</span>
             </a>
 
             <a href="/frontend/deposit-history.html" class="nav-item">
@@ -321,7 +322,7 @@
             </div>
         </div>
 
-        <h1 class="page-title">Tạo bảng giá website mới</h1>
+        <h1 class="page-title">T���o bảng giá website mới</h1>
 
         <div class="form-container">
             <!-- Website Selection -->
@@ -921,6 +922,57 @@
     </div>
 
     <script src="./script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            requireAuth();
+            loadWebsites();
+        });
+
+        async function loadWebsites() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/websites`);
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error('Không thể tải danh sách website');
+                }
+                
+                populateWebsiteSelect(data.websites);
+            } catch (error) {
+                console.error('Error:', error);
+                if (error.message === 'Unauthorized') {
+                    window.location.href = '/frontend/login.html';
+                } else {
+                    alert('Đã xảy ra lỗi khi tải dữ liệu');
+                }
+            }
+        }
+
+        document.getElementById('priceListForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            try {
+                const formData = new FormData(this);
+                
+                const response = await fetchWithAuth(`${baseUrl}/price-lists`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(Object.fromEntries(formData))
+                });
+
+                if (!response.ok) {
+                    throw new Error('Không thể tạo bảng giá');
+                }
+
+                alert('Đã tạo bảng giá thành công!');
+                window.location.href = '/frontend/price-lists.html';
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message);
+            }
+        });
+    </script>
 </body>
 
 </html>

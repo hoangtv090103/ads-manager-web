@@ -1,0 +1,17 @@
+<div class="user-info">
+    <div class="user-details">
+        <div class="user-name">{{username}}</div>
+        <div class="user-email">{{email}}</div>
+    </div>
+    <button onclick="logout()" class="btn-logout">
+        <i class="fas fa-sign-out-alt"></i>
+        Đăng xuất
+    </button>
+</div>
+
+<script>
+function logout() {
+    auth.removeToken();
+    window.location.href = '/frontend/login.html';
+}
+</script> 

@@ -3,85 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novanet Login</title>
-    <link rel="stylesheet" href="./style.css">
+    <title>Đăng nhập - Novanet</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="./js/auth.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .left-section {
+            flex: 1;
+            background: url('./assets/login.svg') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .left-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, rgba(248, 249, 250, 0.9) 0%, rgba(248, 249, 250, 0.8) 100%);
+            z-index: 1;
+        }
+
+        .right-section {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo {
+            width: 120px;
+            margin-bottom: 32px;
+        }
+
+        .login-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            color: #4F4F4F;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .form-input:focus {
+            border-color: #0061C1;
+            outline: none;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 40px;
+            cursor: pointer;
+            color: #828282;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: #0061C1;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .btn-login:hover {
+            background: #004f9e;
+        }
+
+        .error-message {
+            color: #EB5757;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        /* Marketing section styles */
+        .marketing-content {
+            text-align: center;
+            max-width: 400px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .marketing-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin: 16px 0 8px;
+        }
+
+        .marketing-price {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .marketing-button {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #FF6B00;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="left-section">
-            <div class="logo">
-                <img src="./assets/novanet-logo.svg" alt="Novanet">
-            </div>
-            <div class="background-elements">
-                <div class="click-here">
-                    CLICK HERE
-                </div>
-                <div class="phone-frame">
-                    <div class="search-bar">
-                        <input type="text" placeholder="Noveon" disabled>
-                    </div>
-                    <div class="super-sale">
-                        <div class="sale-icon">
-                            <span class="triangle"></span>
-                            SUPER SALE
-                        </div>
-                        <div class="sale-date">23.11 - 12.12</div>
-                        <div class="phone-display">
-                            <img src="./assets/iphone-display.png" alt="iPhone">
-                        </div>
-                        <div class="price">25.990.000đ</div>
-                    </div>
-                </div>
-                <div class="sale-card big-sale">
-                    <div class="sale-header">Shop ABC</div>
-                    <div class="sale-title">BIG SALE</div>
-                    <div class="sale-date">23.11 - 12.12</div>
-                    <div class="product-display">
-                        <img src="./assets/iphone-models.png" alt="iPhone models">
-                    </div>
-                    <div class="price">25.990.000đ</div>
-                    <button class="buy-now">Mua ngay</button>
-                </div>
-                <div class="sale-card special-offer">
-                    <div class="sale-badge">SUPER SALE</div>
-                    <div class="product-display">
-                        <img src="./assets/iphone-colors.png" alt="iPhone colors">
-                    </div>
-                    <div class="special-tag">SPECIAL OFFER</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="right-section">
-            <div class="login-form">
-                <h1>Chào mừng đến với Novanet</h1>
-                <p class="subtitle">Bạn vui lòng đăng nhập tài khoản để bắt đầu sử dụng sản phẩm</p>
-
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label for="username">Tài khoản</label>
-                        <input type="text" id="username" placeholder="Admin@Novanet.vn">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password">Mật khẩu</label>
-                        <div class="password-input">
-                            <input type="password" id="password" placeholder="***************">
-                            <button type="button" class="toggle-password">
-                                <img src="./assets/eye-icon.svg" alt="Show password">
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="form-actions">
-                        <a href="#" class="forgot-password">Quên mật khẩu?</a>
-                        <button type="submit" class="login-button">Đăng nhập</button>
-                    </div>
-                </form>
-            </div>
+    <div class="left-section">
+        <div class="marketing-content">
+            <img src="./assets/login.svg" alt="Marketing Banner" style="width: 100%; max-width: 400px;">
         </div>
     </div>
-    <script src="./script.js"></script>
+
+    <div class="right-section">
+        <img src="../assets/novanet-logo.png" alt="Novanet" class="logo">
+        <h1 class="login-title">Chào mừng đến với Novanet</h1>
+        <p class="login-subtitle">Bạn vui lòng đăng nhập tài khoản để bắt đầu sử dụng sản phẩm</p>
+
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label class="form-label">Tài khoản</label>
+                <input type="email" class="form-input" name="email" placeholder="Email" required>
+                <div class="error-message">Không để trống tài khoản</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Mật khẩu</label>
+                <input type="password" class="form-input" name="password" placeholder="••••••••••••" required>
+                <span class="password-toggle" onclick="togglePassword(this)">
+                    <i class="far fa-eye"></i>
+                </span>
+                <div class="error-message">Không để trống mật khẩu</div>
+            </div>
+
+            <button type="submit" class="btn-login">Đăng nhập</button>
+        </form>
+    </div>
+
+    <script>
+        async function handleLogin(event) {
+            const baseUrl = 'http://127.0.0.1:5000/api/v1';
+            event.preventDefault();
+            
+            const form = event.target;
+            const email = form.email.value;
+            const password = form.password.value;
+
+            try {
+                const response = await fetch(`${baseUrl}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: email,
+                        password: password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.status === 'success') {
+                    // Save token
+                    const tokenSaved = auth.setToken(data.data.token);
+                    if (!tokenSaved) {
+                        throw new Error('Failed to save token');
+                    }
+                    // Redirect to main page
+                    window.location.href = '/frontend/accounts.html';
+                } else {
+                    showError(data.message || 'Email hoặc mật khẩu không đúng');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Đã xảy ra lỗi khi đăng nhập');
+            }
+        }
+
+        // Redirect if already logged in
+        if (auth.isAuthenticated()) {
+            window.location.href = '/frontend/accounts.html';
+        }
+
+        function showError(message) {
+            const errorMessages = document.querySelectorAll('.error-message');
+            errorMessages.forEach(el => {
+                el.style.display = 'block';
+                el.textContent = message;
+            });
+        }
+
+        function togglePassword(element) {
+            const input = element.previousElementSibling;
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+            element.querySelector('i').classList.toggle('fa-eye');
+            element.querySelector('i').classList.toggle('fa-eye-slash');
+        }
+    </script>
 </body>
 </html>

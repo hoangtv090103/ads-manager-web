@@ -68,7 +68,7 @@ class Role:
             cursor = conn.cursor()
             cursor.execute('''
             INSERT INTO role (name, description) 
-            VALUES (?, ?)
+            VALUES (%s, %s)
             ''', (self.name, self.description))
             conn.commit()
 
@@ -77,8 +77,8 @@ class Role:
             cursor = conn.cursor()
             cursor.execute('''
             UPDATE role
-            SET name = ?, description = ?
-            WHERE role_id = ?
+            SET name = %s, description = %s
+            WHERE role_id = %s
             ''', (self.name, self.description, self.role_id))
             conn.commit()
 
@@ -87,7 +87,7 @@ class Role:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(
-                'UPDATE role SET active = 0 WHERE role_id = ?', (role_id,))
+                'UPDATE role SET active = 0 WHERE role_id = %s', (role_id,))
             conn.commit()
 
     @staticmethod
@@ -97,6 +97,7 @@ class Role:
             cursor.execute('''
                 SELECT role_id, name, description, created_at, updated_at, active 
                 FROM role 
-                WHERE role_id = ?
+                WHERE role_id = %s
             ''', (role_id,))
             return cursor.fetchone()
+

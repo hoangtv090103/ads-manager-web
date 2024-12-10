@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
+    <script src="./js/auth.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -239,7 +240,7 @@
             <div class="nav-group">
                 <div class="nav-item" onclick="toggleSubmenu(this)">
                     <i class="fas fa-chart-bar"></i>
-                    <span>B��o cáo</span>
+                    <span>Báo cáo</span>
                     <i class="fas fa-chevron-right dropdown-arrow"></i>
                 </div>
                 <div class="submenu">
@@ -364,10 +365,35 @@
     <script src="./script.js"></script>
 
     <script>
-        document.getElementById('createAdZoneForm').addEventListener('submit', function (e) {
+        document.addEventListener('DOMContentLoaded', function() {
+            requireAuth();
+        });
+
+        document.getElementById('createAdZoneForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            // Xử lý logic submit form
-            alert('Đã tạo vùng quảng cáo thành công!');
+            try {
+                const formData = {
+                    // ... collect form data
+                };
+                
+                const response = await fetchWithAuth(`${baseUrl}/ad-zones`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Không thể tạo vùng quảng cáo');
+                }
+                
+                alert('Đã tạo vùng quảng cáo thành công!');
+                window.location.href = '/frontend/ad-zones.html';
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message);
+            }
         });
 
         document.getElementById('backupAds').addEventListener('change', function () {

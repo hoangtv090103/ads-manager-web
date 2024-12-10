@@ -11,27 +11,13 @@ from controllers.product import *
 from controllers.target_audience import *
 from controllers.user_controller import AccountController
 from models import create_all_tables
+from middlewares.auth_middleware import token_required
 
 app = Flask(__name__)
-CORS(app, resources={
-    r"/api/*": {
-        "origins": ["http://127.0.0.1:5500", "http://localhost:5500"],
-        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization"],
-        "supports_credentials": True
-    }
-})
+CORS(app)
 
 v1 = Blueprint('v1', __name__)
 api = Api(v1)
-@v1.after_request
-def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', '*')
-    response.headers.add('Access-Control-Allow-Methods', '*')
-    response.headers.add('Access-Control-Allow-Credentials', 'true')
-    return response
-
 app.register_blueprint(v1, url_prefix='/api/v1')
 
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -40,7 +26,8 @@ app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5MB max-limit
 # Campaign routes
 api.add_resource(CampaignController,
                  '/campaigns',
-                 '/campaigns/<int:camp_id>'
+                 '/campaigns/<int:camp_id>',
+                 resource_class_kwargs={'decorators': [token_required]}
                  )
 
 # Ads Group routes
@@ -88,6 +75,7 @@ api.add_resource(TransactionController,
 # Auth routes
 api.add_resource(RegisterController,
                  '/auth/register', endpoint='register', methods=['POST'],
+                 resource_class_kwargs={'decorators': [token_required]}
                  )
 
 # Login routes
@@ -136,7 +124,8 @@ api.add_resource(TargetAudienceStatusController,
 # User routes
 api.add_resource(AccountController,
                  '/accounts',
-                 '/accounts/<int:user_id>'
+                 '/accounts/<int:user_id>',
+                 resource_class_kwargs={'decorators': [token_required]}
                  )
 
 

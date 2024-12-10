@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
+    <script src="./js/auth.js"></script>
     <style>
         .main-content {
             margin-left: 250px;
@@ -251,7 +252,7 @@
             Bạn sẽ cập nhật dữ liệu sản phẩm của mình trên một tệp Google Trang tính và các cập nhật đó sẽ tự động áp
             dụng cho tài khoản của bạn.
             Tìm hiểu thêm phần mô tả trường dữ liệu sản phẩm <a href="#" class="link">tại đây</a>.
-            Trong trường hợp bị hủy cấp quyền, bạn vui lòng cấp quyền truy cập vào Google Sheet nguồn dữ liệu cho email
+            Trong trường hợp bị hủy cấp quyền, bạn vui l��ng cấp quyền truy cập vào Google Sheet nguồn dữ liệu cho email
             sau:
             <a href="mailto:novanet-google-sheets@novanet-dev.iam.gserviceaccount.com" class="email-link">
                 novanet-google-sheets@novanet-dev.iam.gserviceaccount.com
@@ -300,14 +301,29 @@
     <script>
         const baseUrl = 'http://127.0.0.1:5000/api/v1';
 
+        document.addEventListener('DOMContentLoaded', function() {
+            requireAuth();
+            fetchDataSources();
+        });
+
         async function fetchDataSources() {
             try {
-                const response = await fetch(`${baseUrl}/data-sources`);
+                const response = await fetchWithAuth(`${baseUrl}/data-sources`);
                 const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error('Không thể tải dữ liệu nguồn cấp');
+                }
+
                 renderDataSources(data);
                 updateFooter(data);
             } catch (error) {
-                console.error('Error fetching data sources:', error);
+                console.error('Error:', error);
+                if (error.message === 'Unauthorized') {
+                    window.location.href = '/frontend/login.html';
+                } else {
+                    alert('Đã xảy ra lỗi khi tải dữ liệu');
+                }
             }
         }
 
@@ -381,9 +397,6 @@
         function viewProducts() {
             window.location.href = '/frontend/products.html';
         }
-
-        // Initial load
-        document.addEventListener('DOMContentLoaded', fetchDataSources);
     </script>
 </body>
 

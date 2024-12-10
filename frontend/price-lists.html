@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
+    <script src="./js/auth.js"></script>
     <style>
         .tabs {
             display: flex;
@@ -266,7 +267,7 @@
                 </div>
                 <div class="submenu">
                     <a href="/reports/website">• Báo cáo website</a>
-                    <a href="/reports/zone">• Báo cáo vùng</a>
+                    <a href="/reports/zone">��� Báo cáo vùng</a>
                     <a href="/reports/publisher">• Báo cáo publisher</a>
                     <a href="/reports/ad-format">• Báo cáo định dạng quảng cáo</a>
                 </div>
@@ -458,44 +459,46 @@
     <script src="./script.js"></script>
 
     <script>
-        const websiteSelect = document.getElementById('websiteSelect');
-        const emptyState = document.getElementById('emptyState');
-        const websiteView = document.getElementById('websiteView');
-        const adzoneView = document.getElementById('adzoneView');
-        const tabs = document.querySelectorAll('.tab');
-
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-
-                const view = tab.dataset.view;
-                websiteView.style.display = 'none';
-                adzoneView.style.display = 'none';
-
-                if (websiteSelect.value) {
-                    if (view === 'website') {
-                        websiteView.style.display = 'block';
-                    } else {
-                        adzoneView.style.display = 'block';
-                    }
-                }
-            });
+        document.addEventListener('DOMContentLoaded', function() {
+            requireAuth();
+            loadPriceLists();
         });
 
-        websiteSelect.addEventListener('change', function () {
-            if (this.value) {
-                emptyState.style.display = 'none';
-                const activeTab = document.querySelector('.tab.active');
-                if (activeTab.dataset.view === 'website') {
-                    websiteView.style.display = 'block';
-                } else {
-                    adzoneView.style.display = 'block';
+        async function loadPriceLists() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/price-lists`);
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error('Không thể tải dữ liệu bảng giá');
                 }
-            } else {
-                emptyState.style.display = 'block';
-                websiteView.style.display = 'none';
-                adzoneView.style.display = 'none';
+                
+                renderPriceLists(data.price_lists);
+            } catch (error) {
+                console.error('Error:', error);
+                if (error.message === 'Unauthorized') {
+                    window.location.href = '/frontend/login.html';
+                } else {
+                    alert('Đã xảy ra lỗi khi tải dữ liệu');
+                }
+            }
+        }
+
+        document.getElementById('websiteSelect').addEventListener('change', async function() {
+            if (this.value) {
+                try {
+                    const response = await fetchWithAuth(`${baseUrl}/price-lists?website_id=${this.value}`);
+                    const data = await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error('Không thể tải dữ liệu bảng giá');
+                    }
+                    
+                    renderPriceLists(data.price_lists);
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Đã xảy ra lỗi khi tải dữ liệu');
+                }
             }
         });
 

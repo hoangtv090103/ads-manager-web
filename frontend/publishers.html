@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
+    <script src="./js/auth.js"></script>
     <style>
 
         .domain-list {
@@ -56,7 +57,7 @@
         <nav class="sidebar-nav">
             <a href="/frontend/campaigns.html" class="nav-item">
                 <i class="fas fa-layer-group"></i>
-                <span>Quản lý chiến dịch</span>
+                <span>Quản lý chiến d���ch</span>
             </a>
 
             <div class="nav-group">
@@ -176,6 +177,75 @@
     </div>
 
     <script src="./script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            requireAuth();
+            fetchPublishers();
+        });
+
+        async function fetchPublishers() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/publishers`);
+                
+                if (!response.ok) {
+                    throw new Error('Không thể tải dữ liệu publishers');
+                }
+                
+                const data = await response.json();
+                renderPublishers(data);
+            } catch (error) {
+                console.error('Error:', error);
+                if (error.message === 'Unauthorized') {
+                    window.location.href = '/frontend/login.html';
+                } else {
+                    alert('Đã xảy ra lỗi khi tải dữ liệu');
+                }
+            }
+        }
+
+        async function togglePublisherStatus(publisherId, active) {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/publishers/${publisherId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ active })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Không thể cập nhật trạng thái publisher');
+                }
+
+                fetchPublishers(); // Refresh data
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message);
+            }
+        }
+
+        // Search functionality
+        document.querySelector('.search-box input').addEventListener('input', async function(e) {
+            const searchTerm = e.target.value.trim();
+            if (searchTerm.length >= 2) {
+                try {
+                    const response = await fetchWithAuth(`${baseUrl}/publishers?search=${searchTerm}`);
+                    
+                    if (!response.ok) {
+                        throw new Error('Không thể tìm kiếm publishers');
+                    }
+                    
+                    const data = await response.json();
+                    renderPublishers(data);
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Đã xảy ra lỗi khi tìm kiếm');
+                }
+            } else if (searchTerm.length === 0) {
+                fetchPublishers();
+            }
+        });
+    </script>
 </body>
 
 </html>

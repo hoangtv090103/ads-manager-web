@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
+    <script src="./js/auth.js"></script>
     <style>
         /* Base styles */
         body {
@@ -352,17 +353,59 @@
 
     <script src="./script.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            requireAuth();
+            loadWebsites();
+        });
+
+        async function loadWebsites() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/websites`);
+                
+                if (!response.ok) {
+                    throw new Error('Không thể tải dữ liệu websites');
+                }
+                
+                const data = await response.json();
+                renderWebsites(data);
+            } catch (error) {
+                console.error('Error:', error);
+                if (error.message === 'Unauthorized') {
+                    window.location.href = '/frontend/login.html';
+                } else {
+                    alert('Đã xảy ra lỗi khi tải dữ liệu');
+                }
+            }
+        }
+
         function toggleEditMode(icon) {
             const parentTd = icon.parentElement;
             parentTd.classList.add("edit-mode");
         }
 
-        function saveEdit(button) {
+        async function saveEdit(button) {
             const parentTd = button.closest("td");
             const input = parentTd.querySelector(".edit-input");
             const displayText = parentTd.querySelector(".display-text");
-            displayText.textContent = input.value;
-            parentTd.classList.remove("edit-mode");
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/websites/${input.dataset.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ domain: input.value })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Không thể cập nhật domain');
+                }
+                
+                displayText.textContent = input.value;
+                parentTd.classList.remove("edit-mode");
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message);
+            }
         }
 
         function cancelEdit(button) {

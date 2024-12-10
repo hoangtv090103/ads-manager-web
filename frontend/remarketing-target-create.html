@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
+    <script src="./js/auth.js"></script>
     <style>
         .main-content {
             margin-left: 250px;
@@ -295,6 +296,10 @@
     <script>
         const baseUrl = 'http://127.0.0.1:5000/api/v1';
 
+        document.addEventListener('DOMContentLoaded', function() {
+            requireAuth();
+        });
+
         // Form submission handler
         document.querySelector('form').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -306,7 +311,7 @@
             };
 
             try {
-                const response = await fetch(`${baseUrl}/target-audiences`, {
+                const response = await fetchWithAuth(`${baseUrl}/target-audiences`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -315,7 +320,7 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error('Không thể tạo nhóm đối tượng');
                 }
 
                 const result = await response.json();
@@ -323,7 +328,7 @@
                 window.location.href = '/frontend/remarking-target.html';
             } catch (error) {
                 console.error('Error:', error);
-                alert('Có lỗi xảy ra khi tạo nhóm đối tượng');
+                alert(error.message);
             }
         });
 

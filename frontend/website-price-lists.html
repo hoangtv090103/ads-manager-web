@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
+    <script src="./js/auth.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -263,14 +264,50 @@
 
     <script src="./script.js"></script>
     <script>
-        document.getElementById("websiteSelect").addEventListener("change", function () {
+        document.addEventListener('DOMContentLoaded', function() {
+            requireAuth();
+            loadPriceLists();
+        });
+
+        async function loadPriceLists() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/website-price-lists`);
+                
+                if (!response.ok) {
+                    throw new Error('Không thể tải dữ liệu bảng giá');
+                }
+                
+                const data = await response.json();
+                renderPriceLists(data);
+            } catch (error) {
+                console.error('Error:', error);
+                if (error.message === 'Unauthorized') {
+                    window.location.href = '/frontend/login.html';
+                } else {
+                    alert('Đã xảy ra lỗi khi tải dữ liệu');
+                }
+            }
+        }
+
+        document.getElementById("websiteSelect").addEventListener("change", async function() {
             const selectedWebsite = this.value;
             const emptyState = document.getElementById("emptyState");
             const dataTable = document.getElementById("dataTable");
 
             if (selectedWebsite) {
-                emptyState.style.display = "none";
-                dataTable.style.display = "block";
+                try {
+                    const response = await fetchWithAuth(`${baseUrl}/website-price-lists/${selectedWebsite}`);
+                    if (!response.ok) {
+                        throw new Error('Không thể tải dữ liệu bảng giá');
+                    }
+                    const data = await response.json();
+                    renderPriceLists(data);
+                    emptyState.style.display = "none";
+                    dataTable.style.display = "block";
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Đã xảy ra lỗi khi tải dữ liệu');
+                }
             } else {
                 emptyState.style.display = "block";
                 dataTable.style.display = "none";

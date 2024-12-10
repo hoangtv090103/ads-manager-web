@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tạo tin quảng cáo Native - Novanet</title>
+    <script src="./js/auth.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
@@ -354,7 +355,7 @@
                                                 <th>Loại</th>
                                                 <th>Định dạng nội dung</th>
                                                 <th>Tỉ lệ Banner</th>
-                                                <th>Dung l��ợng tối đa</th>
+                                                <th>Dung lượng tối đa</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -568,6 +569,8 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            requireAuth();
+
             // Xử lý click cho radio buttons và labels
             const formatItems = document.querySelectorAll('.format-item');
             
@@ -686,6 +689,28 @@
                 }
             };
         }
+
+        document.getElementById('createNativeAdForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            try {
+                const formData = new FormData(this);
+                
+                const response = await fetchWithAuth(`${baseUrl}/ads`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Không thể tạo tin quảng cáo');
+                }
+
+                alert('Đã tạo tin quảng cáo thành công!');
+                window.location.href = '/frontend/ads.html';
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message);
+            }
+        });
     </script>
 </body>
 

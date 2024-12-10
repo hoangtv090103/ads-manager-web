@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
+    <script src="./js/auth.js"></script>
     <style>
         .form-container {
             background: white;
@@ -405,6 +406,10 @@
     <script>
         const baseUrl = 'http://127.0.0.1:5000/api/v1';
 
+        document.addEventListener('DOMContentLoaded', function() {
+            requireAuth();
+        });
+
         document.getElementById('createProductGroupForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
@@ -415,7 +420,7 @@
             };
 
             try {
-                const response = await fetch(`${baseUrl}/product-groups`, {
+                const response = await fetchWithAuth(`${baseUrl}/product-groups`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -423,14 +428,14 @@
                     body: JSON.stringify(data)
                 });
 
-                if (response.ok) {
-                    window.location.href = '/frontend/product-groups.html';
-                } else {
-                    throw new Error('Failed to create product group');
+                if (!response.ok) {
+                    throw new Error('Không thể tạo nhóm sản phẩm');
                 }
+
+                window.location.href = '/frontend/product-groups.html';
             } catch (error) {
                 console.error('Error:', error);
-                alert('Có lỗi xảy ra khi tạo nhóm sản phẩm');
+                alert(error.message);
             }
         });
     </script>

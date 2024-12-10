@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="./styles.css">
+  <script src="./js/auth.js"></script>
   <style>
     .campaign-table {
       width: 100%;
@@ -277,7 +278,7 @@
 
                     <div class="customize-column-footer">
                         <button class="btn-reset" id="resetColumns">Đặt lại</button>
-                        <button class="btn-apply" id="applyColumns">Hoàn t��t</button>
+                        <button class="btn-apply" id="applyColumns">Hoàn tất</button>
                     </div>
                 </div>
             </div>
@@ -379,7 +380,7 @@
                 <div style="font-weight: normal; font-size: 12px;">Tổng</div>
               </th>
               <th class="frozen-column" style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
-                B��t đầu/kết thúc
+                Bắt đầu/kết thúc
               </th>
             </tr>
           </thead>
@@ -492,39 +493,56 @@
 
     // Toggle campaign status
     async function toggleCampaignStatus(camp_id, active) {
-      // Send request to server
-      const response = await fetch(`http://127.0.0.1:5000/api/v1/campaigns/${camp_id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          active: active
-        })
-      });
+      try {
+        const response = await fetchWithAuth(`${baseUrl}/campaigns/${camp_id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            active: active
+          })
+        });
 
-      if (!response.ok) {
-        // If request fails, revert the checkbox state
+        if (!response.ok) {
+          throw new Error('Không thể cập nhật trạng thái chiến dịch');
+        }
+      } catch (error) {
+        console.error('Error:', error);
         const checkbox = event.target;
         checkbox.checked = !active;
+        alert(error.message);
       }
     }
 
     async function fetchCampaigns() {
-      const response = await fetch('http://127.0.0.1:5000/api/v1/campaigns');
-      const data = await response.json();
+      try {
+        const response = await fetchWithAuth(`${baseUrl}/campaigns`);
+        const data = await response.json();
 
+        if (!response.ok) {
+          throw new Error('Không thể tải dữ liệu chiến dịch');
+        }
 
-      const totalBudget = data.campaigns.reduce((acc, campaign) => acc + campaign.ngan_sach_ngay, 0);
-      const totalCost = data.campaigns.reduce((acc, campaign) => acc + campaign.tong_chi_phi, 0);
+        const totalBudget = data.campaigns.reduce((acc, campaign) => acc + campaign.ngan_sach_ngay, 0);
+        const totalCost = data.campaigns.reduce((acc, campaign) => acc + campaign.tong_chi_phi, 0);
 
-      document.getElementById('total-budget').textContent = formatCurrency(totalBudget);
-      document.getElementById('total-cost').textContent = formatCurrency(totalCost);
-      document.getElementById('total-campaigns').textContent = data.campaigns.length;
-      renderCampaigns(data.campaigns);
+        document.getElementById('total-budget').textContent = formatCurrency(totalBudget);
+        document.getElementById('total-cost').textContent = formatCurrency(totalCost);
+        document.getElementById('total-campaigns').textContent = data.campaigns.length;
+        renderCampaigns(data.campaigns);
+      } catch (error) {
+        console.error('Error:', error);
+        if (error.message === 'Unauthorized') {
+          window.location.href = '/frontend/login.html';
+        } else {
+          alert('Đã xảy ra lỗi khi tải dữ liệu');
+        }
+      }
     }
 
     document.addEventListener('DOMContentLoaded', function () {
+      requireAuth();
       fetchCampaigns();
     });
 

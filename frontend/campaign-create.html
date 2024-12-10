@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
+    <script src="./js/auth.js"></script>
     <style>
         :root {
             --primary-color: #0061C1;
@@ -504,7 +505,7 @@
                 console.error('Invalid data structure:', data);
             }
         } catch (error) {
-            console.error('Error fetching data sources:', error);
+            console.error('Error:', error);
         }
     }
 
@@ -753,6 +754,65 @@
         const scheduleOptions = document.querySelector('.schedule-options');
         scheduleOptions.style.display = this.checked ? 'block' : 'none';
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        requireAuth();
+    });
+
+    // Cập nhật hàm onSubmit để sử dụng fetchWithAuth
+    async function onSubmit(e) {
+        e.preventDefault();
+        try {
+            const formData = {
+                ten_chien_dich: document.querySelector('input[name="name"]').value,
+                data_source_id: document.querySelector('select').value,
+                tong_chi_phi: document.querySelector('input[name="total_budget"]').value,
+                ngan_sach_ngay: document.querySelector('input[name="daily_budget"]').value,
+                ngay_bat_dau: document.querySelector('input[name="start_date"]').value,
+                ngay_ket_thuc: document.querySelector('input[name="end_date"]').value,
+                ads_type: document.querySelector('input[name="ad_type"]:checked').value
+            };
+
+            const response = await fetchWithAuth(`${baseUrl}/campaigns`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (!response.ok) {
+                throw new Error('Không thể tạo chiến dịch');
+            }
+
+            window.location.href = '/frontend/campaigns.html';
+        } catch (error) {
+            console.error('Error:', error);
+            alert(error.message);
+        }
+    }
+
+    // Cập nhật hàm fetchDataSources để sử dụng fetchWithAuth
+    async function fetchDataSources() {
+        try {
+            const response = await fetchWithAuth(`${baseUrl}/data-sources`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            
+            if (data && (Array.isArray(data) || data.data)) {
+                renderDataSources(data);
+            } else {
+                console.error('Invalid data structure:', data);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            if (error.message === 'Unauthorized') {
+                window.location.href = '/frontend/login.html';
+            }
+        }
+    }
 </script>
 
 </html>

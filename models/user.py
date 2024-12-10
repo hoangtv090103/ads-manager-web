@@ -68,6 +68,18 @@ class User:
             return dict(zip([column[0] for column in cursor.description], row))
 
     @staticmethod
+    def get_by_email(email):
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT user_id, username, password, email, role_id, created_at, updated_at, active FROM users WHERE email = %s
+            """, (email,))
+            row = cursor.fetchone()
+            if not row:
+                return None
+            return dict(zip([column[0] for column in cursor.description], row))
+
+    @staticmethod
     def create(username, email, password, role_id):
         with get_db_connection() as conn:
             cursor = conn.cursor()

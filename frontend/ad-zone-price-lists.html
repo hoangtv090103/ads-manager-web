@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh sách bảng giá vùng quảng cáo</title>
+    <script src="./js/auth.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -243,6 +244,31 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            requireAuth();
+            loadPriceLists();
+        });
+
+        async function loadPriceLists() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/ad-zone-price-lists`);
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    displayPriceLists(data.data);
+                } else {
+                    throw new Error('Không thể tải dữ liệu bảng giá');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                if (error.message === 'Unauthorized') {
+                    window.location.href = '/frontend/login.html';
+                } else {
+                    alert('Đã xảy ra lỗi khi tải dữ liệu');
+                }
+            }
+        }
+
         function handleWebsiteSelection() {
             const dropdown = document.getElementById("website-dropdown");
             const selectedValue = dropdown.value;

@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
+    <script src="./js/auth.js"></script>
     <style>
         /* Layout styles */
         body {
@@ -325,6 +326,10 @@
     <script src="./script.js"></script>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            requireAuth();
+        });
+
         const baseUrl = 'http://127.0.0.1:5000/api/v1';
         function handleAccessTypeChange() {
             const accessType = document.getElementById('accessType').value;
@@ -387,21 +392,13 @@
             };
 
             try {
-                const response = await fetch(`${baseUrl}/accounts`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                const data = await response.json();
+                const response = await createAccount(formData);
 
                 if (response.ok) {
                     alert('Tạo tài khoản thành công!');
                     window.location.href = '/frontend/accounts.html';
                 } else {
-                    alert(`Lỗi: ${data.error || 'Không thể tạo tài khoản'}`);
+                    alert(`Lỗi: ${response.error || 'Không thể tạo tài khoản'}`);
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -413,6 +410,28 @@
 
         // Initialize form
         handleAccessTypeChange();
+
+        async function createAccount(formData) {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/accounts`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Không thể tạo tài khoản');
+                }
+                
+                return response;
+            } catch (error) {
+                console.error('Error:', error);
+                throw error;
+            }
+        }
     </script>
 </body>
 

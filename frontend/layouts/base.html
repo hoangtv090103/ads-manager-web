@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} - Novanet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./styles.css">
+    
+    <!-- Auth JS -->
+    <script src="./js/auth.js"></script>
+    
+    <!-- Check auth on all pages except login -->
+    <script>
+        if (window.location.pathname !== '/frontend/login.html') {
+            document.addEventListener('DOMContentLoaded', function() {
+                requireAuth();
+            });
+        }
+    </script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Sidebar content -->
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header with logout -->
+        <div class="header-content">
+            <div class="breadcrumb">
+                <i class="{{breadcrumb_icon}}"></i>
+                <span>{{breadcrumb_text}}</span>
+            </div>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-name" id="userName"></div>
+                    <div class="user-role" id="userRole"></div>
+                </div>
+                <button onclick="logout()" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Đăng xuất
+                </button>
+            </div>
+        </div>
+
+        <!-- Page content -->
+        <div class="content-section">
+            {{content}}
+        </div>
+    </div>
+
+    <script>
+        // Logout function
+        function logout() {
+            auth.removeToken();
+            window.location.href = '/frontend/login.html';
+        }
+
+        // Update user info from token
+        function updateUserInfo() {
+            const token = auth.getToken();
+            if (token) {
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    document.getElementById('userName').textContent = payload.username || 'User';
+                    document.getElementById('userRole').textContent = payload.role || '';
+                } catch (e) {
+                    console.error('Error parsing token:', e);
+                }
+            }
+        }
+
+        // Call on page load
+        document.addEventListener('DOMContentLoaded', updateUserInfo);
+    </script>
+</body>
+</html> 

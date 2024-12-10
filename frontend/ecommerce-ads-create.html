@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
+    <script src="./js/auth.js"></script>
     <style>
         .ad-format-list {
             display: flex;
@@ -271,7 +272,7 @@
 
                                     <div class="warning-message">
                                         <i class="fas fa-exclamation-triangle"></i>
-                                        <span>Khi sử dụng mẫu banner có sẵn của Novanet thì sẽ không hi���n thị phần
+                                        <span>Khi sử dụng mẫu banner có sẵn của Novanet thì sẽ không hiển thị phần
                                             banner mở rộng</span>
                                     </div>
 
@@ -512,10 +513,30 @@
     <script src="./script.js"></script>
 
     <script>
-        // Add your JavaScript code here for form handling
-        document.getElementById('createAdForm').addEventListener('submit', function (e) {
+        document.addEventListener('DOMContentLoaded', function() {
+            requireAuth();
+        });
+
+        document.getElementById('createAdForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            // Handle form submission
+            try {
+                const formData = new FormData(this);
+                
+                const response = await fetchWithAuth(`${baseUrl}/ads`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Không thể tạo tin quảng cáo');
+                }
+
+                alert('Đã tạo tin quảng cáo thành công!');
+                window.location.href = '/frontend/ads.html';
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message);
+            }
         });
 
         // Handle ad format selection

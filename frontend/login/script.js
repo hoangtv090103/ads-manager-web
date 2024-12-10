@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle form submission
     loginForm.addEventListener('submit', async function(e) {
         e.preventDefault();
-        const baseUrl = 'http://127.0.0.1:5000';
         
         const username = document.getElementById('username').value;
         const password = passwordInput.value;

@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
+    <script src="./js/auth.js"></script>
     <style>
         .main-content {
             margin-left: 250px;
@@ -256,7 +257,7 @@
                 <div class="form-group">
                     <div class="input-group">
                         <label>Số điện thoại</label>
-                        <input type="tel" placeholder="Nhập số điện thoại">
+                        <input type="tel" placeholder="Nhập s�� điện thoại">
                     </div>
                     <div class="input-group">
                         <label>Trạng thái</label>
@@ -285,7 +286,7 @@
                         </div>
                     </div>
                     <div class="input-group">
-                        <label>Nhập lại mật khẩu</label>
+                        <label>Nh��p lại mật khẩu</label>
                         <div class="password-input">
                             <input type="password" placeholder="Nhập mật khẩu">
                             <i class="far fa-eye"></i>
@@ -302,6 +303,48 @@
     </div>
 
     <script src="./script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            requireAuth();
+        });
+
+        document.getElementById('publisherForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            try {
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData);
+                
+                const response = await fetchWithAuth(`${baseUrl}/publishers`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Không thể tạo publisher');
+                }
+                
+                alert('Đã tạo publisher thành công!');
+                window.location.href = '/frontend/publishers.html';
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message);
+            }
+        });
+
+        // Password visibility toggle
+        document.querySelectorAll('.password-input i').forEach(icon => {
+            icon.addEventListener('click', function() {
+                const input = this.previousElementSibling;
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+            });
+        });
+    </script>
 </body>
 
 </html>

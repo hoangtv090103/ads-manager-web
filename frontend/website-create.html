@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
+    <script src="./js/auth.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -206,7 +207,11 @@
     <script src="./script.js"></script>
 
     <script>
-        function saveData() {
+        document.addEventListener('DOMContentLoaded', function() {
+            requireAuth();
+        });
+
+        async function saveData() {
             const emailPublisher = document.getElementById('email-publisher').value;
             const domainWebsite = document.getElementById('domain-website').value;
             const url = document.getElementById('url').value;
@@ -216,9 +221,25 @@
                 return;
             }
 
-            alert('Thông tin Domain Website đã được lưu.');
-            // Code logic xử lý lưu thông tin
-            console.log({ emailPublisher, domainWebsite, url });
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/websites`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ emailPublisher, domainWebsite, url })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Không thể tạo website');
+                }
+                
+                alert('Thông tin Domain Website đã được lưu.');
+                window.location.href = '/frontend/websites.html';
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message);
+            }
         }
 
         function saveAndCreateAds() {
