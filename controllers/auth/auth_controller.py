@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 from datetime import datetime, timedelta
 import os
-from models.auth import User
+from models.user import User
 from flask_cors import cross_origin
 
 

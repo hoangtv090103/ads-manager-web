@@ -21,8 +21,8 @@ class User:
                 email TEXT NOT NULL,
                 password TEXT NOT NULL,
                 role_id INTEGER NOT NULL,
-                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE,
                 FOREIGN KEY (role_id) REFERENCES role(role_id)
             )

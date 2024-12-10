@@ -1,7 +1,7 @@
 # Auth
-from .auth.auth import Auth
-from .auth.role import Role 
-from .auth.user import User
+from .auth import Auth
+from .role import Role 
+from .user import User
 
 # Trạng thái
 from .campaign_status import CampStatus
@@ -53,6 +53,8 @@ from .ads_group_target_audience import AdsGroupTargetAudience
 from .ads_group_website import AdsGroupWebsite
 from .remarketing_setting import RemarketingSetting
 from .remarketing_excluded_website import RemarketingExcludedWebsite
+from .publisher import Publisher
+from .customer import Customer
 
 def create_all_tables():
     # 1. Bảng Auth
@@ -72,6 +74,7 @@ def create_all_tables():
     AdsZoneStatus.create_table()
 
     # 3. Bảng Cơ sở
+    User.create_table()
     CampaignType.create_table()
     AdsType.create_table()
     PriceType.create_table()
@@ -91,6 +94,7 @@ def create_all_tables():
     Product.create_table()
     TargetAudience.create_table()
     ProductGroup.create_table()
+    Customer.create_table()
 
     # 5. Bảng Mappings & Quan hệ
     AdsDisplay.create_table()

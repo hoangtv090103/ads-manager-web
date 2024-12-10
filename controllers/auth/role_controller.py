@@ -1,6 +1,6 @@
 from flask import request
 from flask_restful import Resource, marshal_with, fields
-from models.auth import Role
+from models.role import Role
 
 role_fields = {
     'role_id': fields.Integer,
