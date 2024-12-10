@@ -1,6 +1,7 @@
 from flask import request, jsonify
 from flask_restful import Resource, fields, marshal_with
-from models.product.product import Product
+
+from models.product import Product
 
 product_fields = {
     'product_id': fields.Integer,

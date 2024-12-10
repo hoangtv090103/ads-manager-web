@@ -1,7 +1,7 @@
 from flask import request
 from flask_restful import Resource, marshal_with, fields
 
-from models.website.ads_zone import AdsZone
+from models.ads_zone import AdsZone
 
 ads_zone_fields = {
     'zone_id': fields.Integer,

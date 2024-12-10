@@ -1,7 +1,7 @@
 from flask import request
 from flask_restful import Resource, marshal_with, fields
 
-from models.website.website_price import WebsitePrice
+from models.website_price import WebsitePrice
 
 website_price_fields = {
     'price_id': fields.Integer,

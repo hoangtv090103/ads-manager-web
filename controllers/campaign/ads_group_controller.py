@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from flask_restful import Resource
-from models.campaign.ads_group import AdsGroup
+from models.ads_group import AdsGroup
 
 
 class AdsGroupController(Resource):

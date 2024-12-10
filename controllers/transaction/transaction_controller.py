@@ -1,5 +1,5 @@
 from flask import request, jsonify
-from models.transaction import TransactionSystem
+from models.transaction_system import TransactionSystem
 from flask_restful import Resource
 
 

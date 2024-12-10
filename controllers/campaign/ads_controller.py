@@ -2,7 +2,7 @@ from flask import request, jsonify
 from werkzeug.utils import secure_filename
 import os
 from flask_restful import Resource
-from models.campaign.ads import Ads
+from models.ads import Ads
 
 
 class AdsController(Resource):

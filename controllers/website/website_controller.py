@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from flask_restful import Resource, marshal_with, fields
 
-from models.website.website import Website
+from models.website import Website
 
 
 class WebsiteController(Resource):

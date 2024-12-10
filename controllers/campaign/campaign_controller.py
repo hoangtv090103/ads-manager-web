@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from flask_restful import Resource
-from models.campaign.campaign import Campaign
+from models.campaign import Campaign
 
 
 class CampaignController(Resource):

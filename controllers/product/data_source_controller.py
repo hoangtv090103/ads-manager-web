@@ -2,7 +2,7 @@ from flask import request
 from flask_restful import Resource, fields, marshal_with
 import base64
 
-from models.product.data_source import DataSource
+from models.data_source import DataSource
 
 data_source_fields = {
     'data_source_id': fields.Integer,

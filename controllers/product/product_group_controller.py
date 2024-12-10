@@ -1,7 +1,7 @@
 from flask import request
 from flask_restful import Resource, fields, marshal_with
 
-from models.product.product_group import ProductGroup
+from models.product_group import ProductGroup
 
 product_group_fields = {
     'group_id': fields.Integer,
@@ -35,7 +35,7 @@ class ProductGroupController(Resource):
         try:
             data = request.get_json()
             group = ProductGroup(**data)
-            group.group_id = group_id
+            group.productgroup_id = group_id
             group.update()
             return {'message': 'Product group updated successfully'}, 200
         except Exception as e:
