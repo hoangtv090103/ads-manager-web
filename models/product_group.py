@@ -1,8 +1,8 @@
 from configs.db import get_db_connection
 
 class ProductGroup:
-    def __init__(self, group_id=None, ten_nhom=""):
-        self.group_id = group_id
+    def __init__(self, productgroup_id=None, ten_nhom=""):
+        self.productgroup_id = productgroup_id
         self.ten_nhom = ten_nhom
 
     @staticmethod
@@ -11,7 +11,7 @@ class ProductGroup:
             cursor = conn.cursor()
             cursor.execute('''
             CREATE TABLE IF NOT EXISTS product_group (
-                group_id SERIAL PRIMARY KEY,
+                productgroup_id SERIAL PRIMARY KEY,
                 ten_nhom VARCHAR(100) NOT NULL,
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
@@ -26,11 +26,11 @@ class ProductGroup:
             cursor.execute('''
             INSERT INTO product_group (ten_nhom)
             VALUES (?)
-            RETURNING group_id
+            RETURNING productgroup_id
             ''', (self.ten_nhom,))
-            self.group_id = cursor.fetchone()[0]
+            self.productgroup_id = cursor.fetchone()[0]
             conn.commit()
-            return self.group_id
+            return self.productgroup_id
 
     @staticmethod
     def get_all():
@@ -46,7 +46,7 @@ class ProductGroup:
     def get_by_id(group_id):
         with get_db_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute('SELECT * FROM product_group WHERE group_id = ?', (group_id,))
+            cursor.execute('SELECT * FROM product_group WHERE productgroup_id = ?', (productgroup_id,))
             row = cursor.fetchone()
             if row:
                 return dict(zip([column[0] for column in cursor.description], row))
@@ -58,9 +58,9 @@ class ProductGroup:
             cursor.execute('''
             UPDATE product_group 
             SET ten_nhom = ?, updated_at = CURRENT_TIMESTAMP
-            WHERE group_id = ?
-            ''', (self.ten_nhom, self.group_id))
-            conn.commit()
+            WHERE productgroup_id = ?
+            ''', (self.ten_nhom, self.productgroup_id))
+        conn.commit()
 
     @staticmethod
     def delete(group_id):

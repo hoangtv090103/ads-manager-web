@@ -1,17 +1,16 @@
 from configs.db import get_db_connection
 
+
 class Website:
     def __init__(self, website_id=None, domain_website="", link_url="",
                  tong_so_luong_vung=0, publisher_id=None, webstatus_id=None,
-                 created_at=None, updated_at=None, active=True):
+                 active=True):
         self.website_id = website_id
         self.domain_website = domain_website
         self.link_url = link_url
         self.tong_so_luong_vung = tong_so_luong_vung
         self.publisher_id = publisher_id
         self.webstatus_id = webstatus_id
-        self.created_at = created_at
-        self.updated_at = updated_at
         self.active = active
 
     @staticmethod

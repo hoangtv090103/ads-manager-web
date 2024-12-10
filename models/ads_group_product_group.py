@@ -1,5 +1,6 @@
 from configs.db import get_db_connection
 
+
 class AdsGroupProductGroup:
     def __init__(self, id=None, ads_group_id=None, product_group_id=None):
         self.id = id
@@ -20,7 +21,7 @@ class AdsGroupProductGroup:
                 active BOOLEAN DEFAULT TRUE,
                 FOREIGN KEY (ads_group_id) REFERENCES ads_group(ads_group_id)
                     ON DELETE CASCADE,
-                FOREIGN KEY (product_group_id) REFERENCES product_group(group_id)
+                FOREIGN KEY (product_group_id) REFERENCES product_group(productgroup_id)
                     ON DELETE CASCADE,
                 UNIQUE(ads_group_id, product_group_id)
             )

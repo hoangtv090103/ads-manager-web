@@ -1,4 +1,6 @@
-from configs.db import get_db_connectionimport hashlib
+import hashlib
+
+from configs.db import get_db_connection
 
 
 class Auth:

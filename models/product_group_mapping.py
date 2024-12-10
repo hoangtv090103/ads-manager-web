@@ -19,8 +19,7 @@ class ProductGroupMapping:
                 FOREIGN KEY (product_id) REFERENCES product(product_id)
                     ON DELETE CASCADE,
                 FOREIGN KEY (productgroup_id) REFERENCES product_group(productgroup_id)
-                    ON DELETE CASCADE,
-                UNIQUE(product_id, productgroup_id)
+                    ON DELETE CASCADE
             )
             ''')
             conn.commit() 

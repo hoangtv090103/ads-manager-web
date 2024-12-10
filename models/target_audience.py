@@ -1,10 +1,11 @@
 from configs.db import get_db_connection
 
+
 class TargetAudience:
     def __init__(self, ta_id=None, ten_nhom_doi_tuong="", ta_status_id=None,
                  trang_da_truy_cap="", apply_all_product=False,
                  HanhViID=None, LoaiTruHanhViID=None, created_at=None,
-                 updated_at=None, status=True):
+                 updated_at=None, active=True):
         self.ta_id = ta_id
         self.ten_nhom_doi_tuong = ten_nhom_doi_tuong
         self.ta_status_id = ta_status_id
@@ -14,7 +15,7 @@ class TargetAudience:
         self.LoaiTruHanhViID = LoaiTruHanhViID
         self.created_at = created_at
         self.updated_at = updated_at
-        self.status = status
+        self.active = active
 
     @staticmethod
     def create_table():
@@ -33,7 +34,9 @@ class TargetAudience:
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE,
                 FOREIGN KEY (ta_status_id) REFERENCES target_audience_status(ta_status_id)
-                    ON DELETE CASCADE
+                    ON DELETE CASCADE,
+                FOREIGN KEY (HanhViID) REFERENCES behaviour(behav_id),
+                FOREIGN KEY (LoaiTruHanhViID) REFERENCES behaviour(behav_id)
             )
             ''')
             conn.commit()

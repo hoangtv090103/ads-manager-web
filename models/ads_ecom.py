@@ -1,8 +1,10 @@
 from configs.db import get_db_connection
+
+
 class AdsEcom:
-    def __init__(self, ads_id=None, format_id=None, anh_banner_chan_trang="", 
+    def __init__(self, ads_id=None, format_id=None, anh_banner_chan_trang="",
                  video_banner="", anh_thumbnail="", su_dung_mau_banner_co_san=False,
-                 ten_san_pham="", hien_thi_gia_khuyen_mai=False, 
+                 ten_san_pham="", hien_thi_gia_khuyen_mai=False,
                  hien_thi_freeship_sp=False):
         self.ads_id = ads_id
         self.format_id = format_id
@@ -53,7 +55,7 @@ class AdsEcom:
             RETURNING ads_id
             ''', (
                 self.ads_id, self.format_id, self.anh_banner_chan_trang,
-                self.video_banner, self.anh_thumbnail, 
+                self.video_banner, self.anh_thumbnail,
                 self.su_dung_mau_banner_co_san, self.ten_san_pham,
                 self.hien_thi_gia_khuyen_mai, self.hien_thi_freeship_sp
             ))
@@ -81,7 +83,8 @@ class AdsEcom:
     def get_by_id(ads_id):
         with get_db_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute('SELECT * FROM ads_ecom WHERE ads_id = %s AND active = TRUE', (ads_id,))
+            cursor.execute(
+                'SELECT * FROM ads_ecom WHERE ads_id = %s AND active = TRUE', (ads_id,))
             row = cursor.fetchone()
             if not row:
                 return None
@@ -92,7 +95,7 @@ class AdsEcom:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(
-                'SELECT * FROM ads_ecom WHERE ten_san_pham ILIKE %s AND active = TRUE', 
+                'SELECT * FROM ads_ecom WHERE ten_san_pham ILIKE %s AND active = TRUE',
                 (f'%{ten_san_pham}%',)
             )
             rows = cursor.fetchall()
@@ -102,14 +105,14 @@ class AdsEcom:
     def update(ads_id, data={}):
         with get_db_connection() as conn:
             cursor = conn.cursor()
-            
+
             update_fields = []
             params = []
-            
+
             for field, value in data.items():
                 update_fields.append(f"{field} = %s")
                 params.append(value)
-                    
+
             if update_fields:
                 query = f'''
                 UPDATE ads_ecom 
@@ -117,7 +120,7 @@ class AdsEcom:
                 WHERE ads_id = %s AND active = TRUE
                 '''
                 params.append(ads_id)
-                
+
                 cursor.execute(query, params)
                 conn.commit()
 

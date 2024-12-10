@@ -1,5 +1,6 @@
 from configs.db import get_db_connection
 
+
 class AdsGroup:
     def __init__(self, ads_group_id=None, camp_id=None, ads_group_status_id=None,
                  ten_nhom="", nham_chon_all_san_pham=False, nham_chon_doi_tuong=False,
@@ -8,7 +9,7 @@ class AdsGroup:
                  tuoi_less_than_18=False, tuoi_from_18_to_24=False,
                  tuoi_from_25_to_34=False, tuoi_from_35_to_50=False,
                  tuoi_more_than_50=False, created_at=None, updated_at=None,
-                 status=True):
+                 active=True):
         self.ads_group_id = ads_group_id
         self.camp_id = camp_id
         self.ads_group_status_id = ads_group_status_id
@@ -26,7 +27,7 @@ class AdsGroup:
         self.tuoi_more_than_50 = tuoi_more_than_50
         self.created_at = created_at
         self.updated_at = updated_at
-        self.status = status
+        self.active = active
 
     @staticmethod
     def create_table():

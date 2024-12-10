@@ -1,5 +1,6 @@
 from configs.db import get_db_connection
 
+
 class AdsGroupProductSelection:
     def __init__(self, selection_id=None, ads_group_id=None, selection_type=None):
         self.selection_id = selection_id
@@ -69,4 +70,4 @@ class AdsGroupProductSelection:
             SET active = FALSE 
             WHERE selection_id = %s
             ''', (selection_id,))
-            conn.commit() 
+            conn.commit()

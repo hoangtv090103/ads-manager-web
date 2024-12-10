@@ -1,5 +1,6 @@
 from configs.db import get_db_connection
 
+
 class AdsGroupProductGroupMapping:
     def __init__(self, mapping_id=None, selection_id=None, product_group_id=None):
         self.mapping_id = mapping_id
@@ -16,6 +17,8 @@ class AdsGroupProductGroupMapping:
                 selection_id INTEGER NOT NULL,
                 product_group_id INTEGER NOT NULL,
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                active BOOLEAN DEFAULT TRUE,
                 FOREIGN KEY (selection_id) REFERENCES ads_group_product_select(selection_id)
                     ON DELETE CASCADE,
                 FOREIGN KEY (product_group_id) REFERENCES product_group(product_group_id)
@@ -68,4 +71,4 @@ class AdsGroupProductGroupMapping:
             DELETE FROM ads_group_product_group_mapping 
             WHERE mapping_id = %s
             ''', (mapping_id,))
-            conn.commit() 
+            conn.commit()

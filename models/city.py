@@ -2,14 +2,14 @@ from configs.db import get_db_connection
 
 class City:
     def __init__(self, city_id=None, ten_thanh_pho="", country_id=None,
-                 mien="", created_at=None, updated_at=None, status=True):
+                 mien="", created_at=None, updated_at=None, active=True):
         self.city_id = city_id
         self.ten_thanh_pho = ten_thanh_pho
         self.country_id = country_id
-        self.mien = mien
         self.created_at = created_at
         self.updated_at = updated_at
-        self.status = status
+        self.mien = mien
+        self.active = active
 
     @staticmethod
     def create_table():

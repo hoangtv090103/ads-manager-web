@@ -1,13 +1,14 @@
 from configs.db import get_db_connection
 
+
 class Country:
     def __init__(self, country_id=None, ten_quoc_gia="",
-                 created_at=None, updated_at=None, status=True):
+                 created_at=None, updated_at=None, active=True):
         self.country_id = country_id
         self.ten_quoc_gia = ten_quoc_gia
         self.created_at = created_at
         self.updated_at = updated_at
-        self.status = status
+        self.active = active
 
     @staticmethod
     def create_table():
@@ -38,7 +39,7 @@ class Country:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(
-                'SELECT country_id, ten_quoc_gia, created_at, updated_at, status FROM country WHERE status = true')
+                'SELECT country_id, ten_quoc_gia, created_at, updated_at, active FROM country WHERE active = true')
             rows = cursor.fetchall()
             return [dict(zip([column[0] for column in cursor.description], row)) for row in rows]
 
@@ -57,6 +58,7 @@ class Country:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-            UPDATE Country SET status = 0 WHERE country_id = ?
+            UPDATE Country SET active = 0 WHERE country_id = ?
             ''', (country_id,))
             conn.commit()
+

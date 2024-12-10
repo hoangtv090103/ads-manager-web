@@ -1,5 +1,6 @@
 from configs.db import get_db_connection
 
+
 class AdsDisplay:
     def __init__(self, ads_id=None, format_id=None, dang_tai_tep_anh="",
                  tieu_de="", noi_dung=""):
@@ -66,7 +67,8 @@ class AdsDisplay:
     def get_by_id(ads_id):
         with get_db_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute('SELECT * FROM ads_display WHERE ads_id = %s AND active = TRUE', (ads_id,))
+            cursor.execute(
+                'SELECT * FROM ads_display WHERE ads_id = %s AND active = TRUE', (ads_id,))
             row = cursor.fetchone()
             if not row:
                 return None
@@ -76,14 +78,14 @@ class AdsDisplay:
     def update(ads_id, data={}):
         with get_db_connection() as conn:
             cursor = conn.cursor()
-            
+
             update_fields = []
             params = []
-            
+
             for field, value in data.items():
                 update_fields.append(f"{field} = %s")
                 params.append(value)
-                    
+
             if update_fields:
                 query = f'''
                 UPDATE ads_display 
@@ -91,7 +93,7 @@ class AdsDisplay:
                 WHERE ads_id = %s AND active = TRUE
                 '''
                 params.append(ads_id)
-                
+
                 cursor.execute(query, params)
                 conn.commit()
 
@@ -102,4 +104,4 @@ class AdsDisplay:
             cursor.execute('''
             UPDATE ads_display SET active = FALSE WHERE ads_id = %s
             ''', (ads_id,))
-            conn.commit() 
+            conn.commit()

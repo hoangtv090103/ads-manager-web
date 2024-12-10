@@ -1,5 +1,6 @@
 from configs.db import get_db_connection
 
+
 class PublisherStatus:
     def __init__(self, status_id=None, ten_trang_thai="",
                  created_at=None, updated_at=None, active=True):

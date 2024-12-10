@@ -1,14 +1,15 @@
 from configs.db import get_db_connection
 
+
 class District:
     def __init__(self, district_id=None, ten_quan_huyen="", city_id=None,
-                 created_at=None, updated_at=None, status=True):
+                 created_at=None, updated_at=None, active=True):
         self.district_id = district_id
         self.ten_quan_huyen = ten_quan_huyen
         self.city_id = city_id
         self.created_at = created_at
         self.updated_at = updated_at
-        self.status = status
+        self.active = active
 
     @staticmethod
     def create_table():
@@ -42,7 +43,7 @@ class District:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(
-                'SELECT district_id, ten_quan_huyen, city_id, created_at, updated_at, status FROM district WHERE active = true')
+                'SELECT district_id, ten_quan_huyen, city_id, created_at, updated_at, active FROM district WHERE active = true')
             rows = cursor.fetchall()
             return [dict(zip([column[0] for column in cursor.description], row)) for row in rows]
 

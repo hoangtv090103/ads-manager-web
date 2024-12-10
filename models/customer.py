@@ -1,11 +1,12 @@
 from configs.db import get_db_connection
 
+
 class Customer:
     def __init__(self, customer_id=None, ho_va_ten="", ngay_sinh=None, gioi_tinh=None,
                  ten_doanh_nghiep="", dia_chi_doanh_nghiep="", country_id=None,
                  city_id=None, district_id=None, website_doanh_nghiep="",
                  so_dien_thoai="", email_doanh_nghiep="", ma_remarketing="",
-                 created_at=None, updated_at=None, status=True):
+                 created_at=None, updated_at=None, active=True):
         self.customer_id = customer_id
         self.ho_va_ten = ho_va_ten
         self.ngay_sinh = ngay_sinh
@@ -21,7 +22,7 @@ class Customer:
         self.ma_remarketing = ma_remarketing
         self.created_at = created_at
         self.updated_at = updated_at
-        self.status = status
+        self.active = active
 
     @staticmethod
     def create_table():

@@ -1,5 +1,6 @@
 from configs.db import get_db_connection
 
+
 class AdSizeFormat:
     def __init__(self, size_id=None, format_id=None):
         self.size_id = size_id
@@ -25,29 +26,26 @@ class AdSizeFormat:
             ''')
             conn.commit()
 
-    def create(self):
+    def save(self):
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
             INSERT INTO ad_size_format (size_id, format_id)
             VALUES (%s, %s)
-            RETURNING size_id, format_id
             ''', (self.size_id, self.format_id))
-            size_id, format_id = cursor.fetchone()
-            self.size_id = size_id
-            self.format_id = format_id
             conn.commit()
-            return self.size_id, self.format_id
 
     @staticmethod
-    def get_by_size_id(size_id):
+    def get_all():
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-            SELECT size_id, format_id 
-            FROM ad_size_format 
-            WHERE size_id = %s AND active = TRUE
-            ''', (size_id,))
+            SELECT asf.*, azs.ten_kich_thuoc, af.format_name
+            FROM ad_size_format asf
+            LEFT JOIN ads_zone_size azs ON asf.size_id = azs.size_id
+            LEFT JOIN ads_format af ON asf.format_id = af.format_id
+            WHERE asf.active = true
+            ''')
             rows = cursor.fetchall()
             return [dict(zip([column[0] for column in cursor.description], row)) for row in rows]
 
@@ -56,20 +54,33 @@ class AdSizeFormat:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-            SELECT size_id, format_id 
-            FROM ad_size_format 
-            WHERE format_id = %s AND active = TRUE
+            SELECT asf.*, azs.ten_kich_thuoc
+            FROM ad_size_format asf
+            LEFT JOIN ads_zone_size azs ON asf.size_id = azs.size_id
+            WHERE asf.format_id = %s AND asf.active = true
             ''', (format_id,))
             rows = cursor.fetchall()
             return [dict(zip([column[0] for column in cursor.description], row)) for row in rows]
 
     @staticmethod
-    def delete(size_id, format_id):
+    def get_by_size_id(size_id):
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+            SELECT asf.*, af.format_name
+            FROM ad_size_format asf
+            LEFT JOIN ads_format af ON asf.format_id = af.format_id
+            WHERE asf.size_id = %s AND asf.active = true
+            ''', (size_id,))
+            rows = cursor.fetchall()
+            return [dict(zip([column[0] for column in cursor.description], row)) for row in rows]
+
+    def delete(self):
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
             UPDATE ad_size_format 
-            SET active = FALSE 
+            SET active = false 
             WHERE size_id = %s AND format_id = %s
-            ''', (size_id, format_id))
-            conn.commit() 
+            ''', (self.size_id, self.format_id))
+            conn.commit()

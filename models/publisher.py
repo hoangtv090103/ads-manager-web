@@ -15,23 +15,23 @@ class Publisher:
     @staticmethod
     def create_table():
         with get_db_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute('''
-            CREATE TABLE IF NOT EXISTS publisher (
-                publisher_id SERIAL PRIMARY KEY,
-                ten_publisher VARCHAR(100) NOT NULL,
-                email VARCHAR(100) NOT NULL,
-                so_dien_thoai VARCHAR(20),
-                password VARCHAR(255) NOT NULL,
-                pub_status_id INTEGER,
-                created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-                active BOOLEAN DEFAULT TRUE,
-                FOREIGN KEY (pub_status_id) REFERENCES publisher_status(status_id)
-                    ON DELETE SET NULL
-            )
-            ''')
-            conn.commit()
+                cursor = conn.cursor()
+                cursor.execute('''
+                CREATE TABLE IF NOT EXISTS publisher (
+                    publisher_id SERIAL PRIMARY KEY,
+                    ten_publisher VARCHAR(100) NOT NULL,
+                    email VARCHAR(100) NOT NULL,
+                    so_dien_thoai VARCHAR(20),
+                    password VARCHAR(255) NOT NULL,
+                    pub_status_id INTEGER,
+                    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                    active BOOLEAN DEFAULT TRUE,
+                    FOREIGN KEY (pub_status_id) REFERENCES publisher_status(status_id)
+                        ON DELETE SET NULL
+                )
+                ''')
+                conn.commit()
 
     def save(self):
         with get_db_connection() as conn:

@@ -1,5 +1,6 @@
 from configs.db import get_db_connection
 
+
 class TargetAudienceStatus:
     def __init__(self, ta_status_id=None, ten_trang_thai=""):
         self.ta_status_id = ta_status_id

@@ -1,5 +1,5 @@
 from configs.db import get_db_connection
-class CampaignStatus:
+class CampStatus:
     def __init__(self, campstatus_id=None, ten_trang_thai=""):
         self.campstatus_id = campstatus_id
         self.ten_trang_thai = ten_trang_thai
