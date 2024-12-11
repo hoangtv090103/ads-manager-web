@@ -1,8 +1,8 @@
 from flask import request, jsonify
-from flask_restful import Resource, marshal_with, fields
 
 from models.website import Website
 from controllers.base_controller import BaseController
+from models.website_report import WebsiteReport
 
 class WebsiteController(BaseController):
     def get(self, website_id=None):

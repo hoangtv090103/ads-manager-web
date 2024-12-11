@@ -46,11 +46,11 @@ class Publisher:
             conn.commit()
 
     @staticmethod
-    def get_all_publishers():
+    def get_all():
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(
-                'SELECT publisher_id, ten_publisher, email, so_dien_thoai, pub_status_id, created_at, updated_at, status FROM publisher WHERE active = true')
+                'SELECT publisher_id, ten_publisher, email, so_dien_thoai, pub_status_id, created_at, updated_at FROM publisher WHERE active = true')
             rows = cursor.fetchall()
             return [dict(zip([column[0] for column in cursor.description], row)) for row in rows]
 

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <script src="./js/auth.js"></script>
+    <script src="./script.js"></script>
 </head>
 
 <body>
@@ -24,9 +25,76 @@
             <span class="logo-text">Ads Manager</span>
         </div>
 
-        <!-- Copy sidebar navigation from campaigns.html -->
         <nav class="sidebar-nav">
-            <!-- ... (giữ nguyên phần sidebar như trong campaigns.html) ... -->
+            <a href="/frontend/campaigns.html" class="nav-item">
+                <i class="fas fa-layer-group"></i>
+                <span>Quản lý chiến dịch</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-box"></i>
+                    <span>Quản lý sản phẩm</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/product-groups.html">• Danh sách nhóm SP</a>
+                    <a href="/frontend/products.html">• Danh sách SP</a>
+                    <a href="/frontend/data-sources.html">• Nguồn cấp dữ liệu</a>
+                </div>
+            </div>
+
+            <a href="/frontend/remarking-target.html" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Quản lý đối tượng</span>
+            </a>
+
+            <a href="/frontend/deposit.html" class="nav-item">
+                <i class="fas fa-wallet"></i>
+                <span>Nạp tiền tài khoản</span>
+            </a>
+
+            <a href="/frontend/deposit-history.html" class="nav-item">
+                <i class="fas fa-history"></i>
+                <span>Lịch sử nạp tiền</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Báo cáo</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/website-report.html">• Báo cáo website</a>
+                    <a href="/reports/zone">• Báo cáo vùng</a>
+                    <a href="/reports/publisher">• Báo cáo publisher</a>
+                    <a href="/reports/ad-format">• Báo cáo định dạng quảng cáo</a>
+                </div>
+            </div>
+
+            <a href="/frontend/publishers.html" class="nav-item">
+                <i class="fas fa-users-cog"></i>
+                <span>Danh sách Publisher</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-globe"></i>
+                    <span>Quản lý website</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/price-lists.html">• Danh sách bảng giá</a>
+                    <a href="/frontend/websites.html">• Danh sách website</a>
+                    <a href="/frontend/ad-zones.html">• Danh sách vùng QC</a>
+                </div>
+            </div>
+
+            <a href="/frontend/accounts.html" class="nav-item">
+                <i class="fas fa-user-shield"></i>
+                <span>Quản lý phân quyền</span>
+            </a>
         </nav>
     </div>
 
@@ -43,7 +111,8 @@
                     <div style="font-weight: 500; color: #333; text-align: right;">Lê Bách</div>
                     <div style="font-size: 12px; color: #828282;">Admin</div>
                 </div>
-                <img src="../assets/avatar.jpg" alt="User Avatar" style="width: 40px; height: 40px; border-radius: 4px;">
+                <img src="../assets/avatar.jpg" alt="User Avatar"
+                    style="width: 40px; height: 40px; border-radius: 4px;">
             </div>
         </div>
 
@@ -63,9 +132,9 @@
 
                 <div class="action-right">
                     <div class="date-range">
-                        <input type="text" id="dateRange" class="form-input" 
-                               value="12/11/2021 - 12/12/2022" 
-                               style="width: 200px;">
+                        <input type="date" id="startDate" class="form-input" style="width: 150px;">
+                        <span>-</span>
+                        <input type="date" id="endDate" class="form-input" style="width: 150px;">
                     </div>
                     <button class="btn-primary" onclick="exportReport()">
                         <i class="fas fa-download"></i>
@@ -93,11 +162,12 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="3" style="text-align: left;">Số Website: <span id="totalWebsites">20</span></td>
-                            <td style="text-align: right;">400.000.000</td>
-                            <td style="text-align: right;">40.000.000</td>
+                            <td colspan="3" style="text-align: left;">Số Website: <span id="totalWebsites">0</span>
+                            </td>
+                            <td style="text-align: right;">0</td>
+                            <td style="text-align: right;">0</td>
                             <td style="text-align: right;">-</td>
-                            <td style="text-align: right;">400.000.000</td>
+                            <td style="text-align: right;">0</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -107,6 +177,57 @@
 
     <script>
         const baseUrl = 'http://127.0.0.1:5000/api/v1';
+
+        // Load publishers for filter dropdown
+        async function loadPublishers() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/publishers`);
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load publishers');
+                }
+
+                const publisherSelect = document.getElementById('publisherFilter');
+                publisherSelect.innerHTML = '<option value="">Publisher</option>';
+                
+                data.publishers.forEach(publisher => {
+                    const option = document.createElement('option');
+                    option.value = publisher.email;
+                    option.textContent = publisher.email;
+                    publisherSelect.appendChild(option);
+                });
+
+                // Add event listener for publisher filter
+                publisherSelect.addEventListener('change', filterReportData);
+            } catch (error) {
+                console.error('Error loading publishers:', error);
+            }
+        }
+
+        // Filter report data based on selected publisher
+        function filterReportData() {
+            const selectedPublisher = document.getElementById('publisherFilter').value;
+            const filteredData = selectedPublisher 
+                ? sampleData.filter(item => item.publisher === selectedPublisher)
+                : sampleData;
+            
+            renderReportData(filteredData);
+            
+            // Update totals
+            const totalViews = filteredData.reduce((sum, item) => sum + item.views, 0);
+            const totalClicks = filteredData.reduce((sum, item) => sum + item.clicks, 0);
+            const totalCost = filteredData.reduce((sum, item) => sum + item.total_cost, 0);
+            
+            document.getElementById('totalWebsites').textContent = filteredData.length;
+            document.querySelector('tfoot tr').innerHTML = `
+                <td colspan="3" style="text-align: left;">Số Website: <span id="totalWebsites">${filteredData.length}</span></td>
+                <td style="text-align: right;">${formatNumber(totalViews)}</td>
+                <td style="text-align: right;">${formatNumber(totalClicks)}</td>
+                <td style="text-align: right;">-</td>
+                <td style="text-align: right;">${formatCurrency(totalCost)}</td>
+            `;
+        }
 
         function formatNumber(value) {
             if (value === undefined || value === null) return '-';
@@ -137,26 +258,114 @@
             });
         }
 
-        // Sample data for testing
-        const sampleData = Array(18).fill({
-            website: 'Novanet.vn',
-            publisher: 'Publisher@gmail.com',
-            views: 20000000,
-            clicks: 20000,
-            ctr: '12,121',
-            total_cost: 20000000
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             requireAuth();
+            loadPublishers();
             renderReportData(sampleData);
         });
 
-        function exportReport() {
-            // Implement export functionality
-            alert('Xuất báo cáo');
+        async function loadReportData() {
+            try {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                const selectedPublisher = document.getElementById('publisherFilter').value;
+                
+                const queryParams = new URLSearchParams({
+                    start_date: startDate,
+                    end_date: endDate,
+                    publisher_email: selectedPublisher,
+                    export: false
+                });
+                
+                const response = await fetchWithAuth(`${baseUrl}/websites/report?${queryParams}`);
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.error || 'Failed to load report data');
+                }
+                
+                renderReportData(data.data);
+                updateTotals(data.data);
+            } catch (error) {
+                console.error('Error loading report data:', error);
+            }
+        }
+        
+        function updateTotals(data) {
+            const totalViews = data.reduce((sum, item) => sum + item.total_views, 0);
+            const totalClicks = data.reduce((sum, item) => sum + item.total_clicks, 0);
+            const totalCost = data.reduce((sum, item) => sum + item.total_cost, 0);
+            const avgCTR = data.length > 0 
+                ? (totalClicks / totalViews * 100).toFixed(2) 
+                : 0;
+                
+            document.querySelector('tfoot tr').innerHTML = `
+                <td colspan="3" style="text-align: left;">Số Website: <span id="totalWebsites">${data.length}</span></td>
+                <td style="text-align: right;">${formatNumber(totalViews)}</td>
+                <td style="text-align: right;">${formatNumber(totalClicks)}</td>
+                <td style="text-align: right;">${avgCTR}%</td>
+                <td style="text-align: right;">${formatCurrency(totalCost)}</td>
+            `;
+        }
+        
+        // Thêm event listeners cho date inputs và publisher filter
+        document.getElementById('startDate').addEventListener('change', loadReportData);
+        document.getElementById('endDate').addEventListener('change', loadReportData);
+        document.getElementById('publisherFilter').addEventListener('change', loadReportData);
+        
+        // Cập nhật hàm renderReportData
+        function renderReportData(data) {
+            const tbody = document.getElementById('reportTableBody');
+            tbody.innerHTML = '';
+            
+            data.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="text-align: center;">${index + 1}</td>
+                    <td><a href="${item.ten_website}" style="color: #0061C1; text-decoration: none;">${item.ten_website}</a></td>
+                    <td>${item.publisher_email}</td>
+                    <td style="text-align: right;">${formatNumber(item.total_views)}</td>
+                    <td style="text-align: right;">${formatNumber(item.total_clicks)}</td>
+                    <td style="text-align: right;">${item.ctr}%</td>
+                    <td style="text-align: right;">${formatCurrency(item.total_cost)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        // Cập nhật hàm exportReport
+        async function exportReport() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const selectedPublisher = document.getElementById('publisherFilter').value;
+            
+            try {
+                const queryParams = new URLSearchParams({
+                    start_date: startDate,
+                    end_date: endDate,
+                    publisher_email: selectedPublisher,
+                    export: true
+                });
+                
+                const response = await fetchWithAuth(`${baseUrl}/websites/report?${queryParams}`);
+                if (!response.ok) {
+                    throw new Error('Failed to export report');
+                }
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `website_report_${startDate}_${endDate}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error('Error exporting report:', error);
+                alert('Có lỗi khi xuất báo cáo');
+            }
         }
     </script>
 </body>
 
-</html> 
+</html>

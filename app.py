@@ -10,8 +10,10 @@ from controllers.auth import *
 from controllers.product import *
 from controllers.target_audience import *
 from controllers.account_controller import AccountController
+from controllers.publisher.publisher_controller import PublisherController
 from models import create_all_tables
 from middlewares.auth_middleware import token_required
+from controllers.report import WebsiteReportController
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Enable CORS for all routes
@@ -55,6 +57,12 @@ api.add_resource(AdsController,
 api.add_resource(WebsiteController,
                  '/websites',
                  '/websites/<int:website_id>',
+                 resource_class_kwargs={'decorators': [token_required]}
+                 )
+
+# Website Report routes
+api.add_resource(WebsiteReportController,
+                 '/websites/report',
                  resource_class_kwargs={'decorators': [token_required]}
                  )
 
@@ -142,6 +150,13 @@ api.add_resource(AccountController,
                  '/accounts',
                  '/accounts/<int:user_id>',
                  endpoint='accounts',
+                 resource_class_kwargs={'decorators': [token_required]}
+                 )
+
+# Publisher routes
+api.add_resource(PublisherController,
+                 '/publishers',
+                 '/publishers/<int:publisher_id>',
                  resource_class_kwargs={'decorators': [token_required]}
                  )
 

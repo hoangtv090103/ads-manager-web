@@ -8,7 +8,7 @@ class Campaign:
                  cpm=0, so_luong_mua_hang=0, conversion_rate=0, cps=0,
                  videoview3s=0, videowatchesat25=0, videowatchesat50=0,
                  videowatchesat75=0, videowatchesat100=0, ngay_bat_dau=None,
-                 ngay_ket_thuc=None, created_at=None, updated_at=None, status=True):
+                 ngay_ket_thuc=None, created_at=None, updated_at=None, active=True):
         self.camp_id = camp_id
         self.ten_chien_dich = ten_chien_dich
         self.camp_type_id = camp_type_id
@@ -33,7 +33,7 @@ class Campaign:
         self.ngay_ket_thuc = ngay_ket_thuc
         self.created_at = created_at
         self.updated_at = updated_at
-        self.status = status
+        self.active = active
 
     @staticmethod
     def create_table():
@@ -65,7 +65,7 @@ class Campaign:
                 ngay_ket_thuc DATE,
                 created_at TIMESTAMP,
                 updated_at TIMESTAMP,
-                status INTEGER,
+                active BOOLEAN DEFAULT TRUE,
                 FOREIGN KEY (camp_type_id) REFERENCES campaign_type(camp_type_id)
                     ON DELETE CASCADE,
                 FOREIGN KEY (campstatus_id) REFERENCES campaign_status(campstatus_id)
@@ -87,7 +87,7 @@ class Campaign:
                 so_luong_mua_hang, conversion_rate, cps,
                 videoview3s, videowatchesat25, videowatchesat50,
                 videowatchesat75, videowatchesat100,
-                ngay_bat_dau, ngay_ket_thuc, status
+                ngay_bat_dau, ngay_ket_thuc, active
             )
             VALUES (
                 %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
@@ -102,7 +102,7 @@ class Campaign:
                 self.cps, self.videoview3s, self.videowatchesat25,
                 self.videowatchesat50, self.videowatchesat75,
                 self.videowatchesat100, self.ngay_bat_dau,
-                self.ngay_ket_thuc, self.status
+                self.ngay_ket_thuc, self.active
             ))
             camp_id = cursor.fetchone()[0]
             conn.commit()
@@ -136,7 +136,7 @@ class Campaign:
                     ngay_ket_thuc, 
                     campaign.created_at, 
                     campaign.updated_at, 
-                    campaign.status 
+                    campaign.active 
                 FROM campaign 
                 LEFT JOIN campaign_type ON campaign.camp_type_id = campaign_type.camp_type_id 
                 ORDER BY campaign.created_at DESC
@@ -200,7 +200,7 @@ class Campaign:
             cursor = conn.cursor()
             cursor.execute('''
             UPDATE campaign 
-            SET status = FALSE, updated_at = CURRENT_TIMESTAMP
+            SET active = FALSE, updated_at = CURRENT_TIMESTAMP
             WHERE camp_id = %s
             ''', (camp_id,))
             conn.commit()
