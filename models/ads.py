@@ -1,15 +1,14 @@
 from configs.db import get_db_connection
 
 class Ads:
-    def __init__(self, ads_id=None, ads_group_id=None, campaign_type_id=None,
-                 ads_status_id=None, ten_tin_quang_cao="", URL_dich="", 
-                 tong_chi_phi=0.0, luot_xem=0, luot_nhan=0, CTR=0.0, 
-                 CPC=0.0, CPM=0.0, so_luong_mua_hang=0, conversion_rate=0.0, 
-                 CPS=0.0, video_watches_at_25=0, video_watches_at_50=0,
+    def __init__(self, ads_id=None, ads_group_id=None, ads_status_id=None,
+                 ten_tin_quang_cao="", URL_dich="", tong_chi_phi=0.0,
+                 luot_xem=0, luot_nhan=0, CTR=0.0, CPC=0.0, CPM=0.0,
+                 so_luong_mua_hang=0, conversion_rate=0.0, CPS=0.0,
+                 video_watches_at_25=0, video_watches_at_50=0,
                  video_watches_at_75=0, video_watches_at_100=0):
         self.ads_id = ads_id
         self.ads_group_id = ads_group_id
-        self.campaign_type_id = campaign_type_id
         self.ads_status_id = ads_status_id
         self.ten_tin_quang_cao = ten_tin_quang_cao
         self.URL_dich = URL_dich
@@ -35,7 +34,6 @@ class Ads:
             CREATE TABLE IF NOT EXISTS ads (
                 ads_id SERIAL PRIMARY KEY,
                 ads_group_id INTEGER NOT NULL,
-                campaign_type_id INTEGER NOT NULL,
                 ads_status_id INTEGER NOT NULL,
                 ten_tin_quang_cao VARCHAR(100),
                 URL_dich TEXT,
@@ -56,8 +54,6 @@ class Ads:
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE,
                 FOREIGN KEY (ads_group_id) REFERENCES ads_group(ads_group_id)
-                    ON DELETE CASCADE,
-                FOREIGN KEY (campaign_type_id) REFERENCES campaign_type(camp_type_id)
                     ON DELETE CASCADE,
                 FOREIGN KEY (ads_status_id) REFERENCES status_ads(status_id)
                     ON DELETE CASCADE
@@ -98,5 +94,5 @@ class Ads:
     def delete_by_id(ads_id):
         with get_db_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute('DELETE FROM ads WHERE ads_id = ?', (ads_id,))
+            cursor.execute('DELETE FROM ads WHERE ads_id = %s', (ads_id,))
             conn.commit()

@@ -34,8 +34,6 @@ class AdsEcom:
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE,
-                FOREIGN KEY (ads_id) REFERENCES ads(ads_id)
-                    ON DELETE CASCADE,
                 FOREIGN KEY (format_id) REFERENCES ads_format(format_id)
                     ON DELETE CASCADE
             )

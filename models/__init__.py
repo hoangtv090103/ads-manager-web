@@ -12,7 +12,7 @@ from .product_status import ProductStatus
 from .publisher_status import PublisherStatus
 from .source_status import SourceStatus
 from .target_audience_status import TargetAudienceStatus
-from .ads_zone_status import AdsZoneStatus
+# from .ads_zone_status import AdsZoneStatus
 
 # Cơ sở
 from .behaviour import Behaviour
@@ -71,7 +71,7 @@ def create_all_tables():
     PublisherStatus.create_table()
     SourceStatus.create_table()
     TargetAudienceStatus.create_table()
-    AdsZoneStatus.create_table()
+    # AdsZoneStatus.create_table()
 
     # 3. Bảng Cơ sở
     User.create_table()
