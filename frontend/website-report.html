@@ -355,7 +355,7 @@
                     responseType: 'blob'
                 });
                 
-                if (!response.ok || !response.body.success) {
+                if (!response.ok) {
                     throw new Error('Failed to export report');
                 }
                 
