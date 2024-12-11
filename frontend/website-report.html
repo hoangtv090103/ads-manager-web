@@ -194,7 +194,7 @@
                 data.publishers.forEach(publisher => {
                     const option = document.createElement('option');
                     option.value = publisher.email;
-                    option.textContent = publisher.email;
+                    option.textContent = `${publisher.ten_publisher} - ${publisher.email}`;
                     publisherSelect.appendChild(option);
                 });
 
