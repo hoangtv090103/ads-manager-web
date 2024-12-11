@@ -93,6 +93,7 @@ class Campaign:
                 %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
                 %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
             )
+            RETURNING camp_id
             ''', (
                 self.ten_chien_dich, self.camp_type_id, self.campstatus_id,
                 self.source_id, self.ngan_sach_ngay, self.tong_chi_phi,
@@ -103,7 +104,9 @@ class Campaign:
                 self.videowatchesat100, self.ngay_bat_dau,
                 self.ngay_ket_thuc, self.status
             ))
+            camp_id = cursor.fetchone()[0]
             conn.commit()
+            return camp_id
 
     @staticmethod
     def get_all():
@@ -113,7 +116,7 @@ class Campaign:
                 '''SELECT 
                     camp_id, 
                     ten_chien_dich, 
-                    ads_type.ten_loai_quang_cao AS ten_loai_quang_cao, 
+                    campaign_type.ten_loai_chien_dich AS ten_loai_quang_cao,
                     ngan_sach_ngay, 
                     tong_chi_phi, 
                     luot_xem, 
@@ -133,9 +136,9 @@ class Campaign:
                     ngay_ket_thuc, 
                     campaign.created_at, 
                     campaign.updated_at, 
-                    campaign.active 
+                    campaign.status 
                 FROM campaign 
-                LEFT JOIN ads_type ON campaign.ads_type_id = ads_type.ads_type_id 
+                LEFT JOIN campaign_type ON campaign.camp_type_id = campaign_type.camp_type_id 
                 ORDER BY campaign.created_at DESC
                 ''')
             rows = cursor.fetchall()
@@ -143,11 +146,16 @@ class Campaign:
                 return []
             return [dict(zip([column[0] for column in cursor.description], row)) for row in rows]
 
+    @staticmethod
     def get_by_id(camp_id):
         with get_db_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute(
-                'SELECT * FROM campaign WHERE camp_id = %s', (camp_id,))
+            cursor.execute('''
+            SELECT c.*, ct.ten_loai_chien_dich as ten_loai_quang_cao
+            FROM campaign c
+            LEFT JOIN campaign_type ct ON c.camp_type_id = ct.camp_type_id
+            WHERE c.camp_id = %s
+            ''', (camp_id,))
             row = cursor.fetchone()
             if not row:
                 return None
@@ -163,37 +171,40 @@ class Campaign:
             return [dict(zip([column[0] for column in cursor.description], row)) for row in rows]
 
     @staticmethod
-    def update(camp_id, data={}):
+    def update(camp_id, data):
         with get_db_connection() as conn:
             cursor = conn.cursor()
-
-            # Build update query dynamically based on provided fields
+            
+            # Build update query dynamically
             update_fields = []
             params = []
-
             for field, value in data.items():
                 update_fields.append(f"{field} = %s")
                 params.append(value)
-
+            
             if update_fields:
+                params.append(camp_id)
                 query = f'''
                 UPDATE campaign 
-                SET {', '.join(update_fields)}
-                WHERE camp_id = %s;
+                SET {', '.join(update_fields)}, updated_at = CURRENT_TIMESTAMP
+                WHERE camp_id = %s
                 '''
-                params.append(camp_id)
-
                 cursor.execute(query, params)
                 conn.commit()
+                return True
+            return False
 
     @staticmethod
-    def delete_by_id(camp_id):
+    def delete(camp_id):
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-            UPDATE campaign SET active = 0 WHERE camp_id = ?
+            UPDATE campaign 
+            SET status = FALSE, updated_at = CURRENT_TIMESTAMP
+            WHERE camp_id = %s
             ''', (camp_id,))
             conn.commit()
+            return True
 
     @staticmethod
     def get_dashboard_stats():

@@ -1,9 +1,10 @@
 from flask import request, jsonify
 from flask_restful import Resource
+from controllers.base_controller import BaseController
 from models.ads_group import AdsGroup
 
-
-class AdsGroupController(Resource):
+from controllers.base_controller import BaseController
+class AdsGroupController(BaseController):
     def get(self, ads_group_id=None):
         try:
             if ads_group_id:

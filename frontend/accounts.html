@@ -296,7 +296,7 @@
 
             <!-- Table Footer -->
             <div class="table-footer">
-                <div>Số tài khoản: <span id="total-accounts">15</span></div>
+                <div>Số tài khoản: <span id="total-accounts">0</span></div>
             </div>
         </div>
     </div>
@@ -407,7 +407,16 @@
             document.getElementById('total-accounts').textContent = total;
         }
 
-        async function toggleUserStatus(userId, newStatus) {
+        function toggleUserStatus(userId, newStatus) {
+            if (!newStatus) {
+                showWarningPopup(userId);
+                return;
+            }
+            
+            updateUserStatus(userId, newStatus);
+        }
+
+        async function updateUserStatus(userId, newStatus) {
             try {
                 const response = await fetchWithAuth(`${baseUrl}/accounts/${userId}`, {
                     method: 'PUT',
@@ -426,6 +435,7 @@
                 loadAccounts(); // Reload the table
             } catch (error) {
                 console.error('Error:', error);
+                // Reset lại trạng thái toggle nếu có lỗi
                 document.getElementById(`status_${userId}`).checked = !newStatus;
                 alert(error.message);
             }
@@ -434,6 +444,11 @@
         function showWarningPopup(userId) {
             const overlay = document.getElementById('overlay');
             const popup = document.getElementById('warningPopup');
+            const checkbox = document.getElementById(`status_${userId}`);
+            
+            // Reset checkbox về trạng thái ban đầu
+            checkbox.checked = true;
+            
             overlay.style.display = 'block';
             popup.style.display = 'block';
             popup.dataset.userId = userId;
@@ -442,10 +457,13 @@
         function closeWarningPopup() {
             const overlay = document.getElementById('overlay');
             const popup = document.getElementById('warningPopup');
+            const userId = popup.dataset.userId;
+            
             overlay.style.display = 'none';
             popup.style.display = 'none';
-            // Reset checkbox state
-            const checkbox = document.getElementById(`status_${popup.dataset.userId}`);
+            
+            // Reset checkbox về trạng thái ban đầu (active)
+            const checkbox = document.getElementById(`status_${userId}`);
             if (checkbox) checkbox.checked = true;
         }
 
@@ -454,31 +472,14 @@
             const userId = popup.dataset.userId;
             
             try {
-                const response = await fetchWithAuth(`${baseUrl}/accounts/${userId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        active: false
-                    })
-                });
-
-                if (response.ok) {
-                    loadAccounts(); // Reload the table
-                } else {
-                    alert('Không thể cập nhật trạng thái tài khoản');
-                    // Reset the toggle
-                    document.getElementById(`status_${userId}`).checked = true;
-                }
+                await updateUserStatus(userId, false);
+                closeWarningPopup();
             } catch (error) {
                 console.error('Error:', error);
                 alert('Đã xảy ra lỗi khi cập nhật trạng thái');
                 // Reset the toggle
                 document.getElementById(`status_${userId}`).checked = true;
             }
-            
-            closeWarningPopup();
         }
 
         function editAccount(userId) {

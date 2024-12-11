@@ -2,10 +2,11 @@ from flask import request, jsonify
 from werkzeug.utils import secure_filename
 import os
 from flask_restful import Resource
+from controllers.base_controller import BaseController
 from models.ads import Ads
 
 
-class AdsController(Resource):
+class AdsController(BaseController):
     def get(self, ads_id=None):
         try:
             if ads_id:

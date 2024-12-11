@@ -7,8 +7,10 @@ from models.customer import Customer
 from models.role import Role
 from configs.db import get_db_connection
 from models.publisher_status import PublisherStatus
+from controllers.base_controller import BaseController
 
-class AccountController(Resource):
+
+class AccountController(BaseController):
     def post(self):
         conn = None
         try:
@@ -51,9 +53,10 @@ class AccountController(Resource):
 
             # Create user account
             cursor = conn.cursor()
-            
+
             # Check if email exists
-            cursor.execute("SELECT COUNT(*) FROM users WHERE email = %s", (email,))
+            cursor.execute(
+                "SELECT COUNT(*) FROM users WHERE email = %s", (email,))
             if cursor.fetchone()[0] > 0:
                 conn.rollback()
                 return jsonify({
@@ -72,7 +75,8 @@ class AccountController(Resource):
             # For non-admin users, create associated profile
             if not is_admin:
                 if user_type == 'publisher':
-                    pub_status_id = PublisherStatus.get_by_name('Hoạt động' if status else 'Tạm khóa')
+                    pub_status_id = PublisherStatus.get_by_name(
+                        'Hoạt động' if status else 'Tạm khóa')
                     cursor.execute("""
                         INSERT INTO publisher (ten_publisher, email, so_dien_thoai, pub_status_id, user_id)
                         VALUES (%s, %s, %s, %s, %s)
@@ -110,7 +114,7 @@ class AccountController(Resource):
         try:
             with get_db_connection() as conn:
                 cursor = conn.cursor()
-                
+
                 # Get all users with their roles
                 cursor.execute("""
                     SELECT 
@@ -138,11 +142,12 @@ class AccountController(Resource):
                     LEFT JOIN customer c ON u.user_id = c.user_id
                     ORDER BY u.created_at DESC
                 """)
-                
+
                 users = []
                 for row in cursor.fetchall():
-                    user_type = 'Khách hàng' if row[12] else ('Publisher' if row[7] else 'Admin')
-                    
+                    user_type = 'Khách hàng' if row[12] else (
+                        'Publisher' if row[7] else 'Admin')
+
                     users.append({
                         'user_id': row[0],
                         'username': row[1],
@@ -150,9 +155,11 @@ class AccountController(Resource):
                         'active': row[3],
                         'created_at': row[4].strftime('%d/%m/%Y') if row[4] else None,
                         'role': row[5],
-                        'full_name': row[7] or row[12] or row[1],  # ten_publisher or ho_va_ten or username
+                        # ten_publisher or ho_va_ten or username
+                        'full_name': row[7] or row[12] or row[1],
                         'user_type': user_type,
-                        'status': row[3]  # Use user active status for all types
+                        # Use user active status for all types
+                        'status': row[3]
                     })
 
                 return jsonify({
@@ -171,13 +178,13 @@ class AccountController(Resource):
         try:
             data = request.get_json()
             active = data.get('active')
-            
+
             with get_db_connection() as conn:
                 cursor = conn.cursor()
-                
+
                 # Start transaction
                 conn.autocommit = False
-                
+
                 try:
                     # Update user status
                     cursor.execute("""
@@ -187,7 +194,7 @@ class AccountController(Resource):
                         WHERE user_id = %s
                         RETURNING role_id
                     """, (active, user_id))
-                    
+
                     result = cursor.fetchone()
                     if not result:
                         conn.rollback()
@@ -195,16 +202,16 @@ class AccountController(Resource):
                             'status': 'error',
                             'message': 'User not found'
                         }), 404
-                        
+
                     # Get user type
                     cursor.execute("""
                         SELECT r.name 
                         FROM role r 
                         WHERE r.role_id = %s
                     """, (result[0],))
-                    
+
                     role = cursor.fetchone()[0]
-                    
+
                     # Update associated profile status
                     if role != 'Admin':
                         # Update publisher status if exists
@@ -214,7 +221,7 @@ class AccountController(Resource):
                                 updated_at = CURRENT_TIMESTAMP
                             WHERE user_id = %s
                         """, (active, user_id))
-                        
+
                         # Update customer status if exists
                         cursor.execute("""
                             UPDATE customer 
@@ -222,19 +229,19 @@ class AccountController(Resource):
                                 updated_at = CURRENT_TIMESTAMP
                             WHERE user_id = %s
                         """, (active, user_id))
-                    
+
                     # Commit transaction
                     conn.commit()
-                    
+
                     return jsonify({
                         'status': 'success',
                         'message': 'User status updated successfully'
                     })
-                    
+
                 except Exception as e:
                     conn.rollback()
                     raise e
-                    
+
         except Exception as e:
             return jsonify({
                 'status': 'error',

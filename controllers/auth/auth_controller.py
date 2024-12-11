@@ -9,9 +9,10 @@ from models.auth import Auth
 from models.role import Role
 from models.user import User
 from flask_cors import cross_origin
+from controllers.base_controller import BaseController
 
 
-class LoginController(Resource):
+class LoginController(BaseController):
     @cross_origin(supports_credentials=True)
     def post(self):
         try:
@@ -45,7 +46,7 @@ class LoginController(Resource):
             return {'status': 'error', 'message': str(e)}, 500
 
 
-class RegisterController(Resource):
+class RegisterController(BaseController):
     def post(self):
         try:
             data = request.get_json()

@@ -1,6 +1,7 @@
 from flask import request
 from flask_restful import Resource, marshal_with, fields
 
+from controllers.base_controller import BaseController
 from models.ads_zone import AdsZone
 
 ads_zone_fields = {
@@ -15,7 +16,7 @@ ads_zone_fields = {
 }
 
 
-class AdsZoneController(Resource):
+class AdsZoneController(BaseController):
     @marshal_with(ads_zone_fields)
     def get(self, zone_id=None):
         try:

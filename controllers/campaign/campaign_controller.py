@@ -1,9 +1,9 @@
 from flask import request, jsonify
-from flask_restful import Resource
+from controllers.base_controller import BaseController
 from models.campaign import Campaign
-
-
-class CampaignController(Resource):
+from middlewares.auth_middleware import token_required
+from controllers.base_controller import BaseController
+class CampaignController(BaseController):
     def get(self, camp_id=None):
         try:
             if camp_id:
@@ -33,7 +33,7 @@ class CampaignController(Resource):
 
     def delete(self, camp_id):
         try:
-            Campaign.delete_by_id(camp_id)
+            Campaign.delete(camp_id)
             return jsonify({"message": "Campaign deleted successfully"})
         except Exception as e:
             return jsonify({"error": str(e)})

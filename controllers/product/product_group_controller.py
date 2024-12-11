@@ -2,7 +2,7 @@ from flask import request
 from flask_restful import Resource, fields, marshal_with
 
 from models.product_group import ProductGroup
-
+from controllers.base_controller import BaseController
 product_group_fields = {
     'group_id': fields.Integer,
     'ten_nhom': fields.String,
@@ -12,7 +12,7 @@ product_group_fields = {
     'updated_at': fields.DateTime
 }
 
-class ProductGroupController(Resource):
+class ProductGroupController(BaseController):
     @marshal_with(product_group_fields)
     def get(self, group_id=None):
         try:

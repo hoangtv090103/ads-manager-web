@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập - Novanet</title>
+    <title>Đăng nhập - Ads Manager</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="./js/auth.js"></script>
     <style>
@@ -158,8 +158,8 @@
     </div>
 
     <div class="right-section">
-        <img src="../assets/novanet-logo.png" alt="Novanet" class="logo">
-        <h1 class="login-title">Chào mừng đến với Novanet</h1>
+        <img src="../assets/novanet-logo.png" alt="Ads Manager" class="logo">
+        <h1 class="login-title">Chào mừng đến với Ads Manager</h1>
         <p class="login-subtitle">Bạn vui lòng đăng nhập tài khoản để bắt đầu sử dụng sản phẩm</p>
 
         <form id="loginForm" onsubmit="handleLogin(event)">
@@ -212,7 +212,7 @@
                         throw new Error('Failed to save token');
                     }
                     // Redirect to main page
-                    window.location.href = '/frontend/accounts.html';
+                    window.location.href = '/frontend/campaigns.html';
                 } else {
                     showError(data.message || 'Email hoặc mật khẩu không đúng');
                 }

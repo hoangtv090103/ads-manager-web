@@ -1,9 +1,9 @@
 from flask import request, jsonify
+from controllers.base_controller import BaseController
 from models.transaction_system import TransactionSystem
-from flask_restful import Resource
 
 
-class TransactionController(Resource):
+class TransactionController(BaseController):
     def post(self):
         try:
             data = request.json

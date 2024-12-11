@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tạo chiến dịch - Novanet</title>
+    <title>Tạo chiến dịch - Ads Manager</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
@@ -255,6 +255,58 @@
                 width: 100%;
             }
         }
+
+        .date-input-group {
+            position: relative;
+        }
+
+        .datepicker {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 1000;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 12px;
+            margin-top: 4px;
+            width: 300px;
+        }
+
+        .datepicker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .datepicker-calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+
+        .calendar-day {
+            padding: 8px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .calendar-day:hover {
+            background-color: var(--gray-6);
+        }
+
+        .calendar-day.selected {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .calendar-day.disabled {
+            color: var(--gray-3);
+            cursor: not-allowed;
+        }
     </style>
 </head>
 
@@ -267,7 +319,7 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <!-- <img src="../assets/novanet-logo.png" alt="Novanet" class="logo"> -->
+            <!-- <img src="../assets/novanet-logo.png" alt="Ads Manager" class="logo"> -->
             <span class="logo-text">Ads Manager</span>
         </div>
 
@@ -286,7 +338,7 @@
                 <div class="submenu">
                     <a href="/frontend/product-groups.html">• Danh sách nhóm SP</a>
                     <a href="/frontend/products.html">• Danh sách SP</a>
-                    <a href="/frontend/data-sources.html">• Nguồn cấp d liệu</a>
+                    <a href="/frontend/data-sources.html">• Ngu���n cấp d liệu</a>
                 </div>
             </div>
 
@@ -353,6 +405,16 @@
             <h1 class="page-title">Tạo chiến dịch</h1>
 
             <form id="campaignForm" onsubmit="return validateForm()">
+                <!-- Tài khoản khách hàng -->
+                <div class="form-group">
+                    <label class="form-label">Tài khoản khách hàng</label>
+                    <select class="form-input" name="customer_account" required>
+                        <option value="">Chọn tài khoản khách hàng</option>
+                        <!-- Options sẽ được fill bằng JavaScript -->
+                    </select>
+                    <div class="error-message" id="account-error"></div>
+                </div>
+
                 <!-- Tên chiến dịch -->
                 <div class="form-group">
                     <label class="form-label">Tên chiến dịch</label>
@@ -586,14 +648,41 @@
     // Xử lý hiển thị date picker
     function showDatePicker(icon) {
         const input = icon.previousElementSibling;
+        const existingDatepicker = document.querySelector('.datepicker');
+        if (existingDatepicker) {
+            existingDatepicker.remove();
+        }
+
         const datepicker = document.createElement('div');
         datepicker.className = 'datepicker';
-        datepicker.style.top = (icon.offsetTop + icon.offsetHeight) + 'px';
-        datepicker.style.left = icon.offsetLeft + 'px';
 
-        // Thêm calendar vào đây
-        // Có thể sử dụng thư viện như flatpickr hoặc tự implement
+        // Tạo header của date picker
+        const header = document.createElement('div');
+        header.className = 'datepicker-header';
+        header.innerHTML = `
+            <button type="button" class="prev-month">&lt;</button>
+            <span class="current-month">Tháng 12 2024</span>
+            <button type="button" class="next-month">&gt;</button>
+        `;
 
+        // Tạo lịch
+        const calendar = document.createElement('div');
+        calendar.className = 'datepicker-calendar';
+        
+        // Thêm tên các ngày trong tuần
+        const weekDays = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+        weekDays.forEach(day => {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'calendar-day weekday';
+            dayElement.textContent = day;
+            calendar.appendChild(dayElement);
+        });
+
+        // Thêm các ngày trong tháng
+        // Code tạo ngày sẽ được thêm vào đây...
+
+        datepicker.appendChild(header);
+        datepicker.appendChild(calendar);
         icon.parentElement.appendChild(datepicker);
     }
 
@@ -813,6 +902,31 @@
             }
         }
     }
+
+    // Thêm hàm fetch danh sách tài khoản khách hàng
+    async function fetchCustomerAccounts() {
+        try {
+            const response = await fetchWithAuth(`${baseUrl}/customer-accounts`);
+            if (!response.ok) throw new Error('Failed to fetch customer accounts');
+            const data = await response.json();
+            
+            const select = document.querySelector('select[name="customer_account"]');
+            data.forEach(account => {
+                const option = document.createElement('option');
+                option.value = account.id;
+                option.textContent = account.name;
+                select.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error fetching customer accounts:', error);
+        }
+    }
+
+    // Thêm vào DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', function() {
+        requireAuth();
+        fetchCustomerAccounts();
+    });
 </script>
 
 </html>

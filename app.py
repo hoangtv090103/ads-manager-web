@@ -9,12 +9,12 @@ from controllers.website import *
 from controllers.auth import *
 from controllers.product import *
 from controllers.target_audience import *
-from controllers.user_controller import AccountController
+from controllers.account_controller import AccountController
 from models import create_all_tables
 from middlewares.auth_middleware import token_required
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})  # Enable CORS for all routes
 
 v1 = Blueprint('v1', __name__)
 api = Api(v1)
@@ -33,101 +33,117 @@ api.add_resource(CampaignController,
 # Ads Group routes
 api.add_resource(AdsGroupController,
                  '/ads-groups',
-                 '/ads-groups/<int:ads_group_id>'
+                 '/ads-groups/<int:ads_group_id>',
+                 resource_class_kwargs={'decorators': [token_required]}
                  )
 
 # City routes
 api.add_resource(CityController,
                  '/cities',
-                 '/cities/<int:city_id>'
+                 '/cities/<int:city_id>',
+                 resource_class_kwargs={'decorators': [token_required]}
                  )
 
 # Ads routes
 api.add_resource(AdsController,
                  '/ads',
-                 '/ads/<int:ads_id>'
+                 '/ads/<int:ads_id>',
+                 resource_class_kwargs={'decorators': [token_required]}
                  )
 
 # Website routes
 api.add_resource(WebsiteController,
                  '/websites',
-                 '/websites/<int:website_id>'
+                 '/websites/<int:website_id>',
+                 resource_class_kwargs={'decorators': [token_required]}
                  )
 
 # Ads Zone routes
 api.add_resource(AdsZoneController,
                  '/ads-zones',
-                 '/ads-zones/<int:ads_zone_id>'
+                 '/ads-zones/<int:ads_zone_id>',
+                 resource_class_kwargs={'decorators': [token_required]}
                  )
 
 # Website Price routes
 api.add_resource(WebsitePriceController,
                  '/website-prices',
-                 '/website-prices/<int:price_id>'
+                 '/website-prices/<int:price_id>',
+                 resource_class_kwargs={'decorators': [token_required]}
                  )
 
 # Transaction routes
 api.add_resource(TransactionController,
                  '/transactions',
-                 '/transactions/<int:transaction_id>'
+                 '/transactions/<int:transaction_id>',
+                 resource_class_kwargs={'decorators': [token_required]}
                  )
 
 # Auth routes
 api.add_resource(RegisterController,
-                 '/auth/register', endpoint='register', methods=['POST'],
+                 '/auth/register', endpoint='register',
                  resource_class_kwargs={'decorators': [token_required]}
                  )
 
 # Login routes
 api.add_resource(LoginController,
-                 '/auth/login', endpoint='login', methods=['POST'],
+                 '/auth/login', endpoint='login'
                  )
 
 # Role routes
 api.add_resource(RoleController,
                  '/roles',
-                 '/roles/<int:role_id>'
+                 '/roles/<int:role_id>',
+                 resource_class_kwargs={'decorators': [token_required]}
                  )
 
 # Product routes
 api.add_resource(ProductController,
                  '/products',
-                 '/products/<int:product_id>'
+                 '/products/<int:product_id>',
+                 resource_class_kwargs={'decorators': [token_required]}
                  )
-api.add_resource(ProductImportController, '/products/import')
+
+api.add_resource(ProductImportController,
+                 '/products/import',
+                 resource_class_kwargs={'decorators': [token_required]}
+                 )
 
 # Product Groups routes
 api.add_resource(ProductGroupController,
                  '/product-groups',
-                 '/product-groups/<int:group_id>'
+                 '/product-groups/<int:group_id>',
+                 resource_class_kwargs={'decorators': [token_required]}
                  )
 
 # Data Sources routes
 api.add_resource(DataSourceController,
                  '/data-sources',
-                 '/data-sources/<int:source_id>'
+                 '/data-sources/<int:source_id>',
+                 resource_class_kwargs={'decorators': [token_required]}
                  )
 
 # Target Audience routes
 api.add_resource(TargetAudienceController,
                  '/target-audiences',
-                 '/target-audiences/<int:ta_id>'
+                 '/target-audiences/<int:ta_id>',
+                 resource_class_kwargs={'decorators': [token_required]}
                  )
 
 # Target Audience Status routes
 api.add_resource(TargetAudienceStatusController,
                  '/target-audience-statuses',
-                 '/target-audience-statuses/<int:status_id>'
+                 '/target-audience-statuses/<int:status_id>',
+                 resource_class_kwargs={'decorators': [token_required]}
                  )
-
 
 # User routes
 api.add_resource(AccountController,
                  '/accounts',
                  '/accounts/<int:user_id>',
+                 endpoint='accounts',
                  resource_class_kwargs={'decorators': [token_required]}
                  )
-
 
 create_all_tables()
 if __name__ == '__main__':

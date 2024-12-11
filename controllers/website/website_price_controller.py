@@ -2,7 +2,7 @@ from flask import request
 from flask_restful import Resource, marshal_with, fields
 
 from models.website_price import WebsitePrice
-
+from controllers.base_controller import BaseController
 website_price_fields = {
     'price_id': fields.Integer,
     'pub_id': fields.Integer,
@@ -18,7 +18,7 @@ website_price_fields = {
     'gia_ban': fields.Float
 }
 
-class WebsitePriceController(Resource):
+class WebsitePriceController(BaseController):
     @marshal_with(website_price_fields)
     def get(self, price_id=None):
         try:

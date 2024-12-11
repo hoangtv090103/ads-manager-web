@@ -1,9 +1,11 @@
 from flask import Blueprint, request, jsonify
 from flask_restful import Resource
 from werkzeug.utils import secure_filename
+from controllers.base_controller import BaseController
 from models.product import Product
 
-class ProductImportController(Resource):
+
+class ProductImportController(BaseController):
     def post(self):
         if 'file' not in request.files:
             return {'error': 'No file provided'}, 400

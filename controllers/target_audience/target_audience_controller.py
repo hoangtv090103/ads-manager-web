@@ -1,12 +1,13 @@
 from flask import request, jsonify
 from flask_restful import Resource
+from controllers.base_controller import BaseController
 from models.target_audience import TargetAudience
 import logging
 
 _logger = logging.getLogger(__name__)
 
 
-class TargetAudienceController(Resource):
+class TargetAudienceController(BaseController):
     def get(self, ta_id=None):
         try:
             if ta_id:

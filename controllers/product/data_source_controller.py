@@ -3,7 +3,7 @@ from flask_restful import Resource, fields, marshal_with
 import base64
 
 from models.data_source import DataSource
-
+from controllers.base_controller import BaseController
 data_source_fields = {
     'data_source_id': fields.Integer,
     'ten_nguon': fields.String,
@@ -17,7 +17,7 @@ data_source_fields = {
 }
 
 
-class DataSourceController(Resource):
+class DataSourceController(BaseController):
     @marshal_with(data_source_fields)
     def get(self, source_id=None):
         try:

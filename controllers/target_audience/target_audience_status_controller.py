@@ -1,6 +1,7 @@
 from flask import request
 from flask_restful import Resource, fields, marshal_with
 
+from controllers.base_controller import BaseController
 from models.target_audience_status import TargetAudienceStatus
 import logging
 
@@ -15,7 +16,7 @@ target_audience_status_fields = {
 }
 
 
-class TargetAudienceStatusController(Resource):
+class TargetAudienceStatusController(BaseController):
     @marshal_with(target_audience_status_fields)
     def get(self, status_id=None):
         try:

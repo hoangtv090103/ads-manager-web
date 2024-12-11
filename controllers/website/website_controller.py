@@ -2,9 +2,9 @@ from flask import request, jsonify
 from flask_restful import Resource, marshal_with, fields
 
 from models.website import Website
+from controllers.base_controller import BaseController
 
-
-class WebsiteController(Resource):
+class WebsiteController(BaseController):
     def get(self, website_id=None):
         try:
             data = request.args

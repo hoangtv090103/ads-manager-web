@@ -2,6 +2,7 @@ from flask import request, jsonify
 from flask_restful import Resource, fields, marshal_with
 
 from models.product import Product
+from controllers.base_controller import BaseController
 
 product_fields = {
     'product_id': fields.Integer,
@@ -19,7 +20,7 @@ product_fields = {
     'updated_at': fields.DateTime
 }
 
-class ProductController(Resource):
+class ProductController(BaseController):
     @marshal_with(product_fields)
     def get(self, product_id=None):
         try:

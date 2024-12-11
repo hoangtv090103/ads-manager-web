@@ -2,8 +2,10 @@ from flask import jsonify, request
 from flask_restful import Resource
 from models.city import City
 
+from controllers.base_controller import BaseController
 
-class CityController(Resource):
+
+class CityController(BaseController):
     def get(self):
         try:
             cities = City.get_all()
