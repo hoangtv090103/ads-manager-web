@@ -338,7 +338,6 @@
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
             const selectedPublisher = document.getElementById('publisherFilter').value;
-            
             try {
                 const queryParams = new URLSearchParams({
                     start_date: startDate,
@@ -347,18 +346,37 @@
                     export: true
                 });
                 
-                const response = await fetchWithAuth(`${baseUrl}/websites/report?${queryParams}`);
-                if (!response.ok) {
+                const response = await fetchWithAuth(`${baseUrl}/websites/report?${queryParams}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        'Content-Type': 'application/json'
+                    },
+                    responseType: 'blob'
+                });
+                
+                if (!response.ok || !response.body.success) {
                     throw new Error('Failed to export report');
                 }
                 
                 const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
+                if (!blob) {
+                    throw new Error('Failed to export report');
+                }
+                // Ensure correct MIME type
+                const excelBlob = new Blob([blob], {
+                    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                });
+                
+                const url = window.URL.createObjectURL(excelBlob);
                 const a = document.createElement('a');
                 a.href = url;
                 a.download = `website_report_${startDate}_${endDate}.xlsx`;
+                
+                // Force download as Excel file
                 document.body.appendChild(a);
                 a.click();
+                document.body.removeChild(a);
                 window.URL.revokeObjectURL(url);
             } catch (error) {
                 console.error('Error exporting report:', error);
