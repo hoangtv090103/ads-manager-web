@@ -267,7 +267,7 @@
                 </div>
                 <div class="submenu">
                     <a href="/reports/website">• Báo cáo website</a>
-                    <a href="/reports/zone">��� Báo cáo vùng</a>
+                    <a href="/reports/zone">• Báo cáo vùng</a>
                     <a href="/reports/publisher">• Báo cáo publisher</a>
                     <a href="/reports/ad-format">• Báo cáo định dạng quảng cáo</a>
                 </div>
@@ -314,6 +314,10 @@
         </div>
 
         <h1 class="page-title">Danh sách bảng giá website</h1>
+        <button class="btn-primary" onclick="createPricing()" style="margin-bottom: 24px;">
+            <i class="fas fa-plus"></i>
+            Tạo bảng giá
+        </button>
 
         <div class="tabs">
             <div class="tab active" data-view="website">Website</div>
@@ -322,10 +326,6 @@
 
         <div class="action-bar">
             <div class="controls">
-                <button class="btn-primary" onclick="createPricing()">
-                    <i class="fas fa-plus"></i>
-                    Tạo bảng giá
-                </button>
                 <select class="dropdown" id="websiteSelect">
                     <option value="" selected disabled>Ads Manager.vn - Lebach@example.vn</option>
                     <option value="website1">Kinhdoanh.tuoitre.vn - publisher@gmail.com</option>

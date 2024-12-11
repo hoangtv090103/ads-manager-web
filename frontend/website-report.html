@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo cáo website - Ads Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./styles.css">
+    <script src="./js/auth.js"></script>
+</head>
+
+<body>
+    <!-- Toggle Menu Button -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="../assets/novanet-logo.png" alt="Ads Manager" class="logo">
+            <span class="logo-text">Ads Manager</span>
+        </div>
+
+        <!-- Copy sidebar navigation from campaigns.html -->
+        <nav class="sidebar-nav">
+            <!-- ... (giữ nguyên phần sidebar như trong campaigns.html) ... -->
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header-content">
+            <div style="display: flex; align-items: center; gap: 8px; color: #4F4F4F;">
+                <i class="fas fa-chart-bar"></i>
+                <span style="font-size: 14px;">/ Báo cáo / Báo cáo website</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div>
+                    <div style="font-weight: 500; color: #333; text-align: right;">Lê Bách</div>
+                    <div style="font-size: 12px; color: #828282;">Admin</div>
+                </div>
+                <img src="../assets/avatar.jpg" alt="User Avatar" style="width: 40px; height: 40px; border-radius: 4px;">
+            </div>
+        </div>
+
+        <!-- Report Content -->
+        <div style="background: white; border-radius: 8px; padding: 24px;">
+            <h1 style="margin: 0 0 24px 0; font-size: 20px; color: #333;">Báo cáo Website</h1>
+
+            <!-- Filter Section -->
+            <div class="action-bar">
+                <div class="action-left">
+                    <div class="filter-group">
+                        <select id="publisherFilter" class="form-select">
+                            <option value="">Publisher</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="action-right">
+                    <div class="date-range">
+                        <input type="text" id="dateRange" class="form-input" 
+                               value="12/11/2021 - 12/12/2022" 
+                               style="width: 200px;">
+                    </div>
+                    <button class="btn-primary" onclick="exportReport()">
+                        <i class="fas fa-download"></i>
+                        Xuất báo cáo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-container">
+                <table class="campaign-table">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;">STT</th>
+                            <th>Website</th>
+                            <th>Publisher</th>
+                            <th style="text-align: right;">Lượt xem</th>
+                            <th style="text-align: right;">Lượt nhấn (qc)</th>
+                            <th style="text-align: right;">CTR (%)</th>
+                            <th style="text-align: right;">Tổng giá mua (VNĐ)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportTableBody">
+                        <!-- Data rows will be inserted here -->
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" style="text-align: left;">Số Website: <span id="totalWebsites">20</span></td>
+                            <td style="text-align: right;">400.000.000</td>
+                            <td style="text-align: right;">40.000.000</td>
+                            <td style="text-align: right;">-</td>
+                            <td style="text-align: right;">400.000.000</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const baseUrl = 'http://127.0.0.1:5000/api/v1';
+
+        function formatNumber(value) {
+            if (value === undefined || value === null) return '-';
+            return value.toLocaleString('vi-VN');
+        }
+
+        function formatCurrency(value) {
+            if (value === undefined || value === null) return '-';
+            return value.toLocaleString('vi-VN');
+        }
+
+        function renderReportData(data) {
+            const tbody = document.getElementById('reportTableBody');
+            tbody.innerHTML = '';
+
+            data.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="text-align: center;">${index + 1}</td>
+                    <td><a href="${item.website}" style="color: #0061C1; text-decoration: none;">${item.website}</a></td>
+                    <td>${item.publisher}</td>
+                    <td style="text-align: right;">${formatNumber(item.views)}</td>
+                    <td style="text-align: right;">${formatNumber(item.clicks)}</td>
+                    <td style="text-align: right;">${item.ctr}</td>
+                    <td style="text-align: right;">${formatCurrency(item.total_cost)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Sample data for testing
+        const sampleData = Array(18).fill({
+            website: 'Novanet.vn',
+            publisher: 'Publisher@gmail.com',
+            views: 20000000,
+            clicks: 20000,
+            ctr: '12,121',
+            total_cost: 20000000
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            requireAuth();
+            renderReportData(sampleData);
+        });
+
+        function exportReport() {
+            // Implement export functionality
+            alert('Xuất báo cáo');
+        }
+    </script>
+</body>
+
+</html> 

@@ -20,7 +20,7 @@
         }
 
         * {
-            box-sizing: border-box;
+            box-sizing: border-box; 
             margin: 0;
             padding: 0;
         }
@@ -174,7 +174,7 @@
 
         .date-input-group {
             position: relative;
-            flex: 1;
+            width: 100%;
         }
 
         .date-input-group i {
@@ -187,17 +187,6 @@
 
         #dataSourceSection {
             display: block;
-        }
-
-        /* Date picker styles */
-        .datepicker {
-            position: absolute;
-            background: white;
-            border: 1px solid #E0E0E0;
-            border-radius: 4px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            display: none;
         }
 
         .error-message {
@@ -256,29 +245,11 @@
             }
         }
 
-        .date-input-group {
-            position: relative;
-        }
-
-        .datepicker {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            z-index: 1000;
-            background: white;
-            border: 1px solid #E0E0E0;
-            border-radius: 4px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            padding: 12px;
-            margin-top: 4px;
-            width: 300px;
-        }
-
         .datepicker-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
 
         .datepicker-calendar {
@@ -306,6 +277,39 @@
         .calendar-day.disabled {
             color: var(--gray-3);
             cursor: not-allowed;
+        }
+
+        .weekday {
+            font-weight: 500;
+            color: var(--gray-3);
+        }
+
+        .campaign-type-radio:checked+.campaign-type-btn {
+            background: #0061C1;
+            color: white;
+            border-color: #0061C1;
+            font-weight: 500;
+        }
+
+        .campaign-type-btn {
+            padding: 8px 24px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            background: white;
+            color: #4F4F4F;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .campaign-type-btn:hover {
+            border-color: #0061C1;
+            color: #0061C1;
+        }
+
+        .campaign-type-radio:checked+.campaign-type-btn:hover {
+            color: white;
         }
     </style>
 </head>
@@ -338,7 +342,7 @@
                 <div class="submenu">
                     <a href="/frontend/product-groups.html">• Danh sách nhóm SP</a>
                     <a href="/frontend/products.html">• Danh sách SP</a>
-                    <a href="/frontend/data-sources.html">• Ngu���n cấp d liệu</a>
+                    <a href="/frontend/data-sources.html">• Nguồn cấp dữ liệu</a>
                 </div>
             </div>
 
@@ -407,17 +411,16 @@
             <form id="campaignForm" onsubmit="return validateForm()">
                 <!-- Tài khoản khách hàng -->
                 <div class="form-group">
-                    <label class="form-label">Tài khoản khách hàng</label>
+                    <label class="form-label required">Tài khoản khách hàng</label>
                     <select class="form-input" name="customer_account" required>
                         <option value="">Chọn tài khoản khách hàng</option>
-                        <!-- Options sẽ được fill bằng JavaScript -->
                     </select>
-                    <div class="error-message" id="account-error"></div>
+                    <div class="error-message" id="customer-error"></div>
                 </div>
 
                 <!-- Tên chiến dịch -->
                 <div class="form-group">
-                    <label class="form-label">Tên chiến dịch</label>
+                    <label class="form-label required">Tên chiến dịch</label>
                     <input type="text" class="form-input" name="campaign_name" required>
                     <div class="error-message" id="name-error"></div>
                 </div>
@@ -425,9 +428,17 @@
                 <!-- Loại chiến dịch -->
                 <div class="form-group">
                     <div class="campaign-types">
-                        <button type="button" class="campaign-type-btn" data-type="ecommerce">Ecommerce</button>
-                        <button type="button" class="campaign-type-btn" data-type="display">Display ads</button>
-                        <button type="button" class="campaign-type-btn" data-type="native">Native ads</button>
+                        <input type="radio" id="ecommerce" name="campaign_type" value="ecommerce"
+                            class="campaign-type-radio" hidden>
+                        <label for="ecommerce" class="campaign-type-btn" data-type="ecommerce">Ecommerce</label>
+
+                        <input type="radio" id="display" name="campaign_type" value="display"
+                            class="campaign-type-radio" hidden>
+                        <label for="display" class="campaign-type-btn" data-type="display">Display ads</label>
+
+                        <input type="radio" id="native" name="campaign_type" value="native" class="campaign-type-radio"
+                            hidden>
+                        <label for="native" class="campaign-type-btn" data-type="native">Native ads</label>
                     </div>
                 </div>
 
@@ -464,17 +475,11 @@
                     <div class="form-row">
                         <div class="form-col">
                             <label class="form-label">Ngày bắt đầu</label>
-                            <div class="date-input-group">
-                                <input type="text" class="form-input" name="start_date" required readonly>
-                                <i class="fas fa-calendar" onclick="showDatePicker(this)"></i>
-                            </div>
+                            <input type="datetime-local" class="form-input" name="start_date" required>
                         </div>
                         <div class="form-col">
                             <label class="form-label">Ngày kết thúc</label>
-                            <div class="date-input-group">
-                                <input type="text" class="form-input" name="end_date" required readonly>
-                                <i class="fas fa-calendar" onclick="showDatePicker(this)"></i>
-                            </div>
+                            <input type="datetime-local" class="form-input" name="end_date" required>
                         </div>
                     </div>
                 </div>
@@ -540,10 +545,10 @@
         while (select.options.length > 1) {
             select.remove(1);
         }
-        
+
         // Kiểm tra và chuyển đổi dữ liệu thành mảng nếu cần
-        const sourcesArray = Array.isArray(dataSources) ? dataSources : 
-                            (dataSources.data ? dataSources.data : []);
+        const sourcesArray = Array.isArray(dataSources) ? dataSources :
+            (dataSources.data ? dataSources.data : []);
 
         sourcesArray.forEach(source => {
             const option = document.createElement('option');
@@ -560,7 +565,7 @@
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            
+
             if (data && (Array.isArray(data) || data.data)) {
                 renderDataSources(data);
             } else {
@@ -574,8 +579,8 @@
     document.addEventListener('DOMContentLoaded', () => {
         // Chỉ fetch data sources khi cần thiết
         document.querySelectorAll('.campaign-type-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                if (this.textContent.trim() === 'Ecommerce') {
+            btn.addEventListener('click', function () {
+                if (this.value === 'Ecommerce') {
                     fetchDataSources();
                 }
             });
@@ -585,63 +590,28 @@
     document.getElementById('createForm').addEventListener('submit', onSubmit);
 
     document.addEventListener('DOMContentLoaded', function () {
-        // Campaign type logic
-        const adTypes = document.querySelectorAll('.ad-type');
-        const dataSourceSection = document.getElementById('dataSourceSection');
+        // Lấy các elements cần thiết
+        const ecommerceRadio = document.getElementById('ecommerce');
+        const dataSourceGroup = document.getElementById('dataSourceGroup');
 
-        adTypes.forEach(type => {
-            type.addEventListener('click', function () {
-                // Remove active class from all types
-                adTypes.forEach(t => t.classList.remove('active'));
-                // Add active class to clicked type
-                this.classList.add('active');
+        // Mặc định chọn Ecommerce và hiển thị nguồn dữ liệu
+        ecommerceRadio.checked = true;
+        dataSourceGroup.style.display = 'block';
 
-                // Hide data source for Display and Native
-                const campaignType = this.getAttribute('data-type');
-                if (campaignType === 'display' || campaignType === 'native') {
-                    dataSourceSection.style.display = 'none';
-                } else {
-                    dataSourceSection.style.display = 'block';
+        // Xử lý sự kiện khi thay đổi loại chiến dịch
+        document.querySelectorAll('input[name="campaign_type"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                dataSourceGroup.style.display = this.value === 'ecommerce' ? 'block' : 'none';
+
+                // Nếu chọn loại khác Ecommerce thì reset các giá trị
+                if (this.value !== 'ecommerce') {
+                    const dataSourceSelect = document.querySelector('select[name="data_source"]');
+                    if (dataSourceSelect) dataSourceSelect.value = '';
+
+                    const budgetInputs = dataSourceGroup.querySelectorAll('input[type="number"]');
+                    budgetInputs.forEach(input => input.value = '');
                 }
             });
-        });
-
-        // Form validation
-        const form = document.querySelector('form');
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const requiredFields = form.querySelectorAll('[required]');
-            let isValid = true;
-
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    isValid = false;
-                    field.classList.add('error');
-                } else {
-                    field.classList.remove('error');
-                }
-            });
-
-            if (!isValid) {
-                alert('Vui lòng điền đầy đủ thông tin bắt buộc');
-                return;
-            }
-
-            // Proceed with form submission
-            // Add your submission logic here
-        });
-    });
-
-    // Xử lý chọn loại chiến dịch
-    document.querySelectorAll('.ad-type').forEach(type => {
-        type.addEventListener('click', function () {
-            document.querySelectorAll('.ad-type').forEach(t => t.classList.remove('active'));
-            this.classList.add('active');
-
-            // Hiển thị/ẩn nguồn dữ liệu
-            const dataSourceGroup = document.getElementById('dataSourceGroup');
-            dataSourceGroup.style.display = this.dataset.type === 'ecommerce' ? 'block' : 'none';
         });
     });
 
@@ -656,19 +626,23 @@
         const datepicker = document.createElement('div');
         datepicker.className = 'datepicker';
 
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth();
+        const currentYear = currentDate.getFullYear();
+
         // Tạo header của date picker
         const header = document.createElement('div');
         header.className = 'datepicker-header';
         header.innerHTML = `
             <button type="button" class="prev-month">&lt;</button>
-            <span class="current-month">Tháng 12 2024</span>
+            <span class="current-month">${getMonthName(currentMonth)} ${currentYear}</span>
             <button type="button" class="next-month">&gt;</button>
         `;
 
         // Tạo lịch
         const calendar = document.createElement('div');
         calendar.className = 'datepicker-calendar';
-        
+
         // Thêm tên các ngày trong tuần
         const weekDays = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
         weekDays.forEach(day => {
@@ -679,11 +653,41 @@
         });
 
         // Thêm các ngày trong tháng
-        // Code tạo ngày sẽ được thêm vào đây...
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+
+        // Thêm ngày trống trước ngày đầu tiên
+        for (let i = 0; i < firstDay; i++) {
+            const emptyDay = document.createElement('div');
+            emptyDay.className = 'calendar-day';
+            calendar.appendChild(emptyDay);
+        }
+
+        // Thêm các ngày trong tháng
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'calendar-day';
+            dayElement.textContent = day;
+            dayElement.onclick = () => {
+                input.value = formatDate(new Date(currentYear, currentMonth, day));
+                datepicker.remove();
+            };
+            calendar.appendChild(dayElement);
+        }
 
         datepicker.appendChild(header);
         datepicker.appendChild(calendar);
         icon.parentElement.appendChild(datepicker);
+
+        // Thêm event listener để đóng datepicker khi click ra ngoài
+        document.addEventListener('click', closeDatepicker);
+
+        function closeDatepicker(e) {
+            if (!datepicker.contains(e.target) && e.target !== icon) {
+                datepicker.remove();
+                document.removeEventListener('click', closeDatepicker);
+            }
+        }
     }
 
     // Validate form
@@ -720,8 +724,6 @@
         return isValid;
     }
 
-    // Biến lưu loại quảng cáo được chọn
-    let selectedAdType = '';
 
     // Xử lý chọn loại chiến dịch
     document.addEventListener('DOMContentLoaded', function () {
@@ -743,7 +745,7 @@
                 selectedAdType = this.textContent.trim();
 
                 // Hiển thị/ẩn nguồn dữ liệu
-                if (selectedAdType === 'Ecommerce') {
+                if (selectedAdType === 'ecommerce') {
                     dataSourceGroup.style.display = 'block';
                 } else {
                     dataSourceGroup.style.display = 'none';
@@ -780,7 +782,7 @@
         }
 
         // Validate nguồn dữ liệu chỉ khi chọn Ecommerce
-        if (selectedAdType === 'Ecommerce') {
+        if (selectedAdType === 'ecommerce') {
             const dataSource = document.querySelector('select[name="data_source"]');
             if (!dataSource.value) {
                 isValid = false;
@@ -804,7 +806,7 @@
             const formData = {
                 campaign_name: document.querySelector('input[name="campaign_name"]').value,
                 ad_type: selectedAdType,
-                data_source: selectedAdType === 'Ecommerce' ? document.querySelector('select[name="data_source"]').value : null,
+                data_source: selectedAdType === 'ecommerce' ? document.querySelector('select[name="data_source"]').value : null,
                 total_budget: document.querySelector('input[name="total_budget"]').value,
                 daily_budget: document.querySelector('input[name="daily_budget"]').value,
                 start_date: document.querySelector('input[name="start_date"]').value,
@@ -844,7 +846,7 @@
         scheduleOptions.style.display = this.checked ? 'block' : 'none';
     });
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         requireAuth();
     });
 
@@ -889,7 +891,7 @@
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            
+
             if (data && (Array.isArray(data) || data.data)) {
                 renderDataSources(data);
             } else {
@@ -909,7 +911,7 @@
             const response = await fetchWithAuth(`${baseUrl}/customer-accounts`);
             if (!response.ok) throw new Error('Failed to fetch customer accounts');
             const data = await response.json();
-            
+
             const select = document.querySelector('select[name="customer_account"]');
             data.forEach(account => {
                 const option = document.createElement('option');
@@ -923,10 +925,86 @@
     }
 
     // Thêm vào DOMContentLoaded
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         requireAuth();
         fetchCustomerAccounts();
     });
+
+    // Fetch danh sách khách hàng
+    async function fetchCustomers() {
+        try {
+            const response = await fetchWithAuth(`${baseUrl}/accounts`);
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                const customers = data.data.filter(user => user.user_type === 'Khách hàng');
+                const select = document.querySelector('select[name="customer_account"]');
+
+                customers.forEach(customer => {
+                    const option = document.createElement('option');
+                    option.value = customer.user_id;
+                    option.textContent = customer.full_name;
+                    select.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching customers:', error);
+        }
+    }
+
+    // Helper functions
+    function getMonthName(month) {
+        const months = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+            'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
+        return months[month];
+    }
+
+    function formatDate(date) {
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.campaign-type-radio').forEach(radio => {
+            radio.addEventListener('change', function () {
+                const dataSourceGroup = document.getElementById('dataSourceGroup');
+                if (this.value === 'ecommerce') {
+                    dataSourceGroup.style.display = 'block';
+                    fetchDataSources();
+                } else {
+                    dataSourceGroup.style.display = 'none';
+                }
+            });
+        });
+        requireAuth();
+        fetchCustomers();
+
+        // Ẩn nguồn dữ liệu khi mới load trang
+        const dataSourceGroup = document.getElementById('dataSourceGroup');
+        dataSourceGroup.style.display = 'none';
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Xử lý campaign type radio buttons
+    });
+
+    // Cập nhật hàm validateForm để kiểm tra campaign type
+    function validateForm() {
+        let isValid = true;
+        const form = document.getElementById('campaignForm');
+
+        const selectedType = form.querySelector('input[name="campaign_type"]:checked');
+        if (!selectedType) {
+            isValid = false;
+            document.getElementById('type-error').textContent = 'Vui lòng chọn loại chiến dịch';
+            document.getElementById('type-error').style.display = 'block';
+        }
+
+        return isValid;
+    }
 </script>
 
 </html>

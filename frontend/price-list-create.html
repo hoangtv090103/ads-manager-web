@@ -15,15 +15,17 @@
             padding: 0;
             font-family: 'Inter', sans-serif;
             background-color: #F8F9FA;
-            overflow: hidden;
-            height: 100vh;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
         }
 
         .main-content {
+            flex: 1;
             margin-left: 250px;
             padding: 24px 40px;
-            height: calc(100vh - 48px);
-            overflow-y: auto;
+            min-width: 0;
+            overflow-x: auto;
         }
 
         .breadcrumb {
@@ -46,6 +48,8 @@
             background: white;
             border-radius: 8px;
             padding: 24px;
+            max-width: 100%;
+            overflow-x: auto;
         }
 
         .form-group {
@@ -146,6 +150,8 @@
             border-collapse: collapse;
             margin-top: 16px;
             background: white;
+            min-width: 800px;
+            max-width: 100%;
         }
 
         .price-table th {
@@ -218,6 +224,13 @@
             border: none;
             color: white;
         }
+
+        @media screen and (max-width: 1200px) {
+            .main-content {
+                margin-left: 0;
+                padding: 24px 20px;
+            }
+        }
     </style>
 </head>
 
@@ -260,7 +273,7 @@
 
             <a href="/frontend/deposit.html" class="nav-item">
                 <i class="fas fa-wallet"></i>
-                <span>N��p tiền tài khoản</span>
+                <span>Nạp tiền tài khoản</span>
             </a>
 
             <a href="/frontend/deposit-history.html" class="nav-item">
@@ -322,7 +335,7 @@
             </div>
         </div>
 
-        <h1 class="page-title">T���o bảng giá website mới</h1>
+        <h1 class="page-title">Tạo bảng giá website mới</h1>
 
         <div class="form-container">
             <!-- Website Selection -->
