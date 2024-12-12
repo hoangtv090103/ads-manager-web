@@ -42,7 +42,7 @@ class ZoneReportController(BaseController):
                 
                 # Save to BytesIO
                 excel_file = BytesIO()
-                wb.save(excel_file)size
+                wb.save(excel_file)
                 excel_file.seek(0)
 
                 # Generate filename
