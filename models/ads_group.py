@@ -39,23 +39,27 @@ class AdsGroup:
                 camp_id INTEGER NOT NULL,
                 ads_group_status_id INTEGER NOT NULL,
                 ten_nhom VARCHAR(100),
-                nham_chon_all_san_pham BOOLEAN DEFAULT FALSE,
-                nham_chon_doi_tuong BOOLEAN DEFAULT FALSE,
-                nham_chon_dia_ly VARCHAR(255),
-                gioi_tinh_khong_xac_dinh BOOLEAN DEFAULT FALSE,
-                gioi_tinh_nam BOOLEAN DEFAULT FALSE,
-                gioi_tinh_nu BOOLEAN DEFAULT FALSE,
-                tuoi_less_than_18 BOOLEAN DEFAULT FALSE,
-                tuoi_from_18_to_24 BOOLEAN DEFAULT FALSE,
-                tuoi_from_25_to_34 BOOLEAN DEFAULT FALSE,
-                tuoi_from_35_to_50 BOOLEAN DEFAULT FALSE,
-                tuoi_more_than_50 BOOLEAN DEFAULT FALSE,
+                ngan_sach_ngay DECIMAL(15,2) DEFAULT 0,
+                tong_chi_phi DECIMAL(15,2) DEFAULT 0,
+                luot_xem INTEGER DEFAULT 0,
+                luot_nhan INTEGER DEFAULT 0,
+                ctr DECIMAL(5,2) DEFAULT 0,
+                cpc DECIMAL(10,2) DEFAULT 0,
+                cpm DECIMAL(10,2) DEFAULT 0,
+                so_luong_mua_hang INTEGER DEFAULT 0,
+                conversion_rate DECIMAL(5,2) DEFAULT 0,
+                cps DECIMAL(10,2) DEFAULT 0,
+                videoview3s INTEGER DEFAULT 0,
+                videowatchesat25 INTEGER DEFAULT 0,
+                videowatchesat50 INTEGER DEFAULT 0,
+                videowatchesat75 INTEGER DEFAULT 0,
+                videowatchesat100 INTEGER DEFAULT 0,
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE,
                 FOREIGN KEY (camp_id) REFERENCES campaign(camp_id)
                     ON DELETE CASCADE,
-                FOREIGN KEY (ads_group_status_id) REFERENCES ads_group_status(ads_group_status_id)
+                FOREIGN KEY (ads_group_status_id) REFERENCES ads_group_status(status_id)
                     ON DELETE CASCADE
             )
             ''')
@@ -109,7 +113,6 @@ class AdsGroup:
                 FROM ads_group ag
                 LEFT JOIN campaign c ON ag.camp_id = c.camp_id
                 LEFT JOIN ads_group_status ags ON ag.ads_group_status_id = ags.ads_group_status_id
-                LEFT JOIN ads_type at ON ag.ads_type_id = at.ads_type_id
                 WHERE ag.ads_group_id = %s
             ''', (ads_group_id,))
             row = cursor.fetchone()

@@ -33,24 +33,30 @@ class Campaign:
             cursor.execute('''
             CREATE TABLE IF NOT EXISTS campaign (
                 camp_id SERIAL PRIMARY KEY,
-                ten_chien_dich VARCHAR(255),
                 camp_type_id INTEGER NOT NULL,
-                campstatus_id INTEGER,
-                source_id INTEGER,
-                ngan_sach_ngay FLOAT,
-                tong_chi_phi FLOAT DEFAULT 0,
+                camp_status_id INTEGER NOT NULL,
+                ten_chien_dich VARCHAR(100),
+                ngan_sach_ngay DECIMAL(15,2) DEFAULT 0,
+                tong_chi_phi DECIMAL(15,2) DEFAULT 0,
                 luot_xem INTEGER DEFAULT 0,
                 luot_nhan INTEGER DEFAULT 0,
-                ctr FLOAT DEFAULT 0,
-                cpc FLOAT DEFAULT 0,
-                cpm FLOAT DEFAULT 0,
+                ctr DECIMAL(5,2) DEFAULT 0,
+                cpc DECIMAL(10,2) DEFAULT 0,
+                cpm DECIMAL(10,2) DEFAULT 0,
                 so_luong_mua_hang INTEGER DEFAULT 0,
-                conversion_rate FLOAT DEFAULT 0,
-                cps FLOAT DEFAULT 0,
+                conversion_rate DECIMAL(5,2) DEFAULT 0,
+                cps DECIMAL(10,2) DEFAULT 0,
+                videoview3s INTEGER DEFAULT 0,
+                videowatchesat25 INTEGER DEFAULT 0,
+                videowatchesat50 INTEGER DEFAULT 0,
+                videowatchesat75 INTEGER DEFAULT 0,
+                videowatchesat100 INTEGER DEFAULT 0,
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE,
-                FOREIGN KEY (camp_type_id) REFERENCES campaign_type(type_id)
+                FOREIGN KEY (camp_type_id) REFERENCES campaign_type(camp_type_id)
+                    ON DELETE CASCADE,
+                FOREIGN KEY (camp_status_id) REFERENCES campaign_status(status_id)
                     ON DELETE CASCADE
             )
             ''')

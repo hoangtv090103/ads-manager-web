@@ -9,7 +9,6 @@ class GlobalPrice:
                  sell_price=0, sell_price_unit_id=None, start_date=None,
                  created_at=None, updated_at=None, active=True):
         self.global_price_id = global_price_id
-        self.price_setup_id = price_setup_id
         self.website_id = website_id
         self.is_uniform_price = is_uniform_price
         self.uniform_buy_price = uniform_buy_price
@@ -33,14 +32,13 @@ class GlobalPrice:
             cursor.execute('''
             CREATE TABLE IF NOT EXISTS global_price (
                 global_price_id SERIAL PRIMARY KEY,
-                price_setup_id INTEGER NOT NULL,
                 website_id INTEGER NOT NULL,
                 is_uniform_price BOOLEAN DEFAULT FALSE,
                 uniform_buy_price DECIMAL(15,2),
                 uniform_sell_price DECIMAL(15,2),
                 uniform_buy_price_unit_id INTEGER,
                 uniform_sell_price_unit_id INTEGER,
-                ad_format_id INTEGER,
+                format_id INTEGER,
                 buy_price DECIMAL(15,2),
                 buy_price_unit_id INTEGER,
                 sell_price DECIMAL(15,2),
@@ -58,6 +56,8 @@ class GlobalPrice:
                 FOREIGN KEY (buy_price_unit_id) REFERENCES price_type(price_type_id)
                     ON DELETE SET NULL,
                 FOREIGN KEY (sell_price_unit_id) REFERENCES price_type(price_type_id)
+                    ON DELETE SET NULL,
+                FOREIGN KEY (format_id) REFERENCES ads_format(format_id)
                     ON DELETE SET NULL
             )
             ''')
@@ -214,4 +214,4 @@ class GlobalPrice:
             row = cursor.fetchone()
             if not row:
                 return None
-            return dict(zip([column[0] for column in cursor.description], row)) 
+            return dict(zip([column[0] for column in cursor.description], row))
