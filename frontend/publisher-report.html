@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Báo cáo website - Ads Manager</title>
+    <title>Báo cáo Publisher - Ads Manager</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
@@ -60,7 +60,7 @@
             </a>
 
             <div class="nav-group">
-                <div class="nav-item" onclick="toggleSubmenu(this)">
+                <div class="nav-item active" onclick="toggleSubmenu(this)">
                     <i class="fas fa-chart-bar"></i>
                     <span>Báo cáo</span>
                     <i class="fas fa-chevron-right dropdown-arrow"></i>
@@ -104,29 +104,27 @@
         <div class="header-content">
             <div style="display: flex; align-items: center; gap: 8px; color: #4F4F4F;">
                 <i class="fas fa-chart-bar"></i>
-                <span style="font-size: 14px;">/ Báo cáo / Báo cáo website</span>
+                <span style="font-size: 14px;">/ Báo cáo / Báo cáo Publisher</span>
             </div>
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div>
                     <div style="font-weight: 500; color: #333; text-align: right;">Phanh</div>
                     <div style="font-size: 12px; color: #828282;">Admin</div>
                 </div>
-                <img src="../assets/avatar.jpg" alt="User Avatar"
-                    style="width: 40px; height: 40px; border-radius: 4px;">
+                <img src="../assets/avatar.jpg" alt="User Avatar" style="width: 40px; height: 40px; border-radius: 4px;">
             </div>
         </div>
 
         <!-- Report Content -->
         <div style="background: white; border-radius: 8px; padding: 24px;">
-            <h1 style="margin: 0 0 24px 0; font-size: 20px; color: #333;">Báo cáo Website</h1>
+            <h1 style="margin: 0 0 24px 0; font-size: 20px; color: #333;">Báo cáo Publisher</h1>
 
             <!-- Filter Section -->
             <div class="action-bar">
                 <div class="action-left">
                     <div class="filter-group">
-                        <select id="publisherFilter" class="form-select">
-                            <option value="">Publisher</option>
-                        </select>
+                        <input type="text" id="searchPublisher" class="form-input" 
+                               placeholder="Tìm kiếm Publisher, email..." style="width: 300px;">
                     </div>
                 </div>
 
@@ -149,8 +147,8 @@
                     <thead>
                         <tr>
                             <th style="text-align: center;">STT</th>
-                            <th>Website</th>
-                            <th>Publisher</th>
+                            <th>Tên Publisher</th>
+                            <th>Email</th>
                             <th style="text-align: right;">Lượt xem</th>
                             <th style="text-align: right;">Lượt nhấn (qc)</th>
                             <th style="text-align: right;">CTR (%)</th>
@@ -162,8 +160,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="3" style="text-align: left;">Số Website: <span id="totalWebsites">0</span>
-                            </td>
+                            <td colspan="3" style="text-align: left;">Số Publisher: <span id="totalPublishers">0</span></td>
                             <td style="text-align: right;">0</td>
                             <td style="text-align: right;">0</td>
                             <td style="text-align: right;">-</td>
@@ -178,57 +175,7 @@
     <script>
         const baseUrl = 'http://127.0.0.1:5000/api/v1';
 
-        // Load publishers for filter dropdown
-        async function loadPublishers() {
-            try {
-                const response = await fetchWithAuth(`${baseUrl}/publishers`);
-                const data = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error('Failed to load publishers');
-                }
-
-                const publisherSelect = document.getElementById('publisherFilter');
-                publisherSelect.innerHTML = '<option value="">Publisher</option>';
-                
-                data.publishers.forEach(publisher => {
-                    const option = document.createElement('option');
-                    option.value = publisher.email;
-                    option.textContent = `${publisher.ten_publisher} - ${publisher.email}`;
-                    publisherSelect.appendChild(option);
-                });
-
-                // Add event listener for publisher filter
-                publisherSelect.addEventListener('change', filterReportData);
-            } catch (error) {
-                console.error('Error loading publishers:', error);
-            }
-        }
-
-        // Filter report data based on selected publisher
-        function filterReportData() {
-            const selectedPublisher = document.getElementById('publisherFilter').value;
-            const filteredData = selectedPublisher 
-                ? sampleData.filter(item => item.publisher === selectedPublisher)
-                : sampleData;
-            
-            renderReportData(filteredData);
-            
-            // Update totals
-            const totalViews = filteredData.reduce((sum, item) => sum + item.views, 0);
-            const totalClicks = filteredData.reduce((sum, item) => sum + item.clicks, 0);
-            const totalCost = filteredData.reduce((sum, item) => sum + item.total_cost, 0);
-            
-            document.getElementById('totalWebsites').textContent = filteredData.length;
-            document.querySelector('tfoot tr').innerHTML = `
-                <td colspan="3" style="text-align: left;">Số Website: <span id="totalWebsites">${filteredData.length}</span></td>
-                <td style="text-align: right;">${formatNumber(totalViews)}</td>
-                <td style="text-align: right;">${formatNumber(totalClicks)}</td>
-                <td style="text-align: right;">-</td>
-                <td style="text-align: right;">${formatCurrency(totalCost)}</td>
-            `;
-        }
-
+        // Format functions
         function formatNumber(value) {
             if (value === undefined || value === null) return '-';
             return value.toLocaleString('vi-VN');
@@ -239,90 +186,44 @@
             return value.toLocaleString('vi-VN');
         }
 
-        function renderReportData(data) {
-            const tbody = document.getElementById('reportTableBody');
-            tbody.innerHTML = '';
-
-            data.forEach((item, index) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="text-align: center;">${index + 1}</td>
-                    <td><a href="${item.website}" style="color: #0061C1; text-decoration: none;">${item.website}</a></td>
-                    <td>${item.publisher}</td>
-                    <td style="text-align: right;">${formatNumber(item.views)}</td>
-                    <td style="text-align: right;">${formatNumber(item.clicks)}</td>
-                    <td style="text-align: right;">${item.ctr}</td>
-                    <td style="text-align: right;">${formatCurrency(item.total_cost)}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            requireAuth();
-            loadPublishers();
-            renderReportData(sampleData);
-        });
-
+        // Load and render report data
         async function loadReportData() {
             try {
                 const startDate = document.getElementById('startDate').value;
                 const endDate = document.getElementById('endDate').value;
-                const selectedPublisher = document.getElementById('publisherFilter').value;
-                
+                const searchTerm = document.getElementById('searchPublisher').value;
+
                 const queryParams = new URLSearchParams({
                     start_date: startDate,
                     end_date: endDate,
-                    publisher_email: selectedPublisher,
+                    search: searchTerm,
                     export: false
                 });
-                
-                const response = await fetchWithAuth(`${baseUrl}/websites/report?${queryParams}`);
+
+                const response = await fetchWithAuth(`${baseUrl}/publishers/report?${queryParams}`);
                 const data = await response.json();
-                
+
                 if (!data.success) {
                     throw new Error(data.error || 'Failed to load report data');
                 }
-                
+
                 renderReportData(data.data);
                 updateTotals(data.data);
             } catch (error) {
                 console.error('Error loading report data:', error);
             }
         }
-        
-        function updateTotals(data) {
-            const totalViews = data.reduce((sum, item) => sum + item.total_views, 0);
-            const totalClicks = data.reduce((sum, item) => sum + item.total_clicks, 0);
-            const totalCost = data.reduce((sum, item) => sum + item.total_cost, 0);
-            const avgCTR = data.length > 0 
-                ? (totalClicks / totalViews * 100).toFixed(2) 
-                : 0;
-                
-            document.querySelector('tfoot tr').innerHTML = `
-                <td colspan="3" style="text-align: left;">Số Website: <span id="totalWebsites">${data.length}</span></td>
-                <td style="text-align: right;">${formatNumber(totalViews)}</td>
-                <td style="text-align: right;">${formatNumber(totalClicks)}</td>
-                <td style="text-align: right;">${avgCTR}%</td>
-                <td style="text-align: right;">${formatCurrency(totalCost)}</td>
-            `;
-        }
-        
-        // Thêm event listeners cho date inputs và publisher filter
-        document.getElementById('startDate').addEventListener('change', loadReportData);
-        document.getElementById('endDate').addEventListener('change', loadReportData);
-        document.getElementById('publisherFilter').addEventListener('change', loadReportData);
-        
-        // Cập nhật hàm renderReportData
+
+        // Render report data
         function renderReportData(data) {
             const tbody = document.getElementById('reportTableBody');
             tbody.innerHTML = '';
-            
+
             data.forEach((item, index) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td style="text-align: center;">${index + 1}</td>
-                    <td><a href="${item.ten_website}" style="color: #0061C1; text-decoration: none;">${item.ten_website}</a></td>
+                    <td>${item.ten_publisher}</td>
                     <td>${item.publisher_email}</td>
                     <td style="text-align: right;">${formatNumber(item.total_views)}</td>
                     <td style="text-align: right;">${formatNumber(item.total_clicks)}</td>
@@ -332,21 +233,39 @@
                 tbody.appendChild(tr);
             });
         }
-        
-        // Cập nhật hàm exportReport
+
+        // Update totals
+        function updateTotals(data) {
+            const totalPublishers = data.length;
+            const totalViews = data.reduce((sum, item) => sum + item.total_views, 0);
+            const totalClicks = data.reduce((sum, item) => sum + item.total_clicks, 0);
+            const totalCost = data.reduce((sum, item) => sum + item.total_cost, 0);
+
+            document.getElementById('totalPublishers').textContent = totalPublishers;
+            document.querySelector('tfoot tr').innerHTML = `
+                <td colspan="3" style="text-align: left;">Số Publisher: <span id="totalPublishers">${totalPublishers}</span></td>
+                <td style="text-align: right;">${formatNumber(totalViews)}</td>
+                <td style="text-align: right;">${formatNumber(totalClicks)}</td>
+                <td style="text-align: right;">-</td>
+                <td style="text-align: right;">${formatCurrency(totalCost)}</td>
+            `;
+        }
+
+        // Export report
         async function exportReport() {
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
-            const selectedPublisher = document.getElementById('publisherFilter').value;
+            const searchTerm = document.getElementById('searchPublisher').value;
+
             try {
                 const queryParams = new URLSearchParams({
                     start_date: startDate,
                     end_date: endDate,
-                    publisher_email: selectedPublisher,
+                    search: searchTerm,
                     export: true
                 });
-                
-                const response = await fetchWithAuth(`${baseUrl}/websites/report?${queryParams}`, {
+
+                const response = await fetchWithAuth(`${baseUrl}/publishers/report?${queryParams}`, {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -354,26 +273,26 @@
                     },
                     responseType: 'blob'
                 });
-                
+
                 if (!response.ok) {
                     throw new Error('Failed to export report');
                 }
-                
+
                 const blob = await response.blob();
                 if (!blob) {
                     throw new Error('Failed to export report');
                 }
+
                 // Ensure correct MIME type
                 const excelBlob = new Blob([blob], {
                     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                 });
-                
+
                 const url = window.URL.createObjectURL(excelBlob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `website_report_${startDate}_${endDate}.xlsx`;
-                
-                // Force download as Excel file
+                a.download = `publisher_report_${startDate}_${endDate}.xlsx`;
+
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -383,7 +302,25 @@
                 alert('Có lỗi khi xuất báo cáo');
             }
         }
+
+        // Event listeners
+        document.getElementById('startDate').addEventListener('change', loadReportData);
+        document.getElementById('endDate').addEventListener('change', loadReportData);
+        document.getElementById('searchPublisher').addEventListener('input', loadReportData);
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            requireAuth();
+            // Set default date range (last 30 days)
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today);
+            thirtyDaysAgo.setDate(today.getDate() - 30);
+
+            document.getElementById('startDate').value = thirtyDaysAgo.toISOString().split('T')[0];
+            document.getElementById('endDate').value = today.toISOString().split('T')[0];
+
+            loadReportData();
+        });
     </script>
 </body>
-
 </html>

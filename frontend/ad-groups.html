@@ -37,6 +37,58 @@
         .ad-groups-table tbody td:nth-child(3) {
             border-right: 2px solid #E0E0E0;
         }
+
+        .website-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 16px;
+        }
+
+        .website-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .website-info {
+            flex: 1;
+        }
+
+        .website-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .website-stats {
+            font-size: 12px;
+            color: #666;
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn-add {
+            padding: 6px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: #2F80ED;
+        }
+
+        .search-box {
+            margin-bottom: 16px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+        }
     </style>
 </head>
 
@@ -95,9 +147,9 @@
                 </div>
                 <div class="submenu">
                     <a href="/frontend/website-report.html">• Báo cáo website</a>
-                    <a href="/reports/zone">• Báo cáo vùng</a>
-                    <a href="/reports/publisher">• Báo cáo publisher</a>
-                    <a href="/reports/ad-format">• Báo cáo định dạng quảng cáo</a>
+                    <a href="/frontend/zone-report.html">• Báo cáo vùng</a>
+                    <a href="/frontend/publisher-report.html" class="active">• Báo cáo publisher</a>
+                    <a href="/frontend/ad-format-report.html">• Báo cáo định dạng quảng cáo</a>
                 </div>
             </div>
 
@@ -215,9 +267,52 @@
         </div>
     </div>
 
+    <div class="form-container">
+        <div class="form-title">Tạo nhóm quảng cáo</div>
+
+        <form id="adGroupForm">
+            <div class="form-section">
+                <div class="section-title">Thông tin cơ bản</div>
+                <div class="form-group">
+                    <label class="form-label">Tên nhóm quảng cáo</label>
+                    <input type="text" class="form-input" name="ten_nhom" required>
+                </div>
+            </div>
+
+            <!-- Phần chọn website -->
+            <div class="form-section">
+                <div class="section-title">Chọn website hiển thị</div>
+                <div class="website-selection">
+                    <div class="available-websites">
+                        <div class="list-header">
+                            <span>Danh sách website khả dụng</span>
+                        </div>
+                        <div class="search-box">
+                            <input type="text" placeholder="Tìm kiếm website..." id="website-search">
+                        </div>
+                        <div class="websites" id="available-websites"></div>
+                    </div>
+
+                    <div class="selected-websites">
+                        <div class="list-header">
+                            <span>Website đã chọn</span>
+                        </div>
+                        <div class="websites" id="selected-websites"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Tạo nhóm quảng cáo</button>
+                <button type="button" class="btn-secondary" onclick="window.history.back()">Hủy</button>
+            </div>
+        </form>
+    </div>
+
     <script src="./script.js"></script>
 
     <script>
+        const baseUrl = 'http://127.0.0.1:5000/api/v1';
         document.addEventListener('DOMContentLoaded', function() {
             requireAuth();
             loadAdGroups();
@@ -428,6 +523,101 @@
                 const cells = document.querySelectorAll(`.${columnId}-cell`);
                 cells.forEach(cell => {
                     cell.style.display = this.checked ? 'table-cell' : 'none';
+                });
+            });
+        });
+
+        // Hàm lấy danh sách website có bảng giá và đang hoạt động
+        async function loadAvailableWebsites() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/websites/available`);
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error('Không thể tải danh sách website');
+                }
+
+                // Lọc chỉ lấy website có bảng giá và đang hoạt động
+                const availableWebsites = data.websites.filter(website => 
+                    website.has_price_list && website.active
+                );
+
+                renderAvailableWebsites(availableWebsites);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Đã xảy ra lỗi khi tải danh sách website');
+            }
+        }
+
+        // Hàm render danh sách website khả dụng
+        function renderAvailableWebsites(websites) {
+            const container = document.getElementById('available-websites');
+            container.innerHTML = '';
+
+            websites.forEach(website => {
+                const websiteElement = document.createElement('div');
+                websiteElement.className = 'website-item';
+                websiteElement.innerHTML = `
+                    <div class="website-info">
+                        <div class="website-name">${website.domain}</div>
+                        <div class="website-stats">
+                            <span>Lượt xem: ${formatNumber(website.views)}</span>
+                            <span>CTR: ${website.ctr}%</span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-add" onclick="selectWebsite(${website.id})">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                `;
+                container.appendChild(websiteElement);
+            });
+        }
+
+        // Hàm xử lý khi submit form
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const selectedWebsites = Array.from(document.getElementById('selected-websites').children)
+                .map(el => el.dataset.websiteId);
+
+            // Thêm danh sách website đã chọn vào formData
+            formData.append('website_ids', JSON.stringify(selectedWebsites));
+
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/ad-groups`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Không thể tạo nhóm quảng cáo');
+                }
+
+                alert('Tạo nhóm quảng cáo thành công!');
+                window.location.href = '/frontend/ad-groups.html';
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            requireAuth();
+            loadAvailableWebsites();
+            
+            // Thêm event listener cho form
+            document.getElementById('adGroupForm').addEventListener('submit', handleSubmit);
+            
+            // Thêm search functionality
+            document.getElementById('website-search').addEventListener('input', function(e) {
+                const searchText = e.target.value.toLowerCase();
+                const websites = document.querySelectorAll('#available-websites .website-item');
+                
+                websites.forEach(website => {
+                    const name = website.querySelector('.website-name').textContent.toLowerCase();
+                    website.style.display = name.includes(searchText) ? 'flex' : 'none';
                 });
             });
         });

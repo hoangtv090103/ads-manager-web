@@ -14,6 +14,10 @@ from controllers.publisher.publisher_controller import PublisherController
 from models import create_all_tables
 from middlewares.auth_middleware import token_required
 from controllers.report import WebsiteReportController
+from controllers.report.publisher_report_controller import PublisherReportController
+from controllers.report.zone_report_controller import ZoneReportController
+from controllers.report.ad_format_report_controller import AdFormatReportController
+# from controllers.campaign.campaign_type_controller import CampaignTypeController
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Enable CORS for all routes
@@ -159,6 +163,31 @@ api.add_resource(PublisherController,
                  '/publishers/<int:publisher_id>',
                  resource_class_kwargs={'decorators': [token_required]}
                  )
+
+# Publisher Report routes
+api.add_resource(PublisherReportController,
+                 '/publishers/report',
+                 resource_class_kwargs={'decorators': [token_required]}
+                 )
+
+# Zone Report routes
+api.add_resource(ZoneReportController,
+                 '/zones/report',
+                 resource_class_kwargs={'decorators': [token_required]}
+                 )
+
+# Ad Format Report routes
+api.add_resource(AdFormatReportController,
+                 '/ad-formats/report',
+                 resource_class_kwargs={'decorators': [token_required]}
+                 )
+
+# Campaign Type routes
+# api.add_resource(CampaignTypeController,
+#                  '/campaign-types',
+#                  '/campaign-types/<int:type_id>',
+#                  resource_class_kwargs={'decorators': [token_required]}
+#                  )
 
 create_all_tables()
 if __name__ == '__main__':

@@ -1,8 +1,11 @@
 from flask import request, jsonify
 from controllers.base_controller import BaseController
 from models.campaign import Campaign
+from models.campaign_type import CampaignType
 from middlewares.auth_middleware import token_required
 from controllers.base_controller import BaseController
+
+
 class CampaignController(BaseController):
     def get(self, camp_id=None):
         try:
@@ -17,9 +20,13 @@ class CampaignController(BaseController):
     def post(self):
         try:
             data = request.json
+
             campaign = Campaign(**data)
-            campaign.create()   
-            return jsonify({"message": "Campaign created successfully"})
+            campaign.create()
+            return jsonify({
+                "message": "Campaign created successfully",
+                "campaign_id": campaign.camp_id
+            })
         except Exception as e:
             return jsonify({"error": str(e)})
 

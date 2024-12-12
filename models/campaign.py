@@ -6,12 +6,10 @@ class Campaign:
                  campstatus_id=None, source_id=None, ngan_sach_ngay=0,
                  tong_chi_phi=0, luot_xem=0, luot_nhan=0, ctr=0, cpc=0,
                  cpm=0, so_luong_mua_hang=0, conversion_rate=0, cps=0,
-                 videoview3s=0, videowatchesat25=0, videowatchesat50=0,
-                 videowatchesat75=0, videowatchesat100=0, ngay_bat_dau=None,
-                 ngay_ket_thuc=None, created_at=None, updated_at=None, active=True):
+                 created_at=None, updated_at=None, active=True):
         self.camp_id = camp_id
         self.ten_chien_dich = ten_chien_dich
-        self.camp_type_id = camp_type_id
+        self.camp_type_id = camp_type_id  # 1: Display, 2: Native, 3: Video
         self.campstatus_id = campstatus_id
         self.source_id = source_id
         self.ngan_sach_ngay = ngan_sach_ngay
@@ -24,13 +22,6 @@ class Campaign:
         self.so_luong_mua_hang = so_luong_mua_hang
         self.conversion_rate = conversion_rate
         self.cps = cps
-        self.videoview3s = videoview3s
-        self.videowatchesat25 = videowatchesat25
-        self.videowatchesat50 = videowatchesat50
-        self.videowatchesat75 = videowatchesat75
-        self.videowatchesat100 = videowatchesat100
-        self.ngay_bat_dau = ngay_bat_dau
-        self.ngay_ket_thuc = ngay_ket_thuc
         self.created_at = created_at
         self.updated_at = updated_at
         self.active = active
@@ -43,34 +34,23 @@ class Campaign:
             CREATE TABLE IF NOT EXISTS campaign (
                 camp_id SERIAL PRIMARY KEY,
                 ten_chien_dich VARCHAR(255),
-                camp_type_id INTEGER,
+                camp_type_id INTEGER NOT NULL,
                 campstatus_id INTEGER,
                 source_id INTEGER,
                 ngan_sach_ngay FLOAT,
-                tong_chi_phi FLOAT,
-                luot_xem INT,
-                luot_nhan INT,
-                ctr FLOAT,
-                cpc FLOAT,
-                cpm FLOAT,
-                so_luong_mua_hang INT,
-                conversion_rate FLOAT,
-                cps FLOAT,
-                videoview3s INT,
-                videowatchesat25 INT,
-                videowatchesat50 INT,
-                videowatchesat75 INT,
-                videowatchesat100 INT,
-                ngay_bat_dau DATE,
-                ngay_ket_thuc DATE,
-                created_at TIMESTAMP,
-                updated_at TIMESTAMP,
+                tong_chi_phi FLOAT DEFAULT 0,
+                luot_xem INTEGER DEFAULT 0,
+                luot_nhan INTEGER DEFAULT 0,
+                ctr FLOAT DEFAULT 0,
+                cpc FLOAT DEFAULT 0,
+                cpm FLOAT DEFAULT 0,
+                so_luong_mua_hang INTEGER DEFAULT 0,
+                conversion_rate FLOAT DEFAULT 0,
+                cps FLOAT DEFAULT 0,
+                created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE,
-                FOREIGN KEY (camp_type_id) REFERENCES campaign_type(camp_type_id)
-                    ON DELETE CASCADE,
-                FOREIGN KEY (campstatus_id) REFERENCES campaign_status(campstatus_id)
-                    ON DELETE CASCADE,
-                FOREIGN KEY (source_id) REFERENCES data_source(source_id)
+                FOREIGN KEY (camp_type_id) REFERENCES campaign_type(type_id)
                     ON DELETE CASCADE
             )
             ''')
@@ -85,13 +65,11 @@ class Campaign:
                 source_id, ngan_sach_ngay, tong_chi_phi, 
                 luot_xem, luot_nhan, ctr, cpc, cpm, 
                 so_luong_mua_hang, conversion_rate, cps,
-                videoview3s, videowatchesat25, videowatchesat50,
-                videowatchesat75, videowatchesat100,
-                ngay_bat_dau, ngay_ket_thuc, active
+                created_at, updated_at, active
             )
             VALUES (
                 %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                %s, %s, %s, %s, %s, %s, %s
             )
             RETURNING camp_id
             ''', (
@@ -99,10 +77,7 @@ class Campaign:
                 self.source_id, self.ngan_sach_ngay, self.tong_chi_phi,
                 self.luot_xem, self.luot_nhan, self.ctr, self.cpc,
                 self.cpm, self.so_luong_mua_hang, self.conversion_rate,
-                self.cps, self.videoview3s, self.videowatchesat25,
-                self.videowatchesat50, self.videowatchesat75,
-                self.videowatchesat100, self.ngay_bat_dau,
-                self.ngay_ket_thuc, self.active
+                self.cps, self.created_at, self.updated_at, self.active
             ))
             camp_id = cursor.fetchone()[0]
             conn.commit()
@@ -127,16 +102,9 @@ class Campaign:
                     so_luong_mua_hang, 
                     conversion_rate, 
                     cps, 
-                    videoview3s, 
-                    videowatchesat25, 
-                    videowatchesat50, 
-                    videowatchesat75, 
-                    videowatchesat100, 
-                    ngay_bat_dau, 
-                    ngay_ket_thuc, 
-                    campaign.created_at, 
-                    campaign.updated_at, 
-                    campaign.active 
+                    created_at, 
+                    updated_at, 
+                    active 
                 FROM campaign 
                 LEFT JOIN campaign_type ON campaign.camp_type_id = campaign_type.camp_type_id 
                 ORDER BY campaign.created_at DESC
@@ -174,14 +142,14 @@ class Campaign:
     def update(camp_id, data):
         with get_db_connection() as conn:
             cursor = conn.cursor()
-            
+
             # Build update query dynamically
             update_fields = []
             params = []
             for field, value in data.items():
                 update_fields.append(f"{field} = %s")
                 params.append(value)
-            
+
             if update_fields:
                 params.append(camp_id)
                 query = f'''

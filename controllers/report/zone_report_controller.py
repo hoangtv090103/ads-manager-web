@@ -1,16 +1,17 @@
-from flask import request, jsonify, send_file, make_response
+from flask import request, jsonify, make_response
 from controllers.base_controller import BaseController
-from models.website_report import WebsiteReport
+from models.zone_report import ZoneReport
 from io import BytesIO
 from datetime import datetime
 
 
-class WebsiteReportController(BaseController):
+class ZoneReportController(BaseController):
     def get(self):
         try:
             start_date = request.args.get('start_date')
             end_date = request.args.get('end_date')
-            publisher_email = request.args.get('publisher_email')
+            website_id = request.args.get('website_id')
+            zone_id = request.args.get('zone_id')
             export = request.args.get('export', type=bool)
 
             # Validate dates
@@ -24,15 +25,16 @@ class WebsiteReportController(BaseController):
                         "error": "Invalid date format. Use YYYY-MM-DD"
                     })
 
-            report_data = WebsiteReport.get_report(
+            report_data = ZoneReport.get_report(
                 start_date=start_date,
                 end_date=end_date,
-                publisher_email=publisher_email
+                website_id=website_id,
+                zone_id=zone_id
             )
 
             if export:
                 # Generate Excel file
-                wb = WebsiteReport.generate_excel_report(
+                wb = ZoneReport.generate_excel_report(
                     report_data, 
                     start_date or 'all', 
                     end_date or 'all'
@@ -40,11 +42,11 @@ class WebsiteReportController(BaseController):
                 
                 # Save to BytesIO
                 excel_file = BytesIO()
-                wb.save(excel_file)
+                wb.save(excel_file)size
                 excel_file.seek(0)
 
                 # Generate filename
-                filename = f"website_report_{start_date or 'all'}_{end_date or 'all'}.xlsx"
+                filename = f"zone_report_{start_date or 'all'}_{end_date or 'all'}.xlsx"
 
                 response = make_response(excel_file.getvalue())
                 response.headers.set('Content-Type', 
@@ -66,4 +68,4 @@ class WebsiteReportController(BaseController):
             return jsonify({
                 "success": False,
                 "error": str(e)
-            })
+            }) 

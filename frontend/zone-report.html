@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo cáo vùng quảng cáo - Ads Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./styles.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./script.js"></script>
+</head>
+
+<body>
+    <!-- Toggle Menu Button -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="../assets/novanet-logo.png" alt="Ads Manager" class="logo">
+            <span class="logo-text">Ads Manager</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="/frontend/campaigns.html" class="nav-item">
+                <i class="fas fa-layer-group"></i>
+                <span>Quản lý chiến dịch</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-box"></i>
+                    <span>Quản lý sản phẩm</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/product-groups.html">• Danh sách nhóm SP</a>
+                    <a href="/frontend/products.html">• Danh sách SP</a>
+                    <a href="/frontend/data-sources.html">• Nguồn cấp dữ liệu</a>
+                </div>
+            </div>
+
+            <a href="/frontend/remarking-target.html" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Quản lý đối tượng</span>
+            </a>
+
+            <a href="/frontend/deposit.html" class="nav-item">
+                <i class="fas fa-wallet"></i>
+                <span>Nạp tiền tài khoản</span>
+            </a>
+
+            <a href="/frontend/deposit-history.html" class="nav-item">
+                <i class="fas fa-history"></i>
+                <span>Lịch sử nạp tiền</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Báo cáo</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/website-report.html">• Báo cáo website</a>
+                    <a href="/frontend/zone-report.html">• Báo cáo vùng</a>
+                    <a href="/frontend/publisher-report.html" class="active">• Báo cáo publisher</a>
+                    <a href="/frontend/ad-format-report.html">• Báo cáo định dạng quảng cáo</a>
+                </div>
+            </div>
+
+            <a href="/frontend/publishers.html" class="nav-item">
+                <i class="fas fa-users-cog"></i>
+                <span>Danh sách Publisher</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-globe"></i>
+                    <span>Quản lý website</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/price-lists.html">• Danh sách bảng giá</a>
+                    <a href="/frontend/websites.html">• Danh sách website</a>
+                    <a href="/frontend/ad-zones.html">• Danh sách vùng QC</a>
+                </div>
+            </div>
+
+            <a href="/frontend/accounts.html" class="nav-item">
+                <i class="fas fa-user-shield"></i>
+                <span>Quản lý phân quyền</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="content-wrapper">
+            <div class="page-header">
+                <h1>Báo cáo vùng quảng cáo</h1>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="action-bar">
+                <div class="action-left">
+                    <div style="display: flex; gap: 16px; flex: 1;">
+                        <div class="search-box" style="position: relative; flex: 1;">
+                            <i class="fas fa-search" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #828282;"></i>
+                            <input type="text" id="searchZone" placeholder="Tìm kiếm vùng quảng cáo" style="width: 100%; height: 40px; border: 1px solid #E0E0E0; border-radius: 4px; padding: 0 12px;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-right">
+                    <div class="date-range">
+                        <input type="date" id="startDate" class="form-input" style="width: 150px;">
+                        <span>-</span>
+                        <input type="date" id="endDate" class="form-input" style="width: 150px;">
+                    </div>
+                    <button class="btn-primary" onclick="exportReport()">
+                        <i class="fas fa-download"></i>
+                        Xuất báo cáo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Report Table -->
+            <div class="table-container">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Vùng quảng cáo</th>
+                            <th>Website</th>
+                            <th>Kích thước</th>
+                            <th>Chi phí</th>
+                            <th>Lượt xem</th>
+                            <th>Lượt nhấn</th>
+                            <th>CTR</th>
+                            <th>CPC</th>
+                            <th>CPM</th>
+                            <th>SL mua hàng</th>
+                            <th>% chuyển đổi mua hàng</th>
+                            <th>CPS (VNĐ)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportData">
+                        <!-- Data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const baseUrl = 'http://127.0.0.1:5000/api/v1';
+
+        // Format number with commas
+        function formatNumber(num) {
+            return num ? num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "0";
+        }
+
+        // Load report data
+        async function loadReportData() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/zones/report`);
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.error || 'Failed to load report data');
+                }
+
+                const tbody = document.getElementById('reportData');
+                tbody.innerHTML = '';
+
+                if (!data.data || data.data.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="13" style="text-align: center;">Không có dữ liệu</td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                let totalViews = 0;
+                let totalClicks = 0;
+                let totalPurchases = 0;
+
+                data.data.forEach((item, index) => {
+                    totalViews += item.luot_xem || 0;
+                    totalClicks += item.luot_nhan || 0;
+                    totalPurchases += item.sl_mua_hang || 0;
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${item.ten_vung_quang_cao || '-'}</td>
+                            <td>${item.website_name || '-'}</td>
+                            <td>${item.kich_thuoc || '-'}</td>
+                            <td style="text-align: right;">${formatNumber(item.chi_phi)}</td>
+                            <td style="text-align: right;">${formatNumber(item.luot_xem)}</td>
+                            <td style="text-align: right;">${formatNumber(item.luot_nhan)}</td>
+                            <td style="text-align: right;">${item.ctr}%</td>
+                            <td style="text-align: right;">${formatNumber(item.cpc)}</td>
+                            <td style="text-align: right;">${formatNumber(item.cpm)}</td>
+                            <td style="text-align: right;">${formatNumber(item.sl_mua_hang)}</td>
+                            <td style="text-align: right;">${item.ty_le_chuyen_doi}%</td>
+                            <td style="text-align: right;">${formatNumber(item.cps)}</td>
+                        </tr>
+                    `;
+                });
+
+                // Add totals row
+                tbody.innerHTML += `
+                    <tr class="totals-row">
+                        <td>Tổng:</td>
+                        <td>${data.data.length}</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td style="text-align: right;">${formatNumber(data.data.reduce((sum, item) => sum + (item.chi_phi || 0), 0))}</td>
+                        <td style="text-align: right;">${formatNumber(totalViews)}</td>
+                        <td style="text-align: right;">${formatNumber(totalClicks)}</td>
+                        <td style="text-align: right;">-</td>
+                        <td style="text-align: right;">-</td>
+                        <td style="text-align: right;">-</td>
+                        <td style="text-align: right;">${formatNumber(totalPurchases)}</td>
+                        <td style="text-align: right;">-</td>
+                        <td style="text-align: right;">-</td>
+                    </tr>
+                `;
+            } catch (error) {
+                console.error('Error loading report data:', error);
+                alert('Có lỗi khi tải dữ liệu báo cáo');
+            }
+        }
+
+        // Export report
+        async function exportReport() {
+            try {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+
+                const queryParams = new URLSearchParams({
+                    export: true
+                });
+
+                if (startDate) queryParams.append('start_date', startDate);
+                if (endDate) queryParams.append('end_date', endDate);
+
+                const response = await fetchWithAuth(`${baseUrl}/zones/report?${queryParams}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to export report');
+                }
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `zone_report.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error('Error exporting report:', error);
+                alert('Có lỗi khi xuất báo cáo');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            requireAuth();
+            loadReportData();
+
+            // Add event listeners for date inputs
+            document.getElementById('startDate').addEventListener('change', loadReportData);
+            document.getElementById('endDate').addEventListener('change', loadReportData);
+        });
+    </script>
+</body>
+
+</html>

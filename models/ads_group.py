@@ -66,7 +66,7 @@ class AdsGroup:
             cursor = conn.cursor()
             cursor.execute('''
             INSERT INTO ads_group (camp_id, ads_group_status_id, ten_nhom, nham_chon_all_san_pham, nham_chon_doi_tuong, nham_chon_dia_ly, gioi_tinh_khong_xac_dinh, gioi_tinh_nam, gioi_tinh_nu, tuoi_less_than_18, tuoi_from_18_to_24, tuoi_from_25_to_34, tuoi_from_35_to_50, tuoi_more_than_50)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ''', (self.camp_id, self.ads_group_status_id, self.ten_nhom,
                   self.nham_chon_all_san_pham, self.nham_chon_doi_tuong, self.nham_chon_dia_ly,
                   self.gioi_tinh_khong_xac_dinh, self.gioi_tinh_nam, self.gioi_tinh_nu,
@@ -79,11 +79,16 @@ class AdsGroup:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-                SELECT ag.ads_group_id, ag.ten_nhom, ags.ten_trang_thai, at.ten_loai_quang_cao, ag.tong_chi_phi, ag.luot_xem, ag.luot_nhan, ag.ctr, ag.cpc, ag.cpm, ag.so_luong_mua_hang, ag.conversion_rate, ag.cps, ag.video_view_3s, ag.video_watches_25, ag.video_watches_50, ag.video_watches_75, ag.video_watches_100, ag.product_group_id, ag.ta_id, ag.nham_chon_dia_ly, ag.nham_chon_gioi_tinh, ag.nham_chon_do_tuoi, ag.website_id, ag.active
+                SELECT ag.ads_group_id, ag.ten_nhom, c.ten_chi_tieu, ags.ten_trang_thai, at.ten_loai_quang_cao, 
+                       ag.tong_chi_phi, ag.luot_xem, ag.luot_nhan, ag.ctr, ag.cpc, ag.cpm, 
+                       ag.so_luong_mua_hang as sl_mua_hang, 
+                       ag.conversion_rate as percent_chuyen_doi_mua_hang,
+                       ag.cps, ag.video_view_3s,
+                       CONCAT(ag.bat_dau, ' - ', ag.ket_thuc) as bat_dau_ket_thuc
                 FROM ads_group ag
-                LEFT JOIN campaign c ON ag.camp_id = c.camp_id
+                LEFT JOIN campaign c ON ag.camp_id = c.camp_id 
                 LEFT JOIN ads_group_status ags ON ag.ads_group_status_id = ags.ads_group_status_id
-                LEFT JOIN ads_type at ON ag.ads_type_id = at.ads_type_id
+                WHERE ag.active = true
             ''')
             rows = cursor.fetchall()
             if not rows:
@@ -95,7 +100,12 @@ class AdsGroup:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
- SELECT ag.ads_group_id, ag.ten_nhom, c.ten_chi_tieu, ags.ten_trang_thai, at.ten_loai_quang_cao, ag.tong_chi_phi, ag.luot_xem, ag.luot_nhan, ag.ctr, ag.cpc, ag.cpm, ag.so_luong_mua_hang, ag.conversion_rate, ag.cps, ag.video_view_3s, ag.video_watches_25, ag.video_watches_50, ag.video_watches_75, ag.video_watches_100, ag.product_group_id, ag.ta_id, ag.nham_chon_dia_ly, ag.nham_chon_gioi_tinh, ag.nham_chon_do_tuoi, ag.website_id, ag.active
+                SELECT ag.ads_group_id, ag.ten_nhom, c.ten_chi_tieu, ags.ten_trang_thai, at.ten_loai_quang_cao, 
+                       ag.tong_chi_phi, ag.luot_xem, ag.luot_nhan, ag.ctr, ag.cpc, ag.cpm, 
+                       ag.so_luong_mua_hang, ag.conversion_rate, ag.cps, ag.video_view_3s, 
+                       ag.video_watches_25, ag.video_watches_50, ag.video_watches_75, ag.video_watches_100, 
+                       ag.product_group_id, ag.ta_id, ag.nham_chon_dia_ly, ag.nham_chon_gioi_tinh, 
+                       ag.nham_chon_do_tuoi, ag.website_id, ag.active
                 FROM ads_group ag
                 LEFT JOIN campaign c ON ag.camp_id = c.camp_id
                 LEFT JOIN ads_group_status ags ON ag.ads_group_status_id = ags.ads_group_status_id

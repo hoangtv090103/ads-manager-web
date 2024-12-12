@@ -55,6 +55,7 @@ from .remarketing_setting import RemarketingSetting
 from .remarketing_excluded_website import RemarketingExcludedWebsite
 from .publisher import Publisher
 from .customer import Customer
+from .transaction_system import TransactionSystem
 
 def create_all_tables():
     # 1. Bảng Auth
@@ -95,7 +96,7 @@ def create_all_tables():
     TargetAudience.create_table()
     ProductGroup.create_table()
     Customer.create_table()
-
+    TransactionSystem.create_table()
     # 5. Bảng Mappings & Quan hệ
     AdsDisplay.create_table()
     AdsEcom.create_table()

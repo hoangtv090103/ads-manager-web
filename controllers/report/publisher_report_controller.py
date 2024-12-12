@@ -1,16 +1,16 @@
-from flask import request, jsonify, send_file, make_response
+from flask import request, jsonify, make_response
 from controllers.base_controller import BaseController
-from models.website_report import WebsiteReport
+from models.publisher_report import PublisherReport
 from io import BytesIO
 from datetime import datetime
 
 
-class WebsiteReportController(BaseController):
+class PublisherReportController(BaseController):
     def get(self):
         try:
             start_date = request.args.get('start_date')
             end_date = request.args.get('end_date')
-            publisher_email = request.args.get('publisher_email')
+            search = request.args.get('search')
             export = request.args.get('export', type=bool)
 
             # Validate dates
@@ -24,15 +24,15 @@ class WebsiteReportController(BaseController):
                         "error": "Invalid date format. Use YYYY-MM-DD"
                     })
 
-            report_data = WebsiteReport.get_report(
+            report_data = PublisherReport.get_report(
                 start_date=start_date,
                 end_date=end_date,
-                publisher_email=publisher_email
+                search=search
             )
 
             if export:
                 # Generate Excel file
-                wb = WebsiteReport.generate_excel_report(
+                wb = PublisherReport.generate_excel_report(
                     report_data, 
                     start_date or 'all', 
                     end_date or 'all'
@@ -44,7 +44,7 @@ class WebsiteReportController(BaseController):
                 excel_file.seek(0)
 
                 # Generate filename
-                filename = f"website_report_{start_date or 'all'}_{end_date or 'all'}.xlsx"
+                filename = f"publisher_report_{start_date or 'all'}_{end_date or 'all'}.xlsx"
 
                 response = make_response(excel_file.getvalue())
                 response.headers.set('Content-Type', 

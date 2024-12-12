@@ -1,1 +1,2 @@
 from .website_report_controller import WebsiteReportController
+from .publisher_report_controller import PublisherReportController

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo cáo định dạng quảng cáo - Ads Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./script.js"></script>
+</head>
+
+<body>
+    <!-- Toggle Menu Button -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="../assets/novanet-logo.png" alt="Ads Manager" class="logo">
+            <span class="logo-text">Ads Manager</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="/frontend/campaigns.html" class="nav-item">
+                <i class="fas fa-layer-group"></i>
+                <span>Quản lý chiến dịch</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-box"></i>
+                    <span>Quản lý sản phẩm</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/product-groups.html">• Danh sách nhóm SP</a>
+                    <a href="/frontend/products.html">• Danh sách SP</a>
+                    <a href="/frontend/data-sources.html">• Nguồn cấp dữ liệu</a>
+                </div>
+            </div>
+
+            <a href="/frontend/remarking-target.html" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Quản lý đối tượng</span>
+            </a>
+
+            <a href="/frontend/deposit.html" class="nav-item">
+                <i class="fas fa-wallet"></i>
+                <span>Nạp tiền tài khoản</span>
+            </a>
+
+            <a href="/frontend/deposit-history.html" class="nav-item">
+                <i class="fas fa-history"></i>
+                <span>Lịch sử nạp tiền</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item active" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Báo cáo</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/website-report.html">• Báo cáo website</a>
+                    <a href="/frontend/zone-report.html">• Báo cáo vùng</a>
+                    <a href="/frontend/publisher-report.html">• Báo cáo publisher</a>
+                    <a href="/frontend/ad-format-report.html" class="active">• Báo cáo định dạng quảng cáo</a>
+                </div>
+            </div>
+
+            <a href="/frontend/publishers.html" class="nav-item">
+                <i class="fas fa-users-cog"></i>
+                <span>Danh sách Publisher</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-globe"></i>
+                    <span>Quản lý website</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/price-lists.html">• Danh sách bảng giá</a>
+                    <a href="/frontend/websites.html">• Danh sách website</a>
+                    <a href="/frontend/ad-zones.html">• Danh sách vùng QC</a>
+                </div>
+            </div>
+
+            <a href="/frontend/accounts.html" class="nav-item">
+                <i class="fas fa-user-shield"></i>
+                <span>Quản lý phân quyền</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header-content">
+            <div style="display: flex; align-items: center; gap: 8px; color: #4F4F4F;">
+                <i class="fas fa-chart-bar"></i>
+                <span style="font-size: 14px;">/ Báo cáo / Báo cáo định dạng quảng cáo</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div>
+                    <div style="font-weight: 500; color: #333; text-align: right;">Lê Bách</div>
+                    <div style="font-size: 12px; color: #828282;">Admin</div>
+                </div>
+                <img src="../assets/avatar.jpg" alt="User Avatar"
+                    style="width: 40px; height: 40px; border-radius: 4px;">
+            </div>
+        </div>
+
+        <div style="background: white; border-radius: 8px; padding: 24px;">
+            <h1 style="margin: 0 0 24px 0; font-size: 20px; color: #333;">Báo cáo định dạng quảng cáo</h1>
+
+            <!-- Filter Section -->
+            <div class="action-bar">
+                <div class="action-left">
+                    <div style="display: flex; gap: 16px; flex: 1;">
+                        <div class="search-box" style="position: relative; flex: 1;">
+                            <i class="fas fa-search"
+                                style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #828282;"></i>
+                            <input type="text" id="searchFormat" placeholder="Định dạng quảng cáo"
+                                style="width: 100%; height: 40px; border: 1px solid #E0E0E0; border-radius: 4px; padding: 0 12px;">
+                            <div id="formatDropdown" class="dropdown-content"
+                                style="display: none; position: absolute; top: 44px; left: 0; width: 100%; background: white; border: 1px solid #E0E0E0; border-radius: 4px; max-height: 200px; overflow-y: auto; z-index: 1000;">
+                                <!-- Format options will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-right">
+                    <div class="date-range">
+                        <input type="date" id="startDate" class="form-input" style="width: 150px;">
+                        <span>-</span>
+                        <input type="date" id="endDate" class="form-input" style="width: 150px;">
+                    </div>
+                    <button class="btn-primary" onclick="exportReport()">
+                        <i class="fas fa-download"></i>
+                        Xuất báo cáo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Report Table -->
+            <div class="table-container" style="background: #fff; border-radius: 4px; overflow: hidden;">
+                <table class="report-table" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #F8F9FB;">
+                            <th style="padding: 12px; text-align: center; border-bottom: 1px solid #E0E0E0; width: 50px;">STT</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #E0E0E0;">Định dạng quảng cáo</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #E0E0E0;">Loại quảng cáo</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #E0E0E0;">Kích thước</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #E0E0E0;">Chi phí</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #E0E0E0;">Lượt xem</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #E0E0E0;">Lượt nhấn</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #E0E0E0;">CTR</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #E0E0E0;">CPC</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #E0E0E0;">CPM</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #E0E0E0;">SL mua hàng</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #E0E0E0;">% chuyển đổi mua hàng</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #E0E0E0;">CPS (VNĐ)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportTableBody">
+                        <!-- Data rows will be populated here -->
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4" style="padding: 12px; text-align: left; border-top: 1px solid #E0E0E0;">
+                                Số định dạng quảng cáo: <span id="totalFormats">0</span>
+                            </td>
+                            <td style="padding: 12px; text-align: right; border-top: 1px solid #E0E0E0;">0</td>
+                            <td style="padding: 12px; text-align: right; border-top: 1px solid #E0E0E0;">0</td>
+                            <td style="padding: 12px; text-align: right; border-top: 1px solid #E0E0E0;">0</td>
+                            <td style="padding: 12px; text-align: right; border-top: 1px solid #E0E0E0;">-</td>
+                            <td style="padding: 12px; text-align: right; border-top: 1px solid #E0E0E0;">-</td>
+                            <td style="padding: 12px; text-align: right; border-top: 1px solid #E0E0E0;">-</td>
+                            <td style="padding: 12px; text-align: right; border-top: 1px solid #E0E0E0;">0</td>
+                            <td style="padding: 12px; text-align: right; border-top: 1px solid #E0E0E0;">-</td>
+                            <td style="padding: 12px; text-align: right; border-top: 1px solid #E0E0E0;">-</td>
+                            <td style="padding: 12px; text-align: right; border-top: 1px solid #E0E0E0;">-</td>
+                            <td style="padding: 12px; text-align: right; border-top: 1px solid #E0E0E0;">-</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const baseUrl = 'http://127.0.0.1:5000/api/v1';
+
+        // Format functions
+        function formatNumber(value) {
+            if (value === undefined || value === null) return '-';
+            return value.toLocaleString('vi-VN');
+        }
+
+        function formatCurrency(value) {
+            if (value === undefined || value === null) return '-';
+            return value.toLocaleString('vi-VN');
+        }
+
+        // Initialize date range picker
+        $(function() {
+            $('#dateRange').daterangepicker({
+                opens: 'left',
+                locale: {
+                    format: 'YYYY-MM-DD'
+                }
+            }, function(start, end) {
+                $('#dateRange input').val(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
+            });
+
+            // Set default date range (last 30 days)
+            const today = moment();
+            const thirtyDaysAgo = moment().subtract(30, 'days');
+            $('#dateRange').data('daterangepicker').setStartDate(thirtyDaysAgo);
+            $('#dateRange').data('daterangepicker').setEndDate(today);
+        });
+
+        // Load ad formats
+        async function loadAdFormats() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/ad-formats`);
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.error || 'Failed to load ad formats');
+                }
+
+                const formatDropdown = document.getElementById('formatDropdown');
+                formatDropdown.innerHTML = '';
+                data.data.forEach(format => {
+                    formatDropdown.innerHTML += `<option value="${format.id}">${format.name}</option>`;
+                });
+            } catch (error) {
+                console.error('Error loading ad formats:', error);
+                alert('Có lỗi khi tải định dạng quảng cáo');
+            }
+        }
+
+        // Load and render report data
+        async function loadReportData() {
+            try {
+                const dateRange = $('#dateRange').data('daterangepicker');
+                if (!dateRange) {
+                    console.error('Date range is not initialized');
+                    return;
+                }
+                const startDate = dateRange.startDate.format('YYYY-MM-DD');
+                const endDate = dateRange.endDate.format('YYYY-MM-DD');
+
+                const queryParams = new URLSearchParams({
+                    start_date: startDate,
+                    end_date: endDate,
+                    export: false
+                });
+
+                const response = await fetchWithAuth(`${baseUrl}/ad-formats/report?${queryParams}`);
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.error || 'Failed to load report data');
+                }
+
+                renderReportData(data.data);
+                updateTotals(data.data);
+            } catch (error) {
+                console.error('Error loading report data:', error);
+            }
+        }
+
+        // Render report data
+        function renderReportData(data) {
+            const tbody = document.getElementById('reportTableBody');
+            tbody.innerHTML = '';
+
+            data.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="padding: 12px; text-align: center; border-bottom: 1px solid #E0E0E0;">${index + 1}</td>
+                    <td style="padding: 12px; text-align: left; border-bottom: 1px solid #E0E0E0;">${item.format_name}</td>
+                    <td style="padding: 12px; text-align: left; border-bottom: 1px solid #E0E0E0;">${item.ad_type}</td>
+                    <td style="padding: 12px; text-align: left; border-bottom: 1px solid #E0E0E0;">${item.size}</td>
+                    <td style="padding: 12px; text-align: right; border-bottom: 1px solid #E0E0E0;">${formatCurrency(item.cost)}</td>
+                    <td style="padding: 12px; text-align: right; border-bottom: 1px solid #E0E0E0;">${formatNumber(item.total_views)}</td>
+                    <td style="padding: 12px; text-align: right; border-bottom: 1px solid #E0E0E0;">${formatNumber(item.total_clicks)}</td>
+                    <td style="padding: 12px; text-align: right; border-bottom: 1px solid #E0E0E0;">${item.ctr}%</td>
+                    <td style="padding: 12px; text-align: right; border-bottom: 1px solid #E0E0E0;">${formatCurrency(item.cpc)}</td>
+                    <td style="padding: 12px; text-align: right; border-bottom: 1px solid #E0E0E0;">${formatCurrency(item.cpm)}</td>
+                    <td style="padding: 12px; text-align: right; border-bottom: 1px solid #E0E0E0;">${formatNumber(item.purchases)}</td>
+                    <td style="padding: 12px; text-align: right; border-bottom: 1px solid #E0E0E0;">${item.conversion_rate}%</td>
+                    <td style="padding: 12px; text-align: right; border-bottom: 1px solid #E0E0E0;">${formatCurrency(item.cps)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Update totals
+        function updateTotals(data) {
+            const totalFormats = data.length;
+            const totalViews = data.reduce((sum, item) => sum + item.total_views, 0);
+            const totalClicks = data.reduce((sum, item) => sum + item.total_clicks, 0);
+            const totalCost = data.reduce((sum, item) => sum + item.cost, 0);
+            const totalPurchases = data.reduce((sum, item) => sum + item.purchases, 0);
+
+            document.getElementById('totalFormats').textContent = totalFormats;
+            document.querySelector('tfoot tr').innerHTML = `
+                <td colspan="4" style="padding: 12px; text-align: left; border-top: 1px solid #E0E0E0;">
+                    Số định dạng quảng cáo: <span id="totalFormats">${totalFormats}</span>
+                </td>
+                <td style="padding: 12px; text-align: right; border-top: 1px solid #E0E0E0;">${formatCurrency(totalCost)}</td>
+                <td style="padding: 12px; text-align: right; border-top: 1px solid #E0E0E0;">${formatNumber(totalViews)}</td>
+                <td style="padding: 12px; text-align: right; border-top: 1px solid #E0E0E0;">${formatNumber(totalClicks)}</td>
+                <td style="padding: 12px; text-align: right; border-top: 1px solid #E0E0E0;">-</td>
+                <td style="padding: 12px; text-align: right; border-top: 1px solid #E0E0E0;">-</td>
+                <td style="padding: 12px; text-align: right; border-top: 1px solid #E0E0E0;">-</td>
+                <td style="padding: 12px; text-align: right; border-top: 1px solid #E0E0E0;">${formatNumber(totalPurchases)}</td>
+                <td style="padding: 12px; text-align: right; border-top: 1px solid #E0E0E0;">-</td>
+                <td style="padding: 12px; text-align: right; border-top: 1px solid #E0E0E0;">-</td>
+            `;
+        }
+
+        // Export report
+        async function exportReport() {
+            try {
+                const queryParams = new URLSearchParams({
+                    export: true
+                });
+
+                const response = await fetchWithAuth(`${baseUrl}/ad-formats/report?${queryParams}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to export report');
+                }
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `ad_format_report.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error('Error exporting report:', error);
+                alert('Có lỗi khi xuất báo cáo');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            requireAuth();
+            loadAdFormats();
+            loadReportData();
+        });
+    </script>
+</body>
+
+</html>

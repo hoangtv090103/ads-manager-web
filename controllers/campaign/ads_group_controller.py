@@ -3,7 +3,6 @@ from flask_restful import Resource
 from controllers.base_controller import BaseController
 from models.ads_group import AdsGroup
 
-from controllers.base_controller import BaseController
 class AdsGroupController(BaseController):
     def get(self, ads_group_id=None):
         try:
