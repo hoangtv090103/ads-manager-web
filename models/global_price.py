@@ -38,7 +38,7 @@ class GlobalPrice:
                 uniform_sell_price DECIMAL(15,2),
                 uniform_buy_price_unit_id INTEGER,
                 uniform_sell_price_unit_id INTEGER,
-                format_id INTEGER,
+                ad_format_id INTEGER,
                 buy_price DECIMAL(15,2),
                 buy_price_unit_id INTEGER,
                 sell_price DECIMAL(15,2),
@@ -57,7 +57,7 @@ class GlobalPrice:
                     ON DELETE SET NULL,
                 FOREIGN KEY (sell_price_unit_id) REFERENCES price_type(price_type_id)
                     ON DELETE SET NULL,
-                FOREIGN KEY (format_id) REFERENCES ads_format(format_id)
+                FOREIGN KEY (ad_format_id) REFERENCES ads_format(format_id)
                     ON DELETE SET NULL
             )
             ''')

@@ -56,7 +56,7 @@ class Campaign:
                 active BOOLEAN DEFAULT TRUE,
                 FOREIGN KEY (camp_type_id) REFERENCES campaign_type(camp_type_id)
                     ON DELETE CASCADE,
-                FOREIGN KEY (camp_status_id) REFERENCES campaign_status(status_id)
+                FOREIGN KEY (camp_status_id) REFERENCES campaign_status(campstatus_id)
                     ON DELETE CASCADE
             )
             ''')

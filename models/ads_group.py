@@ -59,7 +59,7 @@ class AdsGroup:
                 active BOOLEAN DEFAULT TRUE,
                 FOREIGN KEY (camp_id) REFERENCES campaign(camp_id)
                     ON DELETE CASCADE,
-                FOREIGN KEY (ads_group_status_id) REFERENCES ads_group_status(status_id)
+                FOREIGN KEY (ads_group_status_id) REFERENCES ads_group_status(ads_group_status_id)
                     ON DELETE CASCADE
             )
             ''')
