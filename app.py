@@ -17,7 +17,6 @@ from controllers.report import WebsiteReportController
 from controllers.report.publisher_report_controller import PublisherReportController
 from controllers.report.zone_report_controller import ZoneReportController
 from controllers.report.ad_format_report_controller import AdFormatReportController
-# from controllers.campaign.campaign_type_controller import CampaignTypeController
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Enable CORS for all routes
@@ -142,12 +141,6 @@ api.add_resource(TargetAudienceController,
                  resource_class_kwargs={'decorators': [token_required]}
                  )
 
-# Target Audience Status routes
-api.add_resource(TargetAudienceStatusController,
-                 '/target-audience-statuses',
-                 '/target-audience-statuses/<int:status_id>',
-                 resource_class_kwargs={'decorators': [token_required]}
-                 )
 
 # User routes
 api.add_resource(AccountController,
