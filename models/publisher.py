@@ -68,3 +68,16 @@ class Publisher:
             cursor.execute(
                 'UPDATE publisher SET active = 0 WHERE publisher_id = %s', (publisher_id,))
             conn.commit()
+
+    @staticmethod
+    def get_by_id(publisher_id):
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT * FROM publisher 
+                WHERE publisher_id = %s AND active = true
+            ''', (publisher_id,))
+            row = cursor.fetchone()
+            if not row:
+                return None
+            return dict(zip([column[0] for column in cursor.description], row))

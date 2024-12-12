@@ -20,7 +20,7 @@
         }
 
         * {
-            box-sizing: border-box; 
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
@@ -408,7 +408,7 @@
         <div class="form-container">
             <h1 class="page-title">Tạo chiến dịch</h1>
 
-            <form id="campaignForm" onsubmit="return validateForm()">
+            <form id="campaignForm" onsubmit="handleSubmit(event)">
                 <!-- Tài khoản khách hàng -->
                 <div class="form-group">
                     <label class="form-label required">Tài khoản khách hàng</label>
@@ -428,17 +428,17 @@
                 <!-- Loại chiến dịch -->
                 <div class="form-group">
                     <div class="campaign-types">
-                        <input type="radio" id="ecommerce" name="campaign_type" value="ecommerce"
+                        <input type="radio" id="ecommerce" name="campaign_type" value="Ecommerce"
                             class="campaign-type-radio" hidden>
                         <label for="ecommerce" class="campaign-type-btn" data-type="ecommerce">Ecommerce</label>
 
-                        <input type="radio" id="display" name="campaign_type" value="display"
+                        <input type="radio" id="display_ads" name="campaign_type" value="Display ads"
                             class="campaign-type-radio" hidden>
-                        <label for="display" class="campaign-type-btn" data-type="display">Display ads</label>
+                        <label for="display_ads" class="campaign-type-btn" data-type="display_ads">Display ads</label>
 
-                        <input type="radio" id="native" name="campaign_type" value="native" class="campaign-type-radio"
+                        <input type="radio" id="native_ads" name="campaign_type" value="Native ads" class="campaign-type-radio"
                             hidden>
-                        <label for="native" class="campaign-type-btn" data-type="native">Native ads</label>
+                        <label for="native_ads" class="campaign-type-btn" data-type="native_ads">Native ads</label>
                     </div>
                 </div>
 
@@ -449,8 +449,6 @@
                             <label class="form-label">Nguồn dữ liệu</label>
                             <select class="form-select" name="data_source">
                                 <option value="">Chọn nguồn dữ liệu</option>
-                                <option value="1">Google Sheet</option>
-                                <option value="2">API</option>
                             </select>
                         </div>
                         <div class="form-col">
@@ -475,11 +473,11 @@
                     <div class="form-row">
                         <div class="form-col">
                             <label class="form-label">Ngày bắt đầu</label>
-                            <input type="datetime-local" class="form-input" name="start_date" required>
+                            <input type="date" class="form-input" name="start_date" required>
                         </div>
                         <div class="form-col">
                             <label class="form-label">Ngày kết thúc</label>
-                            <input type="datetime-local" class="form-input" name="end_date" required>
+                            <input type="date" class="form-input" name="end_date" required>
                         </div>
                     </div>
                 </div>
@@ -491,17 +489,7 @@
                             <input type="checkbox" name="shared_schedule">
                             <span class="slider round"></span>
                         </label>
-                        <span>Các nhóm quảng cáo chung chiến dịch thì dùng chung lịch biểu</span>
-                    </div>
-                    <div class="schedule-options" style="display: none;">
-                        <div class="radio-group">
-                            <input type="radio" name="schedule_type" id="allTime">
-                            <label for="allTime">Chọn toàn thời gian</label>
-                        </div>
-                        <div class="radio-group">
-                            <input type="radio" name="schedule_type" id="customTime">
-                            <label for="customTime">Cài đặt lịch biểu</label>
-                        </div>
+                        <span>Các nhóm quảng cáo chung chiến dịch thì dùng chung lịch bi���u</span>
                     </div>
                 </div>
 
@@ -515,28 +503,74 @@
 
 <script>
     const baseUrl = 'http://127.0.0.1:5000/api/v1';
-    function onSubmit(e) {
+    let selectedAdType = 'Ecommerce'; // Mặc định là Ecommerce
+
+    document.addEventListener('DOMContentLoaded', async function () {
+        try {
+            // Kiểm tra auth
+            requireAuth();
+
+            // Gọi các hàm khởi tạo
+            await fetchCustomers();
+            await fetchDataSources();
+
+            // Set mặc định campaign type là Ecommerce
+            const ecommerceRadio = document.querySelector('input[name="campaign_type"][value="Ecommerce"]');
+            if (ecommerceRadio) {
+                ecommerceRadio.checked = true;
+                selectedAdType = 'Ecommerce'; // Set giá trị mặc định
+            }
+
+            // Hiển thị data source khi load trang vì mặc định là ecommerce
+            const dataSourceGroup = document.getElementById('dataSourceGroup');
+            if (dataSourceGroup) {
+                dataSourceGroup.style.display = 'block';
+            }
+
+            // Xử lý sự kiện thay đổi campaign type
+            document.querySelectorAll('input[name="campaign_type"]').forEach(radio => {
+                radio.addEventListener('change', function () {
+                    selectedAdType = this.value; // Cập nhật selectedAdType khi thay đổi
+                    
+                    if (this.value === 'Display ads' || this.value === 'Native ads') {
+                        dataSourceGroup.style.display = 'none';
+                    } else {
+                        dataSourceGroup.style.display = 'block';
+                        fetchDataSources();
+                    }
+                });
+            });
+        } catch (error) {
+            console.error('Initialization error:', error);
+        }
+    });
+
+    async function handleSubmit(e) {
         e.preventDefault();
 
         // Tạo chiến dịch
-        const ten_chien_dich = document.querySelector('input[name="name"]').value || '';
-        const data_source_id = document.querySelector('select').value || '';
+        const ten_chien_dich = document.querySelector('input[name="campaign_name"]').value || '';
+        const source_id = document.querySelector('select[name="data_source"]').value || '';
         const tong_chi_phi = document.querySelector('input[name="total_budget"]').value || '';
         const ngan_sach_ngay = document.querySelector('input[name="daily_budget"]').value || '';
         const ngay_bat_dau = document.querySelector('input[name="start_date"]').value || '';
         const ngay_ket_thuc = document.querySelector('input[name="end_date"]').value || '';
-        const ads_type = document.querySelector('input[name="ad_type"]:checked').value || '';
+        const ten_loai_chien_dich = document.querySelector('input[name="campaign_type"]:checked').value || '';
 
-        fetch(`${baseUrl}/campaigns`, {
+        const response = await fetchWithAuth(`${baseUrl}/campaigns`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ ten_chien_dich, ads_type, data_source_id, tong_chi_phi, ngan_sach_ngay, ngay_bat_dau, ngay_ket_thuc })
+            body: JSON.stringify({ ten_chien_dich, ten_loai_chien_dich, source_id, tong_chi_phi, ngan_sach_ngay, ngay_bat_dau, ngay_ket_thuc })
         });
 
-        // Chuyển hướng về trang chiến dịch
-        window.location.href = '/frontend/campaigns.html';
+        const data = await response.json();
+        if (data.campaign_id) {
+            window.location.href = `/frontend/campaigns.html`;
+        } else {
+            console.error('Failed to create campaign');
+        }
     }
 
     function renderDataSources(dataSources) {
@@ -560,7 +594,7 @@
 
     async function fetchDataSources() {
         try {
-            const response = await fetch(`${baseUrl}/data-sources`);
+            const response = fetchWithAuth(`${baseUrl}/data-sources`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -576,46 +610,6 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        // Chỉ fetch data sources khi cần thiết
-        document.querySelectorAll('.campaign-type-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                if (this.value === 'Ecommerce') {
-                    fetchDataSources();
-                }
-            });
-        });
-    });
-
-    document.getElementById('createForm').addEventListener('submit', onSubmit);
-
-    document.addEventListener('DOMContentLoaded', function () {
-        // Lấy các elements cần thiết
-        const ecommerceRadio = document.getElementById('ecommerce');
-        const dataSourceGroup = document.getElementById('dataSourceGroup');
-
-        // Mặc định chọn Ecommerce và hiển thị nguồn dữ liệu
-        ecommerceRadio.checked = true;
-        dataSourceGroup.style.display = 'block';
-
-        // Xử lý sự kiện khi thay đổi loại chiến dịch
-        document.querySelectorAll('input[name="campaign_type"]').forEach(radio => {
-            radio.addEventListener('change', function () {
-                dataSourceGroup.style.display = this.value === 'ecommerce' ? 'block' : 'none';
-
-                // Nếu chọn loại khác Ecommerce thì reset các giá trị
-                if (this.value !== 'ecommerce') {
-                    const dataSourceSelect = document.querySelector('select[name="data_source"]');
-                    if (dataSourceSelect) dataSourceSelect.value = '';
-
-                    const budgetInputs = dataSourceGroup.querySelectorAll('input[type="number"]');
-                    budgetInputs.forEach(input => input.value = '');
-                }
-            });
-        });
-    });
-
-    // Xử lý hiển thị date picker
     function showDatePicker(icon) {
         const input = icon.previousElementSibling;
         const existingDatepicker = document.querySelector('.datepicker');
@@ -690,260 +684,22 @@
         }
     }
 
-    // Validate form
-    function validateForm() {
-        let isValid = true;
-        const form = document.getElementById('campaignForm');
-        const requiredFields = form.querySelectorAll('[required]');
-
-        // Reset errors
-        document.querySelectorAll('.error-message').forEach(err => err.style.display = 'none');
-        document.querySelectorAll('.form-input, .form-select').forEach(input => input.classList.remove('error'));
-
-        // Check required fields
-        requiredFields.forEach(field => {
-            if (!field.value.trim()) {
-                isValid = false;
-                field.classList.add('error');
-                const errorDiv = document.getElementById(`${field.name}-error`);
-                if (errorDiv) {
-                    errorDiv.textContent = 'Trường này không được để trống';
-                    errorDiv.style.display = 'block';
-                }
-            }
-        });
-
-        // Check campaign type
-        const selectedType = document.querySelector('.ad-type.active');
-        if (!selectedType) {
-            isValid = false;
-            document.getElementById('type-error').textContent = 'Vui lòng chọn loại chiến dịch';
-            document.getElementById('type-error').style.display = 'block';
-        }
-
-        return isValid;
-    }
-
-
-    // Xử lý chọn loại chiến dịch
-    document.addEventListener('DOMContentLoaded', function () {
-        const dataSourceGroup = document.getElementById('dataSourceGroup');
-        // Ẩn nguồn dữ liệu khi mới load trang
-        dataSourceGroup.style.display = 'none';
-
-        document.querySelectorAll('.campaign-type-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                // Remove active class from all buttons
-                document.querySelectorAll('.campaign-type-btn').forEach(b => {
-                    b.classList.remove('active');
-                });
-
-                // Add active class to clicked button
-                this.classList.add('active');
-
-                // Lưu loại quảng cáo được chọn
-                selectedAdType = this.textContent.trim();
-
-                // Hiển thị/ẩn nguồn dữ liệu
-                if (selectedAdType === 'ecommerce') {
-                    dataSourceGroup.style.display = 'block';
-                } else {
-                    dataSourceGroup.style.display = 'none';
-                    // Reset giá trị của nguồn dữ liệu khi ẩn
-                    const dataSourceSelect = document.querySelector('select[name="data_source"]');
-                    if (dataSourceSelect) {
-                        dataSourceSelect.value = '';
-                    }
-                    // Reset các input ngân sách
-                    const budgetInputs = dataSourceGroup.querySelectorAll('input[type="number"]');
-                    budgetInputs.forEach(input => input.value = '');
-                }
-
-                console.log('Selected Ad Type:', selectedAdType);
-            });
-        });
-    });
-
-    // Thêm vào hàm validateForm() để validate loại quảng cáo
-    function validateForm() {
-        let isValid = true;
-
-        // Validate các trường khác...
-
-        // Validate loại quảng cáo
-        if (!selectedAdType) {
-            isValid = false;
-            // Hiển thị thông báo lỗi
-            const typeError = document.getElementById('type-error');
-            if (typeError) {
-                typeError.textContent = 'Vui lòng chọn loại quảng cáo';
-                typeError.style.display = 'block';
-            }
-        }
-
-        // Validate nguồn dữ liệu chỉ khi chọn Ecommerce
-        if (selectedAdType === 'ecommerce') {
-            const dataSource = document.querySelector('select[name="data_source"]');
-            if (!dataSource.value) {
-                isValid = false;
-                dataSource.classList.add('error');
-                const sourceError = document.getElementById('source-error');
-                if (sourceError) {
-                    sourceError.textContent = 'Vui lòng chọn nguồn dữ liệu';
-                    sourceError.style.display = 'block';
-                }
-            }
-        }
-
-        return isValid;
-    }
-
-    // Khi submit form
-    document.getElementById('campaignForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        if (validateForm()) {
-            const formData = {
-                campaign_name: document.querySelector('input[name="campaign_name"]').value,
-                ad_type: selectedAdType,
-                data_source: selectedAdType === 'ecommerce' ? document.querySelector('select[name="data_source"]').value : null,
-                total_budget: document.querySelector('input[name="total_budget"]').value,
-                daily_budget: document.querySelector('input[name="daily_budget"]').value,
-                start_date: document.querySelector('input[name="start_date"]').value,
-                end_date: document.querySelector('input[name="end_date"]').value,
-                shared_schedule: document.querySelector('input[name="shared_schedule"]').checked
-            };
-
-            console.log('Form Data:', formData); // For debugging
-
-            // Gửi dữ liệu lên server
-            fetch(`${baseUrl}/campaigns`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    // Xử lý response
-                    if (data.success) {
-                        window.location.href = '/frontend/campaigns.html';
-                    } else {
-                        alert('Có lỗi xảy ra khi tạo chiến dịch');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Có lỗi xảy ra khi tạo chiến dịch');
-                });
-        }
-    });
-
-    // Xử lý toggle lịch biểu
-    document.querySelector('input[name="shared_schedule"]').addEventListener('change', function () {
-        const scheduleOptions = document.querySelector('.schedule-options');
-        scheduleOptions.style.display = this.checked ? 'block' : 'none';
-    });
-
-    document.addEventListener('DOMContentLoaded', function () {
-        requireAuth();
-    });
-
-    // Cập nhật hàm onSubmit để sử dụng fetchWithAuth
-    async function onSubmit(e) {
-        e.preventDefault();
-        try {
-            const formData = {
-                ten_chien_dich: document.querySelector('input[name="name"]').value,
-                data_source_id: document.querySelector('select').value,
-                tong_chi_phi: document.querySelector('input[name="total_budget"]').value,
-                ngan_sach_ngay: document.querySelector('input[name="daily_budget"]').value,
-                ngay_bat_dau: document.querySelector('input[name="start_date"]').value,
-                ngay_ket_thuc: document.querySelector('input[name="end_date"]').value,
-                ads_type: document.querySelector('input[name="ad_type"]:checked').value
-            };
-
-            const response = await fetchWithAuth(`${baseUrl}/campaigns`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
-
-            if (!response.ok) {
-                throw new Error('Không thể tạo chiến dịch');
-            }
-
-            window.location.href = '/frontend/campaigns.html';
-        } catch (error) {
-            console.error('Error:', error);
-            alert(error.message);
-        }
-    }
-
-    // Cập nhật hàm fetchDataSources để sử dụng fetchWithAuth
-    async function fetchDataSources() {
-        try {
-            const response = await fetchWithAuth(`${baseUrl}/data-sources`);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const data = await response.json();
-
-            if (data && (Array.isArray(data) || data.data)) {
-                renderDataSources(data);
-            } else {
-                console.error('Invalid data structure:', data);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            if (error.message === 'Unauthorized') {
-                window.location.href = '/frontend/login.html';
-            }
-        }
-    }
 
     // Thêm hàm fetch danh sách tài khoản khách hàng
-    async function fetchCustomerAccounts() {
-        try {
-            const response = await fetchWithAuth(`${baseUrl}/customer-accounts`);
-            if (!response.ok) throw new Error('Failed to fetch customer accounts');
-            const data = await response.json();
-
-            const select = document.querySelector('select[name="customer_account"]');
-            data.forEach(account => {
-                const option = document.createElement('option');
-                option.value = account.id;
-                option.textContent = account.name;
-                select.appendChild(option);
-            });
-        } catch (error) {
-            console.error('Error fetching customer accounts:', error);
-        }
-    }
-
-    // Thêm vào DOMContentLoaded
-    document.addEventListener('DOMContentLoaded', function () {
-        requireAuth();
-        fetchCustomerAccounts();
-    });
-
-    // Fetch danh sách khách hàng
     async function fetchCustomers() {
         try {
-            const response = await fetchWithAuth(`${baseUrl}/accounts`);
+            const response = await fetchWithAuth(`${baseUrl}/customers`);
             const data = await response.json();
 
-            if (data.status === 'success') {
-                const customers = data.data.filter(user => user.user_type === 'Khách hàng');
+            if (data.customers) {
+                const customers = data.customers;
                 const select = document.querySelector('select[name="customer_account"]');
+                select.innerHTML = '<option value="">Chọn khách hàng</option>';
 
                 customers.forEach(customer => {
                     const option = document.createElement('option');
-                    option.value = customer.user_id;
-                    option.textContent = customer.full_name;
+                    option.value = customer.ho_va_ten;
+                    option.textContent = customer.ho_va_ten;
                     select.appendChild(option);
                 });
             }
@@ -966,41 +722,41 @@
         return `${day}/${month}/${year}`;
     }
 
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.campaign-type-radio').forEach(radio => {
-            radio.addEventListener('change', function () {
-                const dataSourceGroup = document.getElementById('dataSourceGroup');
-                if (this.value === 'ecommerce') {
-                    dataSourceGroup.style.display = 'block';
-                    fetchDataSources();
-                } else {
-                    dataSourceGroup.style.display = 'none';
-                }
-            });
-        });
-        requireAuth();
-        fetchCustomers();
-
-        // Ẩn nguồn dữ liệu khi mới load trang
-        const dataSourceGroup = document.getElementById('dataSourceGroup');
-        dataSourceGroup.style.display = 'none';
-    });
-
-    document.addEventListener('DOMContentLoaded', function () {
-        // Xử lý campaign type radio buttons
-    });
-
-    // Cập nhật hàm validateForm để kiểm tra campaign type
+    // Cập nhật hàm validateForm
     function validateForm() {
         let isValid = true;
         const form = document.getElementById('campaignForm');
 
-        const selectedType = form.querySelector('input[name="campaign_type"]:checked');
-        if (!selectedType) {
+        // Validate customer account
+        const customerAccount = form.querySelector('select[name="customer_account"]');
+        if (!customerAccount.value) {
             isValid = false;
-            document.getElementById('type-error').textContent = 'Vui lòng chọn loại chiến dịch';
-            document.getElementById('type-error').style.display = 'block';
+            customerAccount.classList.add('error');
+            document.getElementById('customer-error').textContent = 'Vui lòng chọn tài khoản khách hàng';
+            document.getElementById('customer-error').style.display = 'block';
+        }
+
+        // Validate campaign name
+        const campaignName = form.querySelector('input[name="campaign_name"]');
+        if (!campaignName.value.trim()) {
+            isValid = false;
+            campaignName.classList.add('error');
+            document.getElementById('name-error').textContent = 'Vui lòng nhập tên chiến dịch';
+            document.getElementById('name-error').style.display = 'block';
+        }
+
+        // Validate data source chỉ khi chọn Ecommerce
+        if (selectedAdType === 'Ecommerce') {
+            const dataSource = form.querySelector('select[name="data_source"]');
+            if (!dataSource.value) {
+                isValid = false;
+                dataSource.classList.add('error');
+                const sourceError = document.getElementById('source-error');
+                if (sourceError) {
+                    sourceError.textContent = 'Vui lòng chọn nguồn dữ liệu';
+                    sourceError.style.display = 'block';
+                }
+            }
         }
 
         return isValid;

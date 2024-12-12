@@ -21,7 +21,6 @@ class AccountController(BaseController):
             fullname = data.get('fullname')
             phone = data.get('phone')
             is_admin = data.get('is_admin', False)
-            status = data.get('status', True)
             user_type = data.get('user_type')  # 'publisher' or 'customer'
 
             # Validate required fields
@@ -74,17 +73,15 @@ class AccountController(BaseController):
             # For non-admin users, create associated profile
             if not is_admin:
                 if user_type == 'publisher':
-                    pub_status_id = PublisherStatus.get_by_name(
-                        'Hoạt động' if status else 'Tạm khóa')
                     cursor.execute("""
-                        INSERT INTO publisher (ten_publisher, email, so_dien_thoai, pub_status_id, user_id)
-                        VALUES (%s, %s, %s, %s, %s)
-                    """, (fullname, email, phone, pub_status_id, user_id))
+                        INSERT INTO publisher (ten_publisher, email, so_dien_thoai, user_id)
+                        VALUES (%s, %s, %s, %s)
+                    """, (fullname, email, phone, user_id))
                 elif user_type == 'customer':
                     cursor.execute("""
-                        INSERT INTO customer (ho_va_ten, email_doanh_nghiep, so_dien_thoai, user_id, active)
-                        VALUES (%s, %s, %s, %s, %s)
-                    """, (fullname, email, phone, user_id, True))
+                        INSERT INTO customer (ho_va_ten, email_doanh_nghiep, so_dien_thoai, user_id)
+                        VALUES (%s, %s, %s, %s)
+                    """, (fullname, email, phone, user_id))
 
             # If everything is successful, commit the transaction
             conn.commit()
@@ -109,13 +106,13 @@ class AccountController(BaseController):
             if conn:
                 conn.close()
 
-    def get(self):
+    def get(self, user_id=None):
         try:
             with get_db_connection() as conn:
                 cursor = conn.cursor()
 
                 # Get all users with their roles
-                cursor.execute("""
+                query = """
                     SELECT 
                         u.user_id,
                         u.username,
@@ -127,7 +124,6 @@ class AccountController(BaseController):
                         p.publisher_id,
                         p.ten_publisher,
                         p.so_dien_thoai as publisher_phone,
-                        p.pub_status_id,
                         p.active as publisher_active,
                         -- Customer info
                         c.customer_id,
@@ -140,7 +136,21 @@ class AccountController(BaseController):
                     LEFT JOIN publisher p ON u.user_id = p.user_id
                     LEFT JOIN customer c ON u.user_id = c.user_id
                     ORDER BY u.created_at DESC
-                """)
+                """
+
+                if user_id:
+                    query += """
+                        WHERE u.user_id = %s
+                    """
+                    cursor.execute(query, (user_id,))
+                    row = cursor.fetchone()
+                    if not row:
+                        return jsonify({
+                            'status': 'error',
+                            'message': 'User not found'
+                        }), 404
+                else:
+                    cursor.execute(query)
 
                 users = []
                 for row in cursor.fetchall():

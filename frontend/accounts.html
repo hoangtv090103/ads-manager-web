@@ -316,12 +316,6 @@
     <script>
         const baseUrl = 'http://127.0.0.1:5000/api/v1';
 
-        // Kiểm tra auth khi load trang
-        document.addEventListener('DOMContentLoaded', function() {
-            requireAuth();
-            loadAccounts();
-        });
-
         // Add search params to URL
         async function loadAccounts() {
             try {
@@ -338,7 +332,7 @@
                     // Apply filters
                     if (searchValue) {
                         const searchLower = searchValue.toLowerCase();
-                        filteredData = filteredData.filter(account => 
+                        filteredData = filteredData.filter(account =>
                             account.full_name.toLowerCase().includes(searchLower) ||
                             account.email.toLowerCase().includes(searchLower)
                         );
@@ -412,7 +406,7 @@
                 showWarningPopup(userId);
                 return;
             }
-            
+
             updateUserStatus(userId, newStatus);
         }
 
@@ -445,10 +439,10 @@
             const overlay = document.getElementById('overlay');
             const popup = document.getElementById('warningPopup');
             const checkbox = document.getElementById(`status_${userId}`);
-            
+
             // Reset checkbox về trạng thái ban đầu
             checkbox.checked = true;
-            
+
             overlay.style.display = 'block';
             popup.style.display = 'block';
             popup.dataset.userId = userId;
@@ -458,10 +452,10 @@
             const overlay = document.getElementById('overlay');
             const popup = document.getElementById('warningPopup');
             const userId = popup.dataset.userId;
-            
+
             overlay.style.display = 'none';
             popup.style.display = 'none';
-            
+
             // Reset checkbox về trạng thái ban đầu (active)
             const checkbox = document.getElementById(`status_${userId}`);
             if (checkbox) checkbox.checked = true;
@@ -470,7 +464,7 @@
         async function confirmDeactivate() {
             const popup = document.getElementById('warningPopup');
             const userId = popup.dataset.userId;
-            
+
             try {
                 await updateUserStatus(userId, false);
                 closeWarningPopup();
@@ -488,7 +482,8 @@
 
         // Initialize page
         document.addEventListener('DOMContentLoaded', () => {
-            // Load initial data
+            // Kiểm tra auth và load data một lần duy nhất
+            requireAuth();
             loadAccounts();
 
             // Add filter handlers

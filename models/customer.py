@@ -126,3 +126,16 @@ class Customer:
             cursor.execute(
                 'UPDATE customer SET active = false WHERE customer_id = %s', (customer_id,))
             conn.commit()
+
+    @staticmethod
+    def get_by_id(customer_id):
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT * FROM customer 
+                WHERE customer_id = %s AND active = true
+            ''', (customer_id,))
+            row = cursor.fetchone()
+            if not row:
+                return None
+            return dict(zip([column[0] for column in cursor.description], row))

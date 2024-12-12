@@ -50,7 +50,7 @@ class DataSource:
             cursor.execute('''
                 SELECT ds.source_id, ds.ten_nguon_du_lieu, ds.source_status_id,
                        ds.user_id, ds.created_at, ds.updated_at,
-                       u.username, ss.status_name
+                       u.username, ss.ten_trang_thai
                 FROM data_source ds
                 LEFT JOIN users u ON ds.user_id = u.user_id
                 LEFT JOIN source_status ss ON ds.source_status_id = ss.source_status_id

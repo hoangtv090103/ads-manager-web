@@ -19,6 +19,14 @@ class CampaignType:
                 active BOOLEAN DEFAULT TRUE
             )
             ''')
+            if len(CampaignType.get_all()) == 0:
+                # Tạo dữ liệu mặc định
+                cursor.execute('''
+                    INSERT INTO campaign_type (ten_loai_chien_dich)
+                    VALUES ('Display Ads'), ('Native Ads'), ('Ecommerce')
+                    ON CONFLICT DO NOTHING
+                ''')
+
             conn.commit()
 
     def create(self):
@@ -60,6 +68,17 @@ class CampaignType:
             return dict(zip([column[0] for column in cursor.description], row))
 
     @staticmethod
+    def get_by_name(ten_loai_chien_dich):
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT camp_type_id FROM campaign_type WHERE ten_loai_chien_dich = %s
+            ''', (ten_loai_chien_dich,))
+            row = cursor.fetchone()
+            return row[0] if row else None
+            
+
+    @staticmethod
     def update(camp_type_id, data={}):
         with get_db_connection() as conn:
             cursor = conn.cursor()
@@ -91,4 +110,3 @@ class CampaignType:
             WHERE camp_type_id = %s
             ''', (camp_type_id,))
             conn.commit()
-

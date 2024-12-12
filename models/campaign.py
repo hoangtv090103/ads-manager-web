@@ -3,13 +3,16 @@ from configs.db import get_db_connection
 
 class Campaign:
     def __init__(self, camp_id=None, ten_chien_dich="", camp_type_id=None,
-                 campstatus_id=None, source_id=None, ngan_sach_ngay=0,
+                 customer_id=None, campstatus_id=None, source_id=None, ngan_sach_ngay=0,
                  tong_chi_phi=0, luot_xem=0, luot_nhan=0, ctr=0, cpc=0,
                  cpm=0, so_luong_mua_hang=0, conversion_rate=0, cps=0,
-                 created_at=None, updated_at=None, active=True):
+                 videoview3s=0, videowatchesat25=0, videowatchesat50=0,
+                 videowatchesat75=0, videowatchesat100=0,
+                 created_at=None, updated_at=None, active=True, ngay_bat_dau=None, ngay_ket_thuc=None):
         self.camp_id = camp_id
         self.ten_chien_dich = ten_chien_dich
         self.camp_type_id = camp_type_id  # 1: Display, 2: Native, 3: Video
+        self.customer_id = customer_id
         self.campstatus_id = campstatus_id
         self.source_id = source_id
         self.ngan_sach_ngay = ngan_sach_ngay
@@ -22,6 +25,13 @@ class Campaign:
         self.so_luong_mua_hang = so_luong_mua_hang
         self.conversion_rate = conversion_rate
         self.cps = cps
+        self.videoview3s = videoview3s
+        self.videowatchesat25 = videowatchesat25
+        self.videowatchesat50 = videowatchesat50
+        self.videowatchesat75 = videowatchesat75
+        self.videowatchesat100 = videowatchesat100
+        self.ngay_bat_dau = ngay_bat_dau
+        self.ngay_ket_thuc = ngay_ket_thuc
         self.created_at = created_at
         self.updated_at = updated_at
         self.active = active
@@ -33,8 +43,10 @@ class Campaign:
             cursor.execute('''
             CREATE TABLE IF NOT EXISTS campaign (
                 camp_id SERIAL PRIMARY KEY,
-                camp_type_id INTEGER NOT NULL,
-                camp_status_id INTEGER NOT NULL,
+                customer_id INTEGER,
+                camp_type_id INTEGER,
+                campstatus_id INTEGER,
+                source_id INTEGER,
                 ten_chien_dich VARCHAR(100),
                 ngan_sach_ngay DECIMAL(15,2) DEFAULT 0,
                 tong_chi_phi DECIMAL(15,2) DEFAULT 0,
@@ -51,13 +63,15 @@ class Campaign:
                 videowatchesat50 INTEGER DEFAULT 0,
                 videowatchesat75 INTEGER DEFAULT 0,
                 videowatchesat100 INTEGER DEFAULT 0,
+                ngay_bat_dau TIMESTAMPTZ,
+                ngay_ket_thuc TIMESTAMPTZ,
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE,
-                FOREIGN KEY (camp_type_id) REFERENCES campaign_type(camp_type_id)
-                    ON DELETE CASCADE,
-                FOREIGN KEY (camp_status_id) REFERENCES campaign_status(campstatus_id)
-                    ON DELETE CASCADE
+                FOREIGN KEY (customer_id) REFERENCES users(user_id) ON DELETE CASCADE,
+                FOREIGN KEY (camp_type_id) REFERENCES campaign_type(camp_type_id) ON DELETE CASCADE,
+                FOREIGN KEY (campstatus_id) REFERENCES campaign_status(campstatus_id) ON DELETE CASCADE,
+                FOREIGN KEY (source_id) REFERENCES data_source(source_id) ON DELETE CASCADE
             )
             ''')
             conn.commit()
@@ -68,22 +82,19 @@ class Campaign:
             cursor.execute('''
             INSERT INTO campaign (
                 ten_chien_dich, camp_type_id, campstatus_id, 
-                source_id, ngan_sach_ngay, tong_chi_phi, 
-                luot_xem, luot_nhan, ctr, cpc, cpm, 
-                so_luong_mua_hang, conversion_rate, cps,
+                source_id, ngan_sach_ngay, tong_chi_phi,
+                ngay_bat_dau, ngay_ket_thuc,
                 created_at, updated_at, active
             )
             VALUES (
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                %s, %s, %s, %s, %s, %s, %s
+                %s, %s, %s, %s, %s, %s, %s, %s, 
+                CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, TRUE
             )
             RETURNING camp_id
             ''', (
                 self.ten_chien_dich, self.camp_type_id, self.campstatus_id,
                 self.source_id, self.ngan_sach_ngay, self.tong_chi_phi,
-                self.luot_xem, self.luot_nhan, self.ctr, self.cpc,
-                self.cpm, self.so_luong_mua_hang, self.conversion_rate,
-                self.cps, self.created_at, self.updated_at, self.active
+                self.ngay_bat_dau, self.ngay_ket_thuc
             ))
             camp_id = cursor.fetchone()[0]
             conn.commit()
@@ -95,22 +106,29 @@ class Campaign:
             cursor = conn.cursor()
             cursor.execute(
                 '''SELECT 
-                    camp_id, 
-                    ten_chien_dich, 
+                    campaign.camp_id, 
+                    campaign.ten_chien_dich, 
                     campaign_type.ten_loai_chien_dich AS ten_loai_quang_cao,
-                    ngan_sach_ngay, 
-                    tong_chi_phi, 
-                    luot_xem, 
-                    luot_nhan, 
-                    ctr, 
-                    cpc, 
-                    cpm, 
-                    so_luong_mua_hang, 
-                    conversion_rate, 
-                    cps, 
-                    created_at, 
-                    updated_at, 
-                    active 
+                    campaign.ngan_sach_ngay, 
+                    campaign.tong_chi_phi, 
+                    campaign.luot_xem, 
+                    campaign.luot_nhan, 
+                    campaign.ctr, 
+                    campaign.cpc, 
+                    campaign.cpm, 
+                    campaign.so_luong_mua_hang, 
+                    campaign.conversion_rate, 
+                    campaign.cps, 
+                    campaign.videoview3s, 
+                    campaign.videowatchesat25, 
+                    campaign.videowatchesat50, 
+                    campaign.videowatchesat75, 
+                    campaign.videowatchesat100,
+                    campaign.ngay_bat_dau, 
+                    campaign.ngay_ket_thuc,
+                    campaign.created_at, 
+                    campaign.updated_at, 
+                    campaign.active 
                 FROM campaign 
                 LEFT JOIN campaign_type ON campaign.camp_type_id = campaign_type.camp_type_id 
                 ORDER BY campaign.created_at DESC
@@ -139,8 +157,9 @@ class Campaign:
     def get_by_name(ten_chien_dich):
         with get_db_connection() as conn:
             cursor = conn.cursor()
+            like_pattern = f'%{ten_chien_dich}%'
             cursor.execute(
-                'SELECT * FROM campaign WHERE ten_chien_dich ILIKE %s', (f'%{ten_chien_dich}%',))
+                'SELECT * FROM campaign WHERE ten_chien_dich ILIKE %s', (like_pattern,))
             rows = cursor.fetchall()
             return [dict(zip([column[0] for column in cursor.description], row)) for row in rows]
 
@@ -148,24 +167,29 @@ class Campaign:
     def update(camp_id, data):
         with get_db_connection() as conn:
             cursor = conn.cursor()
-
+            
             # Build update query dynamically
             update_fields = []
             params = []
             for field, value in data.items():
                 update_fields.append(f"{field} = %s")
                 params.append(value)
-
+            
             if update_fields:
                 params.append(camp_id)
                 query = f'''
                 UPDATE campaign 
-                SET {', '.join(update_fields)}, updated_at = CURRENT_TIMESTAMP
+                SET {', '.join(update_fields)}
                 WHERE camp_id = %s
+                RETURNING camp_id
                 '''
+                
                 cursor.execute(query, params)
+                updated_row = cursor.fetchone()
                 conn.commit()
-                return True
+                
+                return updated_row is not None
+                
             return False
 
     @staticmethod

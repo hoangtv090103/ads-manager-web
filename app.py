@@ -5,6 +5,7 @@ from controllers.auth.auth_controller import LoginController, RegisterController
 from controllers.campaign.campaign_controller import CampaignController
 from controllers.campaign.ads_group_controller import AdsGroupController
 from controllers import *
+from controllers.campaign.campaign_type_controller import CampaignTypeController
 from controllers.website import *
 from controllers.auth import *
 from controllers.product import *
@@ -17,6 +18,7 @@ from controllers.report import WebsiteReportController
 from controllers.report.publisher_report_controller import PublisherReportController
 from controllers.report.zone_report_controller import ZoneReportController
 from controllers.report.ad_format_report_controller import AdFormatReportController
+from controllers.customer.customer_controller import CustomerController
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Enable CORS for all routes
@@ -146,7 +148,6 @@ api.add_resource(TargetAudienceController,
 api.add_resource(AccountController,
                  '/accounts',
                  '/accounts/<int:user_id>',
-                 endpoint='accounts',
                  resource_class_kwargs={'decorators': [token_required]}
                  )
 
@@ -176,11 +177,18 @@ api.add_resource(AdFormatReportController,
                  )
 
 # Campaign Type routes
-# api.add_resource(CampaignTypeController,
-#                  '/campaign-types',
-#                  '/campaign-types/<int:type_id>',
-#                  resource_class_kwargs={'decorators': [token_required]}
-#                  )
+api.add_resource(CampaignTypeController,
+                 '/campaign-types',
+                 '/campaign-types/<int:type_id>',
+                 resource_class_kwargs={'decorators': [token_required]}
+                 )
+
+# Customer routes
+api.add_resource(CustomerController,
+                 '/customers',
+                 '/customers/<int:customer_id>',
+                 resource_class_kwargs={'decorators': [token_required]}
+                 )
 
 create_all_tables()
 if __name__ == '__main__':
