@@ -17,7 +17,7 @@ from .target_audience_status import TargetAudienceStatus
 # Cơ sở
 from .behaviour import Behaviour
 from .campaign_type import CampaignType
-from .ads_type import AdsType
+# from .ads_type import AdsType
 from .price_type import PriceType
 from .country import Country
 from .city import City
@@ -76,7 +76,7 @@ def create_all_tables():
     # 3. Bảng Cơ sở
     User.create_table()
     CampaignType.create_table()
-    AdsType.create_table()
+    # AdsType.create_table()
     PriceType.create_table()
     Country.create_table()
     City.create_table()
