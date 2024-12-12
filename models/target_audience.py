@@ -33,8 +33,6 @@ class TargetAudience:
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE,
-                FOREIGN KEY (ta_status_id) REFERENCES target_audience_status(ta_status_id)
-                    ON DELETE CASCADE,
                 FOREIGN KEY (HanhViID) REFERENCES behaviour(behav_id),
                 FOREIGN KEY (LoaiTruHanhViID) REFERENCES behaviour(behav_id)
             )
@@ -65,11 +63,10 @@ class TargetAudience:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-            SELECT ta.*, tas.ten_trang_thai
-            FROM target_audience ta
-            LEFT JOIN target_audience_status tas ON ta.ta_status_id = tas.ta_status_id
-            WHERE ta.active = TRUE
-            ORDER BY ta.created_at DESC
+            SELECT *
+            FROM target_audience
+            WHERE active = TRUE
+            ORDER BY created_at DESC
             ''')
             rows = cursor.fetchall()
             return [dict(zip([column[0] for column in cursor.description], row)) for row in rows]

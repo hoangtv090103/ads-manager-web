@@ -6,7 +6,6 @@ from models.publisher import Publisher
 from models.customer import Customer
 from models.role import Role
 from configs.db import get_db_connection
-from models.publisher_status import PublisherStatus
 from controllers.base_controller import BaseController
 
 

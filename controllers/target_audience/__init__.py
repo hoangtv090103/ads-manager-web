@@ -1,2 +1,1 @@
 from .target_audience_controller import TargetAudienceController
-from .target_audience_status_controller import TargetAudienceStatusController

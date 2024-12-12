@@ -9,15 +9,11 @@ from .ads_group_status import AdsGroupStatus
 from .ads_status import StatusAds
 from .website_status import WebsiteStatus
 from .product_status import ProductStatus
-from .publisher_status import PublisherStatus
 from .source_status import SourceStatus
-from .target_audience_status import TargetAudienceStatus
-# from .ads_zone_status import AdsZoneStatus
 
 # Cơ sở
 from .behaviour import Behaviour
 from .campaign_type import CampaignType
-# from .ads_type import AdsType
 from .price_type import PriceType
 from .country import Country
 from .city import City
@@ -48,7 +44,6 @@ from .zone_price_mapping import ZonePriceMapping
 from .global_price import GlobalPrice
 from .product_group_mapping import ProductGroupMapping
 from .ads_group_product_group import AdsGroupProductGroup
-# from .ads_group_product_selection import AdsGroupProductSelection
 from .ads_group_target_audience import AdsGroupTargetAudience
 from .ads_group_website import AdsGroupWebsite
 from .remarketing_setting import RemarketingSetting
@@ -69,15 +64,11 @@ def create_all_tables():
     StatusAds.create_table()
     WebsiteStatus.create_table()
     ProductStatus.create_table()
-    PublisherStatus.create_table()
     SourceStatus.create_table()
-    TargetAudienceStatus.create_table()
-    # AdsZoneStatus.create_table()
 
     # 3. Bảng Cơ sở
     User.create_table()
     CampaignType.create_table()
-    # AdsType.create_table()
     PriceType.create_table()
     Country.create_table()
     City.create_table()

@@ -7,7 +7,6 @@ class Publisher:
         self.user_id = user_id
         self.email = email
         self.so_dien_thoai = so_dien_thoai
-        self.pub_status_id = pub_status_id
         self.created_at = created_at
         self.updated_at = updated_at
         self.active = active
@@ -23,12 +22,9 @@ class Publisher:
                     user_id INTEGER NOT NULL,
                     email VARCHAR(100) NOT NULL,
                     so_dien_thoai VARCHAR(20),
-                    pub_status_id INTEGER,
                     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                     active BOOLEAN DEFAULT TRUE,
-                    FOREIGN KEY (pub_status_id) REFERENCES publisher_status(status_id)
-                        ON DELETE SET NULL,
                     FOREIGN KEY (user_id) REFERENCES users(user_id)
                         ON DELETE SET NULL
                 )
@@ -39,10 +35,10 @@ class Publisher:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-            INSERT INTO publisher (publisher_id, ten_publisher, email, so_dien_thoai, pub_status_id, user_id)
-            VALUES (%s, %s, %s, %s, %s, %s)
+            INSERT INTO publisher (publisher_id, ten_publisher, email, so_dien_thoai, user_id)
+            VALUES (%s, %s, %s, %s, %s)
             ''', (
-                self.publisher_id, self.ten_publisher, self.email, self.so_dien_thoai, self.pub_status_id, self.user_id))
+                self.publisher_id, self.ten_publisher, self.email, self.so_dien_thoai, self.user_id))
             conn.commit()
 
     @staticmethod
@@ -50,7 +46,7 @@ class Publisher:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(
-                'SELECT publisher_id, ten_publisher, email, so_dien_thoai, pub_status_id, created_at, updated_at FROM publisher WHERE active = true')
+                'SELECT publisher_id, ten_publisher, email, so_dien_thoai, created_at, updated_at FROM publisher WHERE active = true')
             rows = cursor.fetchall()
             return [dict(zip([column[0] for column in cursor.description], row)) for row in rows]
 
@@ -59,10 +55,10 @@ class Publisher:
             cursor = conn.cursor()
             cursor.execute('''
             UPDATE publisher
-            SET ten_publisher = %s, email = %s, so_dien_thoai = %s, pub_status_id = %s, user_id = %s
+            SET ten_publisher = %s, email = %s, so_dien_thoai = %s, user_id = %s
             WHERE publisher_id = %s
             ''', (
-                self.ten_publisher, self.email, self.so_dien_thoai, self.pub_status_id, self.user_id, self.publisher_id))
+                self.ten_publisher, self.email, self.so_dien_thoai, self.user_id, self.publisher_id))
             conn.commit()
 
     @staticmethod

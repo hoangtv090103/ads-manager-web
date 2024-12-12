@@ -5,7 +5,7 @@ class GlobalPrice:
     def __init__(self, global_price_id=None, price_setup_id=None, website_id=None,
                  is_uniform_price=False, uniform_buy_price=0, uniform_sell_price=0,
                  uniform_buy_price_unit_id=None, uniform_sell_price_unit_id=None,
-                 ad_format_id=None, buy_price=0, buy_price_unit_id=None,
+                 format_id=None, buy_price=0, buy_price_unit_id=None,
                  sell_price=0, sell_price_unit_id=None, start_date=None,
                  created_at=None, updated_at=None, active=True):
         self.global_price_id = global_price_id
@@ -15,7 +15,7 @@ class GlobalPrice:
         self.uniform_sell_price = uniform_sell_price
         self.uniform_buy_price_unit_id = uniform_buy_price_unit_id
         self.uniform_sell_price_unit_id = uniform_sell_price_unit_id
-        self.ad_format_id = ad_format_id
+        self.format_id = format_id
         self.buy_price = buy_price
         self.buy_price_unit_id = buy_price_unit_id
         self.sell_price = sell_price
@@ -38,7 +38,7 @@ class GlobalPrice:
                 uniform_sell_price DECIMAL(15,2),
                 uniform_buy_price_unit_id INTEGER,
                 uniform_sell_price_unit_id INTEGER,
-                ad_format_id INTEGER,
+                format_id INTEGER,
                 buy_price DECIMAL(15,2),
                 buy_price_unit_id INTEGER,
                 sell_price DECIMAL(15,2),
@@ -57,7 +57,7 @@ class GlobalPrice:
                     ON DELETE SET NULL,
                 FOREIGN KEY (sell_price_unit_id) REFERENCES price_type(price_type_id)
                     ON DELETE SET NULL,
-                FOREIGN KEY (ad_format_id) REFERENCES ads_format(format_id)
+                FOREIGN KEY (format_id) REFERENCES ads_format(format_id)
                     ON DELETE SET NULL
             )
             ''')
@@ -71,14 +71,14 @@ class GlobalPrice:
                 price_setup_id, website_id, is_uniform_price,
                 uniform_buy_price, uniform_sell_price,
                 uniform_buy_price_unit_id, uniform_sell_price_unit_id,
-                ad_format_id, buy_price, buy_price_unit_id,
+                format_id, buy_price, buy_price_unit_id,
                 sell_price, sell_price_unit_id, start_date, active
             ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ''', (
                 self.price_setup_id, self.website_id, self.is_uniform_price,
                 self.uniform_buy_price, self.uniform_sell_price,
                 self.uniform_buy_price_unit_id, self.uniform_sell_price_unit_id,
-                self.ad_format_id, self.buy_price, self.buy_price_unit_id,
+                self.format_id, self.buy_price, self.buy_price_unit_id,
                 self.sell_price, self.sell_price_unit_id, self.start_date,
                 self.active
             ))
@@ -159,14 +159,13 @@ class GlobalPrice:
             cursor = conn.cursor()
             cursor.execute('''
             UPDATE global_price 
-            SET price_setup_id = %s,
-                website_id = %s,
+            SET website_id = %s,
                 is_uniform_price = %s,
                 uniform_buy_price = %s,
                 uniform_sell_price = %s,
                 uniform_buy_price_unit_id = %s,
                 uniform_sell_price_unit_id = %s,
-                ad_format_id = %s,
+                format_id = %s,
                 buy_price = %s,
                 buy_price_unit_id = %s,
                 sell_price = %s,
@@ -175,10 +174,10 @@ class GlobalPrice:
                 updated_at = CURRENT_TIMESTAMP
             WHERE global_price_id = %s
             ''', (
-                self.price_setup_id, self.website_id, self.is_uniform_price,
+                self.website_id, self.is_uniform_price,
                 self.uniform_buy_price, self.uniform_sell_price,
                 self.uniform_buy_price_unit_id, self.uniform_sell_price_unit_id,
-                self.ad_format_id, self.buy_price, self.buy_price_unit_id,
+                self.format_id, self.buy_price, self.buy_price_unit_id,
                 self.sell_price, self.sell_price_unit_id, self.start_date,
                 self.global_price_id
             ))
