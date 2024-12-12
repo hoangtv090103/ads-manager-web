@@ -39,7 +39,7 @@ class RemarketingExcludedWebsite:
             cursor = conn.cursor()
             cursor.execute('''
                 SELECT rew.remarketing_id, rew.website_id,
-                       w.ten_website, w.url, w.website_status_id,
+                       w.ten_website, w.url,
                        rew.created_at, rew.updated_at
                 FROM remarketing_excluded_website rew
                 JOIN website w ON rew.website_id = w.website_id
@@ -54,7 +54,7 @@ class RemarketingExcludedWebsite:
             cursor = conn.cursor()
             cursor.execute('''
                 SELECT rew.remarketing_id, rew.website_id,
-                       w.ten_website, w.url, w.website_status_id,
+                       w.ten_website, w.url,
                        rew.created_at, rew.updated_at
                 FROM remarketing_excluded_website rew
                 JOIN website w ON rew.website_id = w.website_id

@@ -39,7 +39,6 @@ class AdsGroup:
                 camp_id INTEGER NOT NULL,
                 ads_group_status_id INTEGER NOT NULL,
                 ten_nhom VARCHAR(100),
-                ngan_sach_ngay DECIMAL(15,2) DEFAULT 0,
                 tong_chi_phi DECIMAL(15,2) DEFAULT 0,
                 luot_xem INTEGER DEFAULT 0,
                 luot_nhan INTEGER DEFAULT 0,

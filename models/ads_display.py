@@ -18,14 +18,14 @@ class AdsDisplay:
             CREATE TABLE IF NOT EXISTS ads_display (
                 ads_id SERIAL PRIMARY KEY,
                 format_id INTEGER,
-                dang_tai_tep_anh VARCHAR(255),
+                dang_tai_tep_anh BYTEA,
                 tieu_de TEXT,
                 noi_dung TEXT,
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE,
                 FOREIGN KEY (format_id) REFERENCES ads_format(format_id)
-                ON DELETE CASCADE
+                    ON DELETE CASCADE
             )
             ''')
             conn.commit()

@@ -7,7 +7,6 @@ from .user import User
 from .campaign_status import CampStatus
 from .ads_group_status import AdsGroupStatus
 from .ads_status import StatusAds
-from .website_status import WebsiteStatus
 from .product_status import ProductStatus
 from .source_status import SourceStatus
 
@@ -62,7 +61,6 @@ def create_all_tables():
     CampStatus.create_table()
     AdsGroupStatus.create_table() 
     StatusAds.create_table()
-    WebsiteStatus.create_table()
     ProductStatus.create_table()
     SourceStatus.create_table()
 

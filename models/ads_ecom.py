@@ -22,11 +22,11 @@ class AdsEcom:
             cursor = conn.cursor()
             cursor.execute('''
             CREATE TABLE IF NOT EXISTS ads_ecom (
-                ads_id INTEGER PRIMARY KEY,
+                ads_id SERIAL PRIMARY KEY,
                 format_id INTEGER NOT NULL,
-                anh_banner_chan_trang VARCHAR(255),
-                video_banner VARCHAR(255),
-                anh_thumbnail VARCHAR(255),
+                anh_banner_chan_trang BYTEA,
+                video_banner BYTEA,
+                anh_thumbnail BYTEA,
                 su_dung_mau_banner_co_san BOOLEAN DEFAULT FALSE,
                 ten_san_pham VARCHAR(100),
                 hien_thi_gia_khuyen_mai BOOLEAN DEFAULT FALSE,

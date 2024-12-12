@@ -24,13 +24,10 @@ class Website:
                 link_url VARCHAR(255),
                 tong_so_luong_vung INTEGER DEFAULT 0,
                 publisher_id INTEGER NOT NULL,
-                webstatus_id INTEGER NOT NULL,
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE,
                 FOREIGN KEY (publisher_id) REFERENCES publisher(publisher_id)
-                    ON DELETE SET NULL,
-                FOREIGN KEY (webstatus_id) REFERENCES website_status(webstatus_id)
                     ON DELETE SET NULL
             )
             ''')

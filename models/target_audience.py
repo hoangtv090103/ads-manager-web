@@ -2,13 +2,11 @@ from configs.db import get_db_connection
 
 
 class TargetAudience:
-    def __init__(self, ta_id=None, ten_nhom_doi_tuong="", ta_status_id=None,
-                 trang_da_truy_cap="", apply_all_product=False,
-                 HanhViID=None, LoaiTruHanhViID=None, created_at=None,
-                 updated_at=None, active=True):
+    def __init__(self, ta_id=None, ten_nhom_doi_tuong="", trang_da_truy_cap="",
+                 apply_all_product=False, HanhViID=None, LoaiTruHanhViID=None,
+                 created_at=None, updated_at=None, active=True):
         self.ta_id = ta_id
         self.ten_nhom_doi_tuong = ten_nhom_doi_tuong
-        self.ta_status_id = ta_status_id
         self.trang_da_truy_cap = trang_da_truy_cap
         self.apply_all_product = apply_all_product
         self.HanhViID = HanhViID
@@ -25,7 +23,6 @@ class TargetAudience:
             CREATE TABLE IF NOT EXISTS target_audience (
                 ta_id SERIAL PRIMARY KEY,
                 ten_nhom_doi_tuong VARCHAR(100),
-                ta_status_id INTEGER NOT NULL,
                 trang_da_truy_cap TEXT,
                 apply_all_product BOOLEAN DEFAULT FALSE,
                 HanhViID INTEGER,
@@ -44,13 +41,13 @@ class TargetAudience:
             cursor = conn.cursor()
             cursor.execute('''
             INSERT INTO target_audience (
-                ten_nhom_doi_tuong, ta_status_id, trang_da_truy_cap,
+                ten_nhom_doi_tuong, trang_da_truy_cap,
                 apply_all_product, HanhViID, LoaiTruHanhViID
             )
             VALUES (%s, %s, %s, %s, %s, %s)
             RETURNING ta_id
             ''', (
-                self.ten_nhom_doi_tuong, self.ta_status_id,
+                self.ten_nhom_doi_tuong,
                 self.trang_da_truy_cap, self.apply_all_product,
                 self.HanhViID, self.LoaiTruHanhViID
             ))
@@ -89,15 +86,15 @@ class TargetAudience:
             cursor = conn.cursor()
             cursor.execute('''
             UPDATE target_audience
-            SET ten_nhom_doi_tuong = %s, ta_status_id = %s,
+            SET ten_nhom_doi_tuong = %s,
                 trang_da_truy_cap = %s, apply_all_product = %s,
                 HanhViID = %s, LoaiTruHanhViID = %s,
                 updated_at = CURRENT_TIMESTAMP
             WHERE ta_id = %s
             ''', (
-                self.ten_nhom_doi_tuong, self.ta_status_id,
-                self.trang_da_truy_cap, self.apply_all_product,
-                self.HanhViID, self.LoaiTruHanhViID, self.ta_id
+                self.ten_nhom_doi_tuong, self.trang_da_truy_cap,
+                self.apply_all_product, self.HanhViID, self.LoaiTruHanhViID,
+                self.ta_id
             ))
             conn.commit()
 
