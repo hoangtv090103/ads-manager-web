@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách nhóm quảng cáo - Ads Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./styles.css">
+    <script src="./js/auth.js"></script>
+    <style>
+        .ad-groups-table {
+            width: 100%;
+            min-width: 1200px;
+            border-collapse: collapse;
+        }
+
+        .frozen-column {
+            position: sticky;
+            left: 0;
+            background: #F8F9FA;
+            z-index: 1;
+        }
+
+        .frozen-column:last-of-type {
+            border-right: 2px solid #E0E0E0;
+        }
+
+        .ad-groups-table tbody td:nth-child(-n+3) {
+            position: sticky;
+            left: 0;
+            background: white;
+            z-index: 1;
+        }
+
+        .ad-groups-table tbody td:nth-child(3) {
+            border-right: 2px solid #E0E0E0;
+        }
+
+        .website-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 16px;
+        }
+
+        .website-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .website-info {
+            flex: 1;
+        }
+
+        .website-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .website-stats {
+            font-size: 12px;
+            color: #666;
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn-add {
+            padding: 6px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: #2F80ED;
+        }
+
+        .search-box {
+            margin-bottom: 16px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+        }
+
+        .customize-column-dropdown {
+            position: relative;
+        }
+
+        .customize-column-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .customize-column-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 320px;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            margin-top: 4px;
+        }
+
+        .customize-column-header {
+            padding: 16px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .customize-column-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .customize-column-content {
+            padding: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .metric-group {
+            margin-bottom: 20px;
+        }
+
+        .metric-group h4 {
+            margin: 0 0 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4F4F4F;
+        }
+
+        .checkbox-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .checkbox-list label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .checkbox-list input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+        }
+
+        .customize-column-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding: 16px;
+            border-top: 1px solid #E0E0E0;
+        }
+
+        .customize-column-footer button {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 1px solid #E0E0E0;
+            color: #4F4F4F;
+        }
+
+        .btn-primary {
+            background: #0061C1;
+            border: none;
+            color: white;
+        }
+
+        .campaign-list {
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .campaign-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .campaign-item:hover {
+            background: #F8F9FA;
+        }
+
+        .campaign-item.disabled {
+            color: #BDBDBD;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Toggle Menu Button -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="../assets/novanet-logo.png" alt="Ads Manager" class="logo">
+            <span class="logo-text">Ads Manager</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="/frontend/campaigns.html" class="nav-item">
+                <i class="fas fa-layer-group"></i>
+                <span>Quản lý chiến dịch</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-box"></i>
+                    <span>Quản lý sản phẩm</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/product-groups.html">• Danh sách nhóm SP</a>
+                    <a href="/frontend/products.html">• Danh sách SP</a>
+                    <a href="/frontend/data-sources.html">• Nguồn cấp dữ liệu</a>
+                </div>
+            </div>
+
+            <a href="/frontend/remarking-target.html" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Quản lý đối tượng</span>
+            </a>
+
+            <a href="/frontend/deposit.html" class="nav-item">
+                <i class="fas fa-wallet"></i>
+                <span>Nạp tiền tài khoản</span>
+            </a>
+
+            <a href="/frontend/deposit-history.html" class="nav-item">
+                <i class="fas fa-history"></i>
+                <span>Lịch sử nạp tiền</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Báo cáo</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/website-report.html">• Báo cáo website</a>
+                    <a href="/frontend/zone-report.html">• Báo cáo vùng</a>
+                    <a href="/frontend/publisher-report.html" class="active">• Báo cáo publisher</a>
+                    <a href="/frontend/ad-format-report.html">• Báo cáo định dạng quảng cáo</a>
+                </div>
+            </div>
+
+            <a href="/frontend/publishers.html" class="nav-item">
+                <i class="fas fa-users-cog"></i>
+                <span>Danh sách Publisher</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-globe"></i>
+                    <span>Quản lý website</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <div class="submenu">
+                        <a href="/frontend/price-lists.html">• Danh sách bảng giá</a>
+                        <a href="/frontend/websites.html">• Danh sách website</a>
+                        <a href="/frontend/ad-zones.html">• Danh sách vùng QC</a>
+                    </div>
+                </div>
+            </div>
+            <a href="/frontend/accounts.html" class="nav-item">
+                <i class="fas fa-user-shield"></i>
+                <span>Quản lý phân quyền</span>
+            </a>
+        </nav>
+    </div>
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header-content">
+            <div class="breadcrumb">
+                <i class="fas fa-layer-group"></i>
+                <span>/ Quản lý chiến dịch</span>
+            </div>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-name">BA team</div>
+                    <div class="user-email">bateam@gmail.com</div>
+                </div>
+                <img src="../assets/avatar.jpg" alt="User Avatar" class="user-avatar">
+            </div>
+        </div>
+
+        <div class="content-wrapper">
+            <h1 class="page-title">Danh sách nhóm quảng cáo</h1>
+
+            <div class="tabs">
+                <a href="/frontend/campaigns.html" class="tab-item">Chiến dịch</a>
+                <a href="/frontend/ads-group.html" class="tab-item active">Nhóm quảng cáo</a>
+                <a href="/frontend/ads.html" class="tab-item">Tin quảng cáo</a>
+            </div>
+
+            <div class="action-bar">
+                <div class="action-left">
+                    <select class="filter-select">
+                        <option value="">Chọn khách hàng</option>
+                    </select>
+                    <!-- Thay thế nút "Tạo nhóm quảng cáo" hiện tại bằng đoạn code sau -->
+                    <div class="campaign-dropdown" style="position: relative;">
+                        <button onclick="toggleCampaignList()" class="campaign-btn" style="background: #0061C1; color: white; border: none; border-radius: 4px; padding: 8px 16px; cursor: pointer;">
+                            <i class="fas fa-plus"></i> Tạo nhóm quảng cáo
+                        </button>
+                        <div id="campaignDropdown" class="campaign-list" style="display: none; position: absolute; top: 100%; left: 0; background: white; border: 1px solid #E0E0E0; border-radius: 4px; width: 300px; max-height: 400px; overflow-y: auto; z-index: 1000; margin-top: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <div class="search-box" style="padding: 12px; border-bottom: 1px solid #E0E0E0;">
+                                <input type="text" id="campaignSearch" placeholder="Tìm chiến dịch" onkeyup="filterCampaigns()" style="width: 100%; padding: 8px; border: 1px solid #E0E0E0; border-radius: 4px;">
+                            </div>
+                            <div id="campaignList"></div>
+                        </div>
+                    </div>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Tìm kiếm">
+                    </div>
+                </div>
+                <div class="action-right">
+                    <select class="filter-select">
+                        <option>Loại QC</option>
+                        <option>Display Ads</option>
+                        <option>Ecommerce</option>
+                        <option>Native Ads</option>
+                    </select>
+                    <select class="filter-select">
+                        <option>Trạng thái</option>
+                        <option>Tất cả</option>
+                        <option>Chưa chạy</option>
+                        <option>Đang chạy</option>
+                        <option>Tạm dừng</option>
+                        <option>Lỗi</option>
+                        <option>Hoàn thành</option>
+                        <option>Chưa hoàn thành</option>
+                    </select>
+                    <input type="date" class="filter-select" id="startDate">
+                    <input type="date" class="filter-select" id="endDate">
+                    <div class="customize-column-dropdown">
+                        <button class="btn-secondary customize-column-btn">
+                            <i class="fas fa-columns"></i>
+                            Tùy chỉnh cột
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="customize-column-menu" style="display: none;">
+                            <div class="customize-column-header">
+                                <h3>Chọn chỉ số hiển thị</h3>
+                            </div>
+                            <div class="customize-column-content">
+                                <div class="metric-group">
+                                    <h4>Chỉ số chung</h4>
+                                    <div class="checkbox-list">
+                                        <label><input type="checkbox" checked data-column="tong_chi_phi"> Tổng chi
+                                            phí</label>
+                                        <label><input type="checkbox" checked data-column="luot_xem"> Lượt xem</label>
+                                        <label><input type="checkbox" checked data-column="luot_nhan"> Lượt nhấn</label>
+                                        <label><input type="checkbox" checked data-column="ctr"> CTR</label>
+                                        <label><input type="checkbox" checked data-column="cpc"> CPC</label>
+                                        <label><input type="checkbox" checked data-column="cpm"> CPM</label>
+                                    </div>
+                                </div>
+                                <div class="metric-group">
+                                    <h4>Video view</h4>
+                                    <div class="checkbox-list">
+                                        <label><input type="checkbox" checked data-column="video_view_3s"> Video view
+                                            3s</label>
+                                        <label><input type="checkbox" data-column="video_watches_25"> Video watches at
+                                            25%</label>
+                                        <label><input type="checkbox" data-column="video_watches_50"> Video watches at
+                                            50%</label>
+                                        <label><input type="checkbox" data-column="video_watches_75"> Video watches at
+                                            75%</label>
+                                        <label><input type="checkbox" data-column="video_watches_100"> Video watches at
+                                            100%</label>
+                                    </div>
+                                </div>
+                                <div class="metric-group">
+                                    <h4>Ecommerce</h4>
+                                    <div class="checkbox-list">
+                                        <label><input type="checkbox" checked data-column="sl_mua_hang"> SL mua
+                                            hàng</label>
+                                        <label><input type="checkbox" checked data-column="ti_le_chuyen_doi"> % chuyển
+                                            đổi mua hàng</label>
+                                        <label><input type="checkbox" checked data-column="cps"> CPS</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="customize-column-footer">
+                                <button type="button" class="btn-secondary" onclick="resetColumns()">Đặt lại</button>
+                                <button type="button" class="btn-primary" onclick="applyColumns()">Hoàn tất</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="ad-groups-table">
+                    <thead>
+                        <tr>
+                            <th class="frozen-column"><input type="checkbox"></th>
+                            <th class="frozen-column">STT</th>
+                            <th class="frozen-column">Tên nhóm</th>
+                            <th class="frozen-column">Chiến dịch QC</th>
+                            <th class="frozen-column">Trạng thái</th>
+                            <th class="frozen-column">Loại QC</th>
+                            <th data-column="tong_chi_phi">Tổng chi phí (VND)</th>
+                            <th data-column="luot_xem">Lượt xem</th>
+                            <th data-column="luot_nhan">Lượt nhấn</th>
+                            <th data-column="ctr">CTR (%)</th>
+                            <th data-column="cpc">CPC (VND)</th>
+                            <th data-column="cpm">CPM (VND)</th>
+                            <th data-column="video_view_3s">Video view 3s</th>
+                            <th data-column="video_watches_25">Video watches at 25%</th>
+                            <th data-column="video_watches_50">Video watches at 50%</th>
+                            <th data-column="video_watches_75">Video watches at 75%</th>
+                            <th data-column="video_watches_100">Video watches at 100%</th>
+                            <th data-column="sl_mua_hang">SL mua hàng</th>
+                            <th data-column="ti_le_chuyen_doi">% chuyển đổi mua hàng</th>
+                            <th data-column="cps">CPS (VND)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adGroupsTableBody"></tbody>
+                </table>
+            </div>
+
+            <div class="table-footer">
+                <div>Số nhóm quảng cáo: <span id="totalGroups">0</span></div>
+                <div>Tổng chi phí: <span id="totalCost">0 VND</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class="form-container">
+        <div class="form-title">Tạo nhóm quảng cáo</div>
+
+        <form id="adGroupForm">
+            <div class="form-section">
+                <div class="section-title">Thông tin cơ bản</div>
+                <div class="form-group">
+                    <label class="form-label">Tên nhóm quảng cáo</label>
+                    <input type="text" class="form-input" name="ten_nhom" required>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Chọn website hiển thị</div>
+                <div class="website-selection">
+                    <div class="available-websites">
+                        <div class="list-header">
+                            <span>Danh sách website khả dụng</span>
+                        </div>
+                        <div class="search-box">
+                            <input type="text" placeholder="Tìm kiếm website..." id="website-search">
+                        </div>
+                        <div class="websites" id="available-websites"></div>
+                    </div>
+
+                    <div class="selected-websites">
+                        <div class="list-header">
+                            <span>Website đã chọn</span>
+                        </div>
+                        <div class="websites" id="selected-websites"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Tạo nhóm quảng cáo</button>
+                <button type="button" class="btn-secondary" onclick="window.history.back()">Hủy</button>
+            </div>
+        </form>
+    </div> -->
+
+    <script src="./script.js"></script>
+
+    <script>
+        const baseUrl = 'http://127.0.0.1:5000/api/v1';
+        document.addEventListener('DOMContentLoaded', function () {
+            requireAuth();
+            loadAdGroups();
+        });
+
+        async function loadAdGroups() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/ads-groups`);
+                const data = await response.json();
+
+                renderAdGroups(data.ads_groups);
+            } catch (error) {
+                console.error('Error:', error);
+                if (error.message === 'Unauthorized') {
+                    window.location.href = '/frontend/login.html';
+                } else {
+                    alert('Đã xảy ra lỗi khi tải dữ liệu');
+                }
+            }
+        }
+
+        function renderAdGroups(groups) {
+            const tbody = document.getElementById('adGroupsTableBody');
+            tbody.innerHTML = '';
+
+            groups.forEach((group, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="frozen-column"><input type="checkbox"></td>
+                    <td class="frozen-column">${index + 1}</td>
+                    <td class="frozen-column">${group.ten_nhom}</td>
+                    <td class="frozen-column">${group.ten_chi_tieu}</td>
+                    <td class="frozen-column"><span class="status-badge">${group.ten_trang_thai}</span></td>
+                    <td class="frozen-column">${group.ten_loai_quang_cao}</td>
+                    <td data-column="tong_chi_phi">${formatCurrency(group.tong_chi_phi)}</td>
+                    <td data-column="luot_xem">${formatNumber(group.luot_xem)}</td>
+                    <td data-column="luot_nhan">${formatNumber(group.luot_nhan)}</td>
+                    <td data-column="ctr">${formatPercent(group.ctr)}</td>
+                    <td data-column="cpc">${formatCurrency(group.cpc)}</td>
+                    <td data-column="cpm">${formatCurrency(group.cpm)}</td>
+                    <td data-column="video_view_3s">${formatNumber(group.video_view_3s)}</td>
+                    <td data-column="video_watches_25">${formatNumber(group.video_watches_25)}</td>
+                    <td data-column="video_watches_50">${formatNumber(group.video_watches_50)}</td>
+                    <td data-column="video_watches_75">${formatNumber(group.video_watches_75)}</td>
+                    <td data-column="video_watches_100">${formatNumber(group.video_watches_100)}</td>
+                    <td data-column="sl_mua_hang">${formatNumber(group.sl_mua_hang)}</td>
+                    <td data-column="ti_le_chuyen_doi">${formatPercent(group.ti_le_chuyen_doi)}</td>
+                    <td data-column="cps">${formatCurrency(group.cps)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Apply current column visibility
+            applyColumnVisibility();
+        }
+
+        function formatNumber(value) {
+            return value?.toLocaleString() || '0';
+        }
+
+        function formatCurrency(value) {
+            return value ? value.toLocaleString() + ' ₫' : '0 ₫';
+        }
+
+        function formatPercent(value) {
+            return value ? value.toFixed(2) + '%' : '0%';
+        }
+
+        // Column visibility management
+        let columnVisibility = {
+            tong_chi_phi: true,
+            luot_xem: true,
+            luot_nhan: true,
+            ctr: true,
+            cpc: true,
+            cpm: true,
+            video_view_3s: true,
+            video_watches_25: false,
+            video_watches_50: false,
+            video_watches_75: false,
+            video_watches_100: false,
+            sl_mua_hang: true,
+            ti_le_chuyen_doi: true,
+            cps: true
+        };
+
+        // Save initial column state
+        let initialColumnState = { ...columnVisibility };
+
+        function applyColumnVisibility() {
+            // Update table headers
+            const headers = document.querySelectorAll('th[data-column]');
+            headers.forEach(header => {
+                const column = header.dataset.column;
+                if (columnVisibility.hasOwnProperty(column)) {
+                    header.style.display = columnVisibility[column] ? 'table-cell' : 'none';
+                }
+            });
+
+            // Update table cells
+            const rows = document.querySelectorAll('#adGroupsTableBody tr');
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td[data-column]');
+                cells.forEach(cell => {
+                    const column = cell.dataset.column;
+                    if (columnVisibility.hasOwnProperty(column)) {
+                        cell.style.display = columnVisibility[column] ? 'table-cell' : 'none';
+                    }
+                });
+            });
+        }
+
+        function resetColumns() {
+            // Reset to initial state
+            columnVisibility = { ...initialColumnState };
+
+            // Update checkboxes
+            document.querySelectorAll('.customize-column-content input[type="checkbox"]').forEach(checkbox => {
+                const column = checkbox.dataset.column;
+                if (columnVisibility.hasOwnProperty(column)) {
+                    checkbox.checked = columnVisibility[column];
+                }
+            });
+
+            // Apply visibility
+            applyColumnVisibility();
+        }
+
+        function applyColumns() {
+            // Update columnVisibility based on checkbox states
+            document.querySelectorAll('.customize-column-content input[type="checkbox"]').forEach(checkbox => {
+                const column = checkbox.dataset.column;
+                if (columnVisibility.hasOwnProperty(column)) {
+                    columnVisibility[column] = checkbox.checked;
+                }
+            });
+
+            // Apply new visibility settings
+            applyColumnVisibility();
+
+            // Close the menu
+            document.querySelector('.customize-column-menu').style.display = 'none';
+        }
+
+        // Initialize column visibility on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            // Save initial state
+            initialColumnState = { ...columnVisibility };
+
+            // Apply initial visibility
+            applyColumnVisibility();
+
+            // Set initial checkbox states
+            document.querySelectorAll('.customize-column-content input[type="checkbox"]').forEach(checkbox => {
+                const column = checkbox.dataset.column;
+                if (columnVisibility.hasOwnProperty(column)) {
+                    checkbox.checked = columnVisibility[column];
+                }
+            });
+        });
+
+        // Mock data for testing
+        const mockGroups = [
+            {
+                active: true,
+                name: 'Nhomtest1',
+                campaign: 'cdtest1',
+                type: 'Ecommerce',
+                cost: '-'
+            },
+            {
+                active: true,
+                name: 'Nhóm 12',
+                campaign: 'Chiến dịch 12',
+                type: 'Display ads',
+                cost: '-'
+            },
+            {
+                active: true,
+                name: 'Nhóm 0',
+                campaign: 'Chiến dịch 0',
+                type: 'Display ads',
+                cost: '-'
+            }
+            // Add more mock data as needed
+        ];
+
+        async function fetchCampaigns() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/campaigns`);
+                const data = await response.json();
+                return data.campaigns || [];
+            } catch (error) {
+                console.error('Error fetching campaigns:', error);
+                return [];
+            }
+        }
+
+        function renderCampaignDropdown(campaigns) {
+            const campaignsList = document.getElementById('campaignsList');
+            campaignsList.innerHTML = '';
+
+            campaigns.forEach(campaign => {
+                const item = document.createElement('div');
+                item.className = 'dropdown-item';
+                item.style.cssText = 'padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #E0E0E0;';
+                item.textContent = campaign.ten_chien_dich;
+
+                item.addEventListener('mouseover', () => {
+                    item.style.backgroundColor = '#F5F5F5';
+                });
+
+                item.addEventListener('mouseout', () => {
+                    item.style.backgroundColor = 'white';
+                });
+
+                item.onclick = () => {
+                    // Store campaign ID in session storage
+                    sessionStorage.setItem('selected_campaign_id', campaign.camp_id);
+                    // Redirect to create page
+                    window.location.href = '/frontend/ads-group-create.html';
+                };
+
+                campaignsList.appendChild(item);
+            });
+        }
+
+        function filterCampaigns(searchText) {
+            const items = document.querySelectorAll('.dropdown-item');
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(searchText.toLowerCase())) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Add campaign dropdown functionality
+        document.querySelector('.create-button').addEventListener('click', async function (e) {
+            e.stopPropagation();
+            const dropdownContent = document.querySelector('.dropdown-content');
+
+            if (dropdownContent.style.display === 'none') {
+                // Load campaigns
+                const campaigns = await fetchCampaigns();
+                renderCampaignDropdown(campaigns);
+                dropdownContent.style.display = 'block';
+            } else {
+                dropdownContent.style.display = 'none';
+            }
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function (e) {
+            const dropdownContent = document.querySelector('.dropdown-content');
+            const createButton = document.querySelector('.create-button');
+
+            if (!dropdownContent.contains(e.target) && !createButton.contains(e.target)) {
+                dropdownContent.style.display = 'none';
+            }
+        });
+
+        // Hàm lấy danh sách website có bảng giá và đang hoạt động
+        async function loadAvailableWebsites() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/websites/available`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error('Không thể tải danh sách website');
+                }
+
+                // Lọc chỉ lấy website có bảng giá và đang hoạt động
+                const availableWebsites = data.websites.filter(website =>
+                    website.has_price_list && website.active
+                );
+
+                renderAvailableWebsites(availableWebsites);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Đã xảy ra lỗi khi tải danh sách website');
+            }
+        }
+
+        // Hàm render danh sách website khả dụng
+        function renderAvailableWebsites(websites) {
+            const container = document.getElementById('available-websites');
+            container.innerHTML = '';
+
+            websites.forEach(website => {
+                const websiteElement = document.createElement('div');
+                websiteElement.className = 'website-item';
+                websiteElement.innerHTML = `
+                    <div class="website-info">
+                        <div class="website-name">${website.domain}</div>
+                        <div class="website-stats">
+                            <span>Lượt xem: ${formatNumber(website.views)}</span>
+                            <span>CTR: ${website.ctr}%</span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-add" onclick="selectWebsite(${website.id})">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                `;
+                container.appendChild(websiteElement);
+            });
+        }
+
+        // Hàm xử lý khi submit form
+        async function handleSubmit(event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const selectedWebsites = Array.from(document.getElementById('selected-websites').children)
+                .map(el => el.dataset.websiteId);
+
+            // Thêm danh sách website đã chọn vào formData
+            formData.append('website_ids', JSON.stringify(selectedWebsites));
+
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/ad-groups`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Không thể tạo nhóm quảng cáo');
+                }
+
+                alert('Tạo nhóm quảng cáo thành công!');
+                window.location.href = '/frontend/ad-groups.html';
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            requireAuth();
+            // loadAvailableWebsites();
+
+            // Thêm event listener cho form
+            document.getElementById('adGroupForm').addEventListener('submit', handleSubmit);
+
+            // Thêm search functionality
+            document.getElementById('website-search').addEventListener('input', function (e) {
+                const searchText = e.target.value.toLowerCase();
+                const websites = document.querySelectorAll('#available-websites .website-item');
+
+                websites.forEach(website => {
+                    const name = website.querySelector('.website-name').textContent.toLowerCase();
+                    website.style.display = name.includes(searchText) ? 'flex' : 'none';
+                });
+            });
+        });
+
+        // Toggle customize column menu
+        document.querySelector('.customize-column-btn').addEventListener('click', function (e) {
+            e.stopPropagation();
+            const menu = document.querySelector('.customize-column-menu');
+            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.customize-column-dropdown')) {
+                document.querySelector('.customize-column-menu').style.display = 'none';
+            }
+        });
+
+        // Initialize column visibility on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            resetColumns();
+        });
+
+        let selectedCampaignId = null;
+
+        function toggleCampaignList() {
+            const dropdown = document.getElementById('campaignDropdown');
+            if (dropdown.style.display === 'none') {
+                dropdown.style.display = 'block';
+                loadCampaigns();
+            } else {
+                dropdown.style.display = 'none';
+            }
+        }
+
+        async function loadCampaigns() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/campaigns`);
+                const data = await response.json();
+                
+                const campaignList = document.getElementById('campaignList');
+                campaignList.innerHTML = '';
+                
+                data.campaigns.forEach(campaign => {
+                    const div = document.createElement('div');
+                    div.className = 'campaign-item';
+                    div.style.cssText = 'padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #E0E0E0; transition: background 0.2s;';
+                    div.onmouseover = () => div.style.background = '#F8F9FA';
+                    div.onmouseout = () => div.style.background = 'white';
+                    
+                    div.innerHTML = `
+                        <div style="font-weight: 500;">${campaign.ten_chien_dich}</div>
+                        <div style="font-size: 12px; color: #828282;">${campaign.ten_loai_quang_cao || 'Chưa có loại quảng cáo'}</div>
+                    `;
+                    
+                    div.onclick = () => selectCampaign(campaign.camp_id, campaign.ten_chien_dich);
+                    campaignList.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Error loading campaigns:', error);
+            }
+        }
+
+        function filterCampaigns() {
+            const input = document.getElementById('campaignSearch');
+            const filter = input.value.toLowerCase();
+            const items = document.getElementsByClassName('campaign-item');
+
+            for (let item of items) {
+                const text = item.textContent || item.innerText;
+                if (text.toLowerCase().indexOf(filter) > -1) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            }
+        }
+
+        function selectCampaign(campId, campName) {
+            // Lưu thông tin chiến dịch vào sessionStorage
+            sessionStorage.setItem('selected_campaign_id', campId);
+            sessionStorage.setItem('selected_campaign_name', campName);
+            
+            // Chuyển hướng đến trang tạo nhóm quảng cáo
+            window.location.href = '/frontend/ads-group-create.html';
+        }
+
+        // Đóng dropdown khi click ra ngoài
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('campaignDropdown');
+            const campaignBtn = document.querySelector('.campaign-btn');
+            
+            if (!dropdown.contains(e.target) && !campaignBtn.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -154,7 +154,7 @@
           <a href="/frontend/campaigns.html" style="color: #0061C1; text-decoration: none;">Chiến dịch</a>
         </div>
         <div style="padding: 12px 0; color: #4F4F4F;">
-          <a href="/frontend/ad-groups.html" style="color: #4F4F4F; text-decoration: none;">Nhóm quảng cáo</a>
+          <a href="/frontend/ads-group.html" style="color: #4F4F4F; text-decoration: none;">Nhóm quảng cáo</a>
         </div>
         <div style="padding: 12px 0; color: #4F4F4F;">
           <a href="/frontend/ads.html" style="color: #4F4F4F; text-decoration: none;">Tin quảng cáo</a>
@@ -601,6 +601,13 @@
     document.addEventListener('DOMContentLoaded', function () {
       requireAuth();
       fetchCampaigns();
+
+      const adTypeFilter = document.getElementById('adTypeFilter');
+      if (adTypeFilter) {
+        adTypeFilter.addEventListener('change', applyFilters);
+      } else {
+        console.error('Element with ID "adTypeFilter" not found.');
+      }
     });
 
     document.addEventListener('DOMContentLoaded', function () {

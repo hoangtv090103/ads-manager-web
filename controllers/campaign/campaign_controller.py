@@ -9,7 +9,6 @@ from controllers.base_controller import BaseController
 class CampaignController(BaseController):
     def get(self, camp_id=None):
         try:
-
             if camp_id:
                 campaign = Campaign.get_by_id(camp_id)
                 return jsonify({"campaign": campaign})

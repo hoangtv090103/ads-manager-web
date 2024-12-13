@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo nhóm quảng cáo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="./styles.css">
+    <script src="./js/auth.js"></script>
+    <script src="./script.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 250px;
+            --header-height: 60px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            background-color: #f5f5f5;
+            transition: margin-left 0.3s;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 0;
+            }
+
+            .website-selection {
+                flex-direction: column;
+            }
+
+            .website-controls {
+                flex-direction: row;
+                justify-content: center;
+                padding: 12px;
+            }
+
+            .tab-btn {
+                min-width: auto;
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-group {
+                padding: 0 16px;
+            }
+
+            .section {
+                padding: 16px;
+            }
+
+            .radio-group,
+            .checkbox-group {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .radio-label,
+            .checkbox-label {
+                min-width: 100%;
+            }
+
+            .website-list {
+                padding: 12px;
+            }
+
+            .website-items {
+                height: 300px;
+            }
+
+            .tab-header {
+                overflow-x: auto;
+                white-space: nowrap;
+                padding: 0 16px;
+            }
+
+            .submit-container {
+                padding: 12px 16px;
+            }
+        }
+
+        .container {
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            padding: 16px 24px;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+
+        .breadcrumb a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .section {
+            background: #fff;
+            padding: 24px;
+            margin-bottom: 1px;
+            border: none;
+            border-radius: 0;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+            padding: 0 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            padding: 0 24px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .radio-group,
+        .checkbox-group {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            padding: 12px 0;
+        }
+
+        .radio-label,
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            min-width: 200px;
+        }
+
+        .radio-label input,
+        .checkbox-label input {
+            margin-right: 8px;
+        }
+
+        .region-selection {
+            margin-top: 16px;
+            padding: 0 24px;
+        }
+
+        .region-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        .region-item input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        .region-count {
+            color: #666;
+            margin-left: 4px;
+        }
+
+        .remarketing-tabs {
+            margin-top: 0;
+        }
+
+        .tab-header {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            background: #fff;
+            padding: 0 24px;
+        }
+
+        .tab-btn {
+            padding: 16px 24px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: 500;
+            color: #666;
+            position: relative;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .tab-btn.active {
+            color: #007bff;
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #007bff;
+        }
+
+        .tab-content {
+            padding: 24px 0;
+            background: #fff;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .website-selection {
+            display: flex;
+            gap: 24px;
+            padding: 0 24px;
+        }
+
+        .website-list {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 16px;
+            background: #fff;
+        }
+
+        .website-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 0 8px;
+        }
+
+        .website-search {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        .website-items {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+
+        .website-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .website-item:last-child {
+            border-bottom: none;
+        }
+
+        .website-controls {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 16px;
+            padding: 16px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #007bff;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+
+        .unit {
+            color: #666;
+            margin-left: 8px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group .unit {
+            position: absolute;
+            right: 36px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .form-group label+input+.unit {
+            top: calc(50% + 12px);
+        }
+
+        .form-group input[type="number"] {
+            padding-right: 60px;
+        }
+
+        .section-subtitle {
+            font-weight: 500;
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        /* Submit button container */
+        .submit-container {
+            position: static;
+            box-shadow: none;
+            text-align: center;
+            padding: 24px;
+            background: transparent;
+        }
+
+        /* Add padding to bottom of form to account for fixed submit button */
+        form {
+            padding-bottom: 80px;
+        }
+
+        /* Make form sections full width */
+        .form-section {
+            width: 100%;
+            margin: 0;
+            padding: 24px;
+        }
+
+        /* Responsive adjustments for form elements */
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 480px) {
+            .form-control {
+                padding: 8px;
+            }
+
+            .btn {
+                padding: 8px 16px;
+            }
+
+            .website-item {
+                padding: 8px;
+            }
+
+            .section-title {
+                font-size: 16px;
+            }
+
+            .breadcrumb {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+        }
+
+        /* Adjust website selection for different screen sizes */
+        .website-selection {
+            display: flex;
+            gap: 24px;
+            padding: 0 24px;
+        }
+
+        @media (min-width: 1025px) and (max-width: 1366px) {
+            .website-items {
+                height: 350px;
+            }
+
+            .website-list {
+                min-width: 300px;
+            }
+        }
+
+        @media (min-width: 1367px) {
+            .website-items {
+                height: 500px;
+            }
+
+            .website-list {
+                min-width: 400px;
+            }
+        }
+
+        /* Improve touch targets on mobile */
+        @media (hover: none) and (pointer: coarse) {
+
+            .checkbox-label,
+            .radio-label {
+                padding: 8px 0;
+            }
+
+            .website-item {
+                padding: 12px 8px;
+            }
+
+            input[type="checkbox"],
+            input[type="radio"] {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        /* Add smooth transitions */
+        .tab-btn,
+        .btn,
+        .form-control,
+        .website-item {
+            transition: all 0.2s ease-in-out;
+        }
+
+        /* Optimize for larger screens */
+        @media (min-width: 1600px) {
+            .main-content {
+                max-width: calc(100% - var(--sidebar-width));
+                margin-left: var(--sidebar-width);
+            }
+
+            .container {
+                max-width: 1600px;
+                margin: 0 auto;
+            }
+        }
+
+        /* Update submit button styles */
+        .submit-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 12px 24px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            max-width: 200px;
+            margin: 24px auto;
+            display: block;
+        }
+
+        .submit-button:hover {
+            background: #0056b3;
+        }
+
+        /* Remove fixed submit container */
+        .submit-container {
+            position: static;
+            box-shadow: none;
+            text-align: center;
+            padding: 24px;
+            background: transparent;
+        }
+
+        /* Remove category section styles */
+        .category-section {
+            display: none;
+        }
+
+        .region-section {
+            margin-bottom: 24px;
+        }
+
+        .region-group {
+            margin-bottom: 16px;
+        }
+
+        .region-header {
+            display: flex;
+            align-items: flex-start;
+            cursor: pointer;
+            padding: 8px 0;
+        }
+
+        .region-header input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        .region-name {
+            font-weight: 500;
+        }
+
+        .region-count {
+            color: #666;
+            margin-left: 8px;
+        }
+
+        .region-cities {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            padding: 12px 0 12px 24px;
+            display: none;
+        }
+
+        .region-cities.expanded {
+            display: grid;
+        }
+
+        .city-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .city-item input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        .expand-icon {
+            margin-left: 4px;
+            transition: transform 0.3s;
+        }
+
+        .expand-icon.expanded {
+            transform: rotate(180deg);
+        }
+
+        @media (max-width: 1200px) {
+            .region-cities {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .region-cities {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .region-cities {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .region-cities {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .region-section {
+            margin-top: 16px;
+        }
+
+        .region-group {
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .region-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .region-header input[type="checkbox"] {
+            margin-right: 12px;
+        }
+
+        .region-name {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .region-count {
+            margin: 0 12px;
+            color: #666;
+        }
+
+        .expand-icon {
+            transition: transform 0.3s;
+        }
+
+        .region-header.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .region-cities {
+            display: none;
+            padding: 16px;
+            background: white;
+            border-top: 1px solid #E0E0E0;
+        }
+
+        .region-header.expanded+.region-cities {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        .city-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .region-section {
+            margin-top: 16px;
+        }
+        
+        .region-group {
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        
+        .region-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            cursor: pointer;
+            background: #fff;
+        }
+        
+        .region-header input[type="checkbox"] {
+            margin-right: 12px;
+        }
+        
+        .region-name {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        .region-count {
+            margin: 0 12px;
+            color: #666;
+        }
+        
+        .expand-icon {
+            transition: transform 0.3s;
+        }
+        
+        .region-header.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+        
+        .region-cities {
+            display: none;
+            padding: 16px;
+            background: #f5f5f5;
+            border-top: 1px solid #E0E0E0;
+        }
+        
+        .region-header.expanded + .region-cities {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .city-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Styles cho phần nhắm chọn đối tượng */
+        .targeting-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 16px 0;
+        }
+
+        .targeting-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        /* Styles chung cho options */
+        .gender-options,
+        .age-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 16px 0;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 4px;
+            background-color: #f5f5f5;
+            transition: background-color 0.2s;
+            min-width: 120px;
+        }
+
+        .option:hover {
+            background-color: #e0e0e0;
+        }
+
+        .option input[type="radio"],
+        .option input[type="checkbox"] {
+            margin: 0;
+        }
+
+        .option span {
+            font-size: 14px;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .gender-options,
+            .age-options {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .option {
+                width: 100%;
+                min-width: unset;
+            }
+        }
+
+        /* Active states */
+        .option input:checked + span {
+            font-weight: 500;
+        }
+
+        /* Section spacing */
+        .section {
+            margin-bottom: 24px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 4px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        /* Improve touch targets on mobile */
+        @media (hover: none) and (pointer: coarse) {
+            .option {
+                padding: 12px 16px;
+            }
+
+            .option input[type="radio"],
+            .option input[type="checkbox"] {
+                width: 20px;
+                height: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Toggle Menu Button -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <!-- <img src="../assets/novanet-logo.png" alt="Ads Manager" class="logo"> -->
+            <span class="logo-text">Ads Manager</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="/frontend/campaigns.html" class="nav-item">
+                <i class="fas fa-layer-group"></i>
+                <span>Quản lý chiến dịch</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-box"></i>
+                    <span>Quản lý sản phẩm</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/product-groups.html">• Danh sách nhóm SP</a>
+                    <a href="/frontend/products.html">• Danh sách SP</a>
+                    <a href="/frontend/data-sources.html">• Nguồn cấp dữ liệu</a>
+                </div>
+            </div>
+
+            <a href="/frontend/remarking-target.html" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Quản lý đối tượng</span>
+            </a>
+
+            <a href="/frontend/deposit.html" class="nav-item">
+                <i class="fas fa-wallet"></i>
+                <span>Nạp tiền tài khoản</span>
+            </a>
+
+            <a href="/frontend/deposit-history.html" class="nav-item">
+                <i class="fas fa-history"></i>
+                <span>Lịch sử nạp tiền</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Báo cáo</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/website-report.html">• Báo cáo website</a>
+                    <a href="/frontend/zone-report.html">• Báo cáo vùng</a>
+                    <a href="/frontend/publisher-report.html" class="active">• Báo cáo publisher</a>
+                    <a href="/frontend/ad-format-report.html">• Báo cáo định dạng quảng cáo</a>
+                </div>
+            </div>
+
+            <a href="/frontend/publishers.html" class="nav-item">
+                <i class="fas fa-users-cog"></i>
+                <span>Danh sách Publisher</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-globe"></i>
+                    <span>Quản lý website</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/price-lists.html">• Danh sách bảng giá</a>
+                    <a href="/frontend/websites.html">• Danh sách website</a>
+                    <a href="/frontend/ad-zones.html">• Danh sách vùng QC</a>
+                </div>
+            </div>
+            <a href="/frontend/accounts.html" class="nav-item">
+                <i class="fas fa-user-shield"></i>
+                <span>Quản lý phân quyền</span>
+            </a>
+        </nav>
+    </div>
+    <div class="main-content">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="#">Quản lý chiến dịch</a> / Nhóm quảng cáo mới
+            </div>
+
+            <form id="adsGroupForm">
+                <!-- Phần đặt tên nhóm quảng cáo -->
+                <div class="section">
+                    <div class="section-title">Đặt tên nhóm quảng cáo</div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Tên nhóm quảng cáo">
+                    </div>
+                </div>
+
+                <!-- Phần nhắm chọn đối tượng -->
+                <div class="section">
+                    <div class="section-title">Nhắm chọn đối tượng</div>
+                    <div class="targeting-options">
+                        <label class="targeting-option">
+                            <input type="radio" name="targeting" checked>
+                            <span>Bỏ nhắm chọn theo đối tượng</span>
+                        </label>
+                        <label class="targeting-option">
+                            <input type="radio" name="targeting">
+                            <span>Sử dụng nhóm đối tượng có sẵn</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Nhắm chọn theo giới tính -->
+                <div class="section">
+                    <div class="section-title">Nhắm chọn theo giới tính</div>
+                    <div class="gender-options">
+                        <label class="option">
+                            <input type="radio" name="gender" value="all">
+                            <span>Tất cả</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="gender" value="unknown">
+                            <span>Không xác định</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="gender" value="male">
+                            <span>Nam</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="gender" value="female">
+                            <span>Nữ</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Nhắm chọn theo độ tuổi -->
+                <div class="section">
+                    <div class="section-title">Nhắm chọn theo độ tuổi</div>
+                    <div class="age-options">
+                        <label class="option">
+                            <input type="checkbox" value="all">
+                            <span>Tất cả</span>
+                        </label>
+                        <label class="option">
+                            <input type="checkbox" value="<18">
+                            <span>&lt;18</span>
+                        </label>
+                        <label class="option">
+                            <input type="checkbox" value="18-24">
+                            <span>18-24</span>
+                        </label>
+                        <label class="option">
+                            <input type="checkbox" value="25-34">
+                            <span>25-34</span>
+                        </label>
+                        <label class="option">
+                            <input type="checkbox" value="35-50">
+                            <span>35-50</span>
+                        </label>
+                        <label class="option">
+                            <input type="checkbox" value=">50">
+                            <span>&gt;50</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Phần Remarketing -->
+                <div class="section">
+                    <div class="remarketing-tabs">
+                        <div class="tab-header">
+                            <button type="button" class="tab-btn active" data-tab="run-more">Chạy thêm
+                                Remarketing</button>
+                            <button type="button" class="tab-btn" data-tab="no-run">Không chạy Remarketing</button>
+                            <button type="button" class="tab-btn" data-tab="run-only">Chỉ chạy Remarketing</button>
+                        </div>
+
+                        <div class="tab-content">
+                            <!-- Tab Chạy thêm Remarketing -->
+                            <div class="tab-pane active" id="run-more">
+                                <div class="website-selection">
+                                    <div class="website-list">
+                                        <div class="website-list-header">
+                                            <span>Danh sách Website(0/0)</span>
+                                        </div>
+                                        <input type="text" class="website-search" placeholder="Tìm kiếm Domain...">
+                                        <div class="website-items" id="available-websites-run-more">
+                                            <!-- Will be populated by JS -->
+                                        </div>
+                                    </div>
+
+                                    <div class="website-controls">
+                                        <button type="button" class="btn btn-primary" id="add-website-run-more">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-primary" id="remove-website-run-more">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </button>
+                                    </div>
+
+                                    <div class="website-list">
+                                        <div class="website-list-header">
+                                            <span>Website được chọn(0/0)</span>
+                                        </div>
+                                        <input type="text" class="website-search" placeholder="Tìm kiếm Domain...">
+                                        <div class="website-items" id="selected-websites-run-more">
+                                            <!-- Will be populated by JS -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="section-subtitle">Nhắm chọn remarketing</div>
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox">
+                                            Nhắm chọn remarketing tự động theo sản phẩm
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox">
+                                            Loại trừ các website
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Tần suất hiển thị quảng cáo ngày (lần)</label>
+                                    <input type="number" class="form-control" value="100">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Thời gian giữa 2 lần hiển thị (phút)</label>
+                                    <input type="number" class="form-control" value="10">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Thời gian Remarketing (ngày)</label>
+                                    <input type="number" class="form-control" value="50">
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="section-subtitle">Điều kiện dừng marketing</div>
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox">
+                                            Khi người dùng đã click vào quảng cáo Remarketing
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox">
+                                            Khi người xem của người dùng đạt
+                                            <input type="number" style="width: 60px; margin: 0 8px;" value="1"> lượt xem
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab Không chạy Remarketing -->
+                            <div class="tab-pane" id="no-run">
+                                <div class="website-selection">
+                                    <div class="website-list">
+                                        <div class="website-list-header">
+                                            <span>Danh sách Website(0/0)</span>
+                                        </div>
+                                        <input type="text" class="website-search" placeholder="Tìm kiếm Domain...">
+                                        <div class="website-items" id="available-websites-no-run">
+                                            <!-- Will be populated by JS -->
+                                        </div>
+                                    </div>
+
+                                    <div class="website-controls">
+                                        <button type="button" class="btn btn-primary" id="add-website-no-run">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-primary" id="remove-website-no-run">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </button>
+                                    </div>
+
+                                    <div class="website-list">
+                                        <div class="website-list-header">
+                                            <span>Website được chọn(0/0)</span>
+                                        </div>
+                                        <input type="text" class="website-search" placeholder="Tìm kiếm Domain...">
+                                        <div class="website-items" id="selected-websites-no-run">
+                                            <!-- Will be populated by JS -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab Chỉ chạy Remarketing -->
+                            <div class="tab-pane" id="run-only">
+                                <div class="form-group">
+                                    <label class="switch">
+                                        <input type="checkbox">
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span>Đồng nhất giá quảng cáo trên website</span>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="section-subtitle">Nhắm chọn remarketing</div>
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox">
+                                            Nhắm chọn remarketing tự động theo sản phẩm
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox">
+                                            Loại trừ các website
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Tần suất hiển thị quảng cáo ngày (lần)</label>
+                                    <input type="number" class="form-control" value="100" placeholder="Nhập số lần">
+                                    <span class="unit">lần</span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Thời gian giữa 2 lần hiển thị (phút)</label>
+                                    <input type="number" class="form-control" value="10" placeholder="Nhập số phút">
+                                    <span class="unit">phút</span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Thời gian Remarketing (ngày)</label>
+                                    <input type="number" class="form-control" value="50" placeholder="Nhập số ngày">
+                                    <span class="unit">ngày</span>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="section-subtitle">Điều kiện dừng marketing</div>
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox">
+                                            Khi người dùng đã click vào quảng cáo Remarketing
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox">
+                                            Khi người xem của người dùng đạt
+                                            <input type="number" style="width: 60px; margin: 0 8px;" value="1" min="1">
+                                            lượt xem
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Update submit button -->
+                <div class="submit-container">
+                    <button type="submit" class="submit-button">
+                        Tạo nhóm quảng cáo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const baseUrl = 'http://127.0.0.1:5000/api/v1';
+        document.addEventListener('DOMContentLoaded', function () {
+            // Tab switching
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabPanes.forEach(p => p.classList.remove('active'));
+
+                    this.classList.add('active');
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
+            // Load websites
+            async function loadWebsites() {
+                const response = await fetchWithAuth(`${baseUrl}/websites?has_price=true`);
+                const data = await response.json();
+                const websiteListRunMore = document.getElementById('available-websites-run-more');
+                const websiteListNoRun = document.getElementById('available-websites-no-run');
+
+                const websiteHTML = data.map(website => `
+                            <div class="website-item">
+                                <input type="checkbox">
+                                <span style="margin-left: 8px;">${website.domain_website}</span>
+                            </div>
+                        `).join('');
+
+                websiteListRunMore.innerHTML = websiteHTML;
+                websiteListNoRun.innerHTML = websiteHTML;
+            }
+
+            // Initialize
+            loadWebsites();
+
+            // Website transfer controls for "Chạy thêm Remarketing"
+            setupWebsiteTransfer('run-more');
+            // Website transfer controls for "Không chạy Remarketing"
+            setupWebsiteTransfer('no-run');
+
+            function setupWebsiteTransfer(tabId) {
+                document.getElementById(`add-website-${tabId}`).addEventListener('click', function () {
+                    transferWebsites(`available-websites-${tabId}`, `selected-websites-${tabId}`);
+                });
+
+                document.getElementById(`remove-website-${tabId}`).addEventListener('click', function () {
+                    transferWebsites(`selected-websites-${tabId}`, `available-websites-${tabId}`);
+                });
+            }
+
+            function transferWebsites(fromId, toId) {
+                const selectedItems = document.querySelectorAll(`#${fromId} .website-item input:checked`);
+                const targetList = document.getElementById(toId);
+
+                selectedItems.forEach(item => {
+                    const websiteItem = item.closest('.website-item');
+                    targetList.appendChild(websiteItem.cloneNode(true));
+                    websiteItem.remove();
+                });
+
+                updateWebsiteCounts(fromId.split('-')[2]); // Extract tab id (run-more or no-run)
+            }
+
+            function updateWebsiteCounts(tabId) {
+                const availableCount = document.getElementById(`available-websites-${tabId}`).children.length;
+                const selectedCount = document.getElementById(`selected-websites-${tabId}`).children.length;
+                const totalCount = availableCount + selectedCount;
+
+                const tabContainer = document.getElementById(tabId === 'run-more' ? 'run-more' : 'no-run');
+
+                tabContainer.querySelector('#available-websites-' + tabId).closest('.website-list')
+                    .querySelector('.website-list-header span').textContent =
+                    `Danh sách Website(${availableCount}/${totalCount})`;
+
+                tabContainer.querySelector('#selected-websites-' + tabId).closest('.website-list')
+                    .querySelector('.website-list-header span').textContent =
+                    `Website được chọn(${selectedCount}/${totalCount})`;
+            }
+
+            // Search functionality
+            document.querySelectorAll('.website-search').forEach(input => {
+                input.addEventListener('input', function () {
+                    const searchTerm = this.value.toLowerCase();
+                    const websiteItems = this.closest('.website-list').querySelectorAll('.website-item');
+
+                    websiteItems.forEach(item => {
+                        const domain = item.querySelector('span').textContent.toLowerCase();
+                        item.style.display = domain.includes(searchTerm) ? '' : 'none';
+                    });
+                });
+            });
+
+            // Handle "Select All" functionality
+            function setupSelectAll(containerSelector, itemSelector) {
+                const container = document.querySelector(containerSelector);
+                if (!container) return;
+
+                const selectAllCheckbox = container.querySelector('input[type="checkbox"][value="all"]');
+                const itemCheckboxes = container.querySelectorAll(`${itemSelector} input[type="checkbox"]:not([value="all"])`);
+
+                if (selectAllCheckbox) {
+                    selectAllCheckbox.addEventListener('change', function () {
+                        itemCheckboxes.forEach(checkbox => {
+                            checkbox.checked = this.checked;
+                        });
+                    });
+
+                    // Update "Select All" when individual items change
+                    itemCheckboxes.forEach(checkbox => {
+                        checkbox.addEventListener('change', function () {
+                            const allChecked = Array.from(itemCheckboxes).every(cb => cb.checked);
+                            selectAllCheckbox.checked = allChecked;
+                        });
+                    });
+                }
+            }
+
+            // Setup "Select All" for each section that needs it
+            setupSelectAll('.gender-section', '.gender-option');
+            setupSelectAll('.age-section', '.age-option');
+            // Add for other sections as needed
+
+            // Handle form submission
+            document.getElementById('adsGroupForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                // Add your form submission logic here
+            });
+        });
+
+        // Add responsive handling
+        function handleResize() {
+            const width = window.innerWidth;
+            const mainContent = document.querySelector('.main-content');
+
+            if (width <= 1024) {
+                mainContent.style.marginLeft = '0';
+            } else {
+                mainContent.style.marginLeft = 'var(--sidebar-width)';
+            }
+        }
+
+        // Listen for resize events
+        window.addEventListener('resize', handleResize);
+
+        // Initial call
+        handleResize();
+
+        // Geographic targeting functionality
+        async function loadGeographicData() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/cities`);
+                const cities = await response.json();
+                
+                // Group cities by region
+                const regions = {
+                    'bac': { name: 'Miền Bắc', cities: [] },
+                    'trung': { name: 'Miền Trung', cities: [] },
+                    'nam': { name: 'Miền Nam', cities: [] }
+                };
+                
+                cities.forEach(city => {
+                    if (city.mien && regions[city.mien]) {
+                        regions[city.mien].cities.push(city);
+                    }
+                });
+
+                const container = document.getElementById('geographic-targeting');
+                
+                // Clear existing content
+                container.innerHTML = '';
+                
+                // Create region groups
+                Object.entries(regions).forEach(([regionKey, regionData]) => {
+                    const regionElement = document.createElement('div');
+                    regionElement.className = 'region-group';
+                    
+                    const citiesCount = regionData.cities.length;
+                    regionElement.innerHTML = `
+                        <div class="region-header">
+                            <input type="checkbox" class="region-checkbox" 
+                                   data-region="${regionKey}"
+                                   onclick="event.stopPropagation()">
+                            <span class="region-name">${regionData.name}</span>
+                            <span class="region-count">(0/${citiesCount})</span>
+                            <i class="fas fa-chevron-down expand-icon"></i>
+                        </div>
+                        <div class="region-cities" id="region-${regionKey}">
+                            ${regionData.cities.map(city => `
+                                <label class="city-item">
+                                    <input type="checkbox" 
+                                           class="city-checkbox"
+                                           data-region="${regionKey}"
+                                           data-city-id="${city.city_id}"
+                                           value="${city.city_id}">
+                                    <span>${city.ten_thanh_pho}</span>
+                                </label>
+                            `).join('')}
+                        </div>
+                    `;
+                    
+                    container.appendChild(regionElement);
+                });
+
+                // Add event listeners
+                setupRegionEventListeners();
+                
+            } catch (error) {
+                console.error('Error loading geographic data:', error);
+            }
+        }
+
+        function setupRegionEventListeners() {
+            // Toggle region expansion
+            document.querySelectorAll('.region-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    this.classList.toggle('expanded');
+                });
+            });
+
+            // Handle region checkbox changes
+            document.querySelectorAll('.region-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const region = this.dataset.region;
+                    const cities = document.querySelectorAll(`.city-checkbox[data-region="${region}"]`);
+                    cities.forEach(cityCheckbox => {
+                        cityCheckbox.checked = this.checked;
+                    });
+                    updateRegionCount(region);
+                });
+            });
+
+            // Handle city checkbox changes
+            document.querySelectorAll('.city-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const region = this.dataset.region;
+                    updateRegionCount(region);
+                });
+            });
+        }
+
+        function updateRegionCount(region) {
+            const cities = document.querySelectorAll(`.city-checkbox[data-region="${region}"]`);
+            const checkedCities = document.querySelectorAll(`.city-checkbox[data-region="${region}"]:checked`);
+            const regionCheckbox = document.querySelector(`.region-checkbox[data-region="${region}"]`);
+            const countElement = document.querySelector(`#region-${region}`).previousElementSibling.querySelector('.region-count');
+            
+            countElement.textContent = `(${checkedCities.length}/${cities.length})`;
+            
+            // Update region checkbox state
+            regionCheckbox.checked = checkedCities.length === cities.length;
+            regionCheckbox.indeterminate = checkedCities.length > 0 && checkedCities.length < cities.length;
+        }
+
+        // Call this when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGeographicData();
+        });
+
+        function getSelectedCities() {
+            const selectedCities = [];
+            document.querySelectorAll('.city-checkbox:checked').forEach(checkbox => {
+                selectedCities.push({
+                    city_id: checkbox.dataset.cityId,
+                    region: checkbox.dataset.region
+                });
+            });
+            return selectedCities;
+        }
+
+        // Xử lý "Tất cả" cho độ tuổi
+        document.addEventListener('DOMContentLoaded', function() {
+            const allAgeCheckbox = document.querySelector('.age-options input[value="all"]');
+            const ageCheckboxes = document.querySelectorAll('.age-options input[type="checkbox"]:not([value="all"])');
+
+            allAgeCheckbox.addEventListener('change', function() {
+                ageCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+            });
+
+            ageCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const allChecked = Array.from(ageCheckboxes).every(cb => cb.checked);
+                    allAgeCheckbox.checked = allChecked;
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

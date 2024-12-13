@@ -19,6 +19,9 @@ from controllers.report.publisher_report_controller import PublisherReportContro
 from controllers.report.zone_report_controller import ZoneReportController
 from controllers.report.ad_format_report_controller import AdFormatReportController
 from controllers.customer.customer_controller import CustomerController
+from controllers.remarketing.remarketing_controller import RemarketingController
+from controllers.website.website_controller import WebsiteController
+from controllers.ads_group.ads_group_controller import AdsGroupController
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Enable CORS for all routes
@@ -41,6 +44,10 @@ api.add_resource(CampaignController,
 api.add_resource(AdsGroupController,
                  '/ads-groups',
                  '/ads-groups/<int:ads_group_id>',
+                 '/ads-groups/<int:ads_group_id>/product-groups',
+                 '/ads-groups/<int:ads_group_id>/websites',
+                 '/ads-groups/<int:ads_group_id>/product-groups/<int:product_group_id>',
+                 '/ads-groups/<int:ads_group_id>/websites/<int:website_id>',
                  resource_class_kwargs={'decorators': [token_required]}
                  )
 
@@ -189,6 +196,9 @@ api.add_resource(CustomerController,
                  '/customers/<int:customer_id>',
                  resource_class_kwargs={'decorators': [token_required]}
                  )
+
+# Remarketing routes
+api.add_resource(RemarketingController, '/api/remarketing', '/api/remarketing/<int:remarketing_id>')
 
 create_all_tables()
 if __name__ == '__main__':

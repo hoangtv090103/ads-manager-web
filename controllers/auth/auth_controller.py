@@ -20,6 +20,9 @@ class LoginController(BaseController):
             user = User.get_by_username(data['username'])
             if not user:
                 user = User.get_by_email(data['username'])
+                
+            if not user:
+                return {'status': 'error', 'message': 'Invalid credentials'}, 401
 
             if user and Auth.verify_password(data.get('password'), user.get('password')) or user.get('password') == data.get('password'):
                 token = jwt.encode({
