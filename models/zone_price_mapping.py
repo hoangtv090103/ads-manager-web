@@ -61,6 +61,26 @@ class ZonePriceMapping:
             if not row:
                 return None
             return dict(zip([column[0] for column in cursor.description], row))
+        
+    @staticmethod
+    def get_by_setup_id(zone_price_setup_id):
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM zone_price_mapping WHERE zone_price_setup_id = %s', (zone_price_setup_id,))
+            rows = cursor.fetchall()
+            if not rows:
+                return []
+            columns = [desc[0] for desc in cursor.description]
+            return [dict(zip(columns, row)) for row in rows]
+    @staticmethod
+    def get_by_zone_id(zone_id):
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM zone_price_mapping WHERE zone_id = %s', (zone_id,))
+            rows = cursor.fetchall()
+            if not rows:
+                return []
+            return [dict(zip([column[0] for column in cursor.description], row)) for row in rows]
 
     @staticmethod
     def update(mapping_id, data={}):

@@ -4,48 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tạo mới vùng quảng cáo - Ads Manager</title>
+    <title>Tạo vùng quảng cáo - Ads Manager</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <script src="./js/auth.js"></script>
+    <script src="./script.js"></script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #F5F5F5;
-            margin: 0;
-            padding: 0;
-        }
-
-        .main-content {
-            margin-left: 250px;
-            padding: 24px 40px;
-            background-color: #F5F5F5;
-            min-height: 100vh;
-        }
-
         .form-container {
             background: white;
             border-radius: 8px;
-            padding: 32px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 24px;
-            color: #4F4F4F;
-            font-size: 14px;
-        }
-
-        .form-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 32px;
+            padding: 24px;
+            margin-top: 24px;
         }
 
         .form-group {
@@ -55,72 +25,83 @@
         .form-label {
             display: block;
             margin-bottom: 8px;
+            color: #4F4F4F;
+            font-weight: 500;
             font-size: 14px;
-            color: #333;
         }
 
         .form-input,
         .form-select {
             width: 100%;
-            padding: 10px;
+            padding: 8px 12px;
             border: 1px solid #E0E0E0;
             border-radius: 4px;
             font-size: 14px;
+            color: #333;
+            background-color: white;
         }
 
-        .tab-container {
-            display: flex;
-            gap: 24px;
-            margin-bottom: 24px;
-            border-bottom: 1px solid #E0E0E0;
+        .form-input::placeholder {
+            color: #BDBDBD;
         }
 
-        .tab {
-            padding: 12px 0;
-            color: #4F4F4F;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .tab.active {
-            color: #0061C1;
-            font-weight: 500;
-        }
-
-        .tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: #0061C1;
-        }
-
-        .format-section {
+        .ad-format-section {
             margin-top: 24px;
+        }
+
+        .format-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #4F4F4F;
+            margin-bottom: 16px;
+        }
+
+        .format-required {
+            color: #EB5757;
+            font-size: 12px;
+            margin-left: 4px;
         }
 
         .format-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 16px;
+            margin-bottom: 16px;
         }
 
-        .format-item {
+        .format-group {
+            margin-bottom: 16px;
+        }
+
+        .format-group-title {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
             border: 1px solid #E0E0E0;
-            padding: 12px;
             border-radius: 4px;
-        }
-
-        .backup-ads {
-            margin-top: 24px;
         }
 
         .switch {
             position: relative;
             display: inline-block;
-            width: 40px;
+            width: 36px;
             height: 20px;
         }
 
@@ -139,7 +120,7 @@
             bottom: 0;
             background-color: #ccc;
             transition: .4s;
-            border-radius: 20px;
+            border-radius: 34px;
         }
 
         .slider:before {
@@ -155,37 +136,124 @@
         }
 
         input:checked+.slider {
-            background-color: #2196F3;
+            background-color: #0061C1;
         }
 
         input:checked+.slider:before {
-            transform: translateX(20px);
+            transform: translateX(16px);
         }
 
-        .btn-submit {
-            background-color: #2196F3;
-            color: white;
-            padding: 12px 24px;
-            border: none;
+        .backup-ads {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 24px;
+        }
+
+        .backup-ads-label {
+            font-size: 14px;
+            color: #4F4F4F;
+        }
+
+        .form-actions {
+            margin-top: 32px;
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 8px 16px;
             border-radius: 4px;
-            cursor: pointer;
             font-size: 14px;
             font-weight: 500;
+            cursor: pointer;
+            border: none;
         }
 
-        .required {
-            color: #EB5757;
-            margin-left: 4px;
+        .btn-primary {
+            background: #0061C1;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #4F4F4F;
+            border: 1px solid #E0E0E0;
+        }
+
+        @media (max-width: 768px) {
+            .format-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .checkbox-group {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
         }
 
         .format-group {
             margin-bottom: 24px;
         }
 
-        .format-label {
+        .format-group-title {
             font-weight: 500;
             margin-bottom: 12px;
             color: #333;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .checkbox-item:hover {
+            background: #F8F9FA;
+        }
+
+        .format-size {
+            color: #828282;
+            font-size: 12px;
+            margin-left: 4px;
+        }
+
+        /* Styles cho backup ads section */
+        #backupAdsOptions {
+            margin-top: 16px;
+            padding: 16px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            background-color: #F8F9FA;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        #backupAdsToggle {
+            margin-right: 8px;
         }
     </style>
 </head>
@@ -199,7 +267,7 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <img src="../assets/novanet-logo.png" alt="Ads Manager" class="logo">
+
             <span class="logo-text">Ads Manager</span>
         </div>
 
@@ -227,15 +295,7 @@
                 <span>Quản lý đối tượng</span>
             </a>
 
-            <a href="/frontend/deposit.html" class="nav-item">
-                <i class="fas fa-wallet"></i>
-                <span>Nạp tiền tài khoản</span>
-            </a>
 
-            <a href="/frontend/deposit-history.html" class="nav-item">
-                <i class="fas fa-history"></i>
-                <span>Lịch sử nạp tiền</span>
-            </a>
 
             <div class="nav-group">
                 <div class="nav-item" onclick="toggleSubmenu(this)">
@@ -268,6 +328,7 @@
                     <a href="/frontend/ad-zones.html">• Danh sách vùng QC</a>
                 </div>
             </div>
+
             <a href="/frontend/accounts.html" class="nav-item">
                 <i class="fas fa-user-shield"></i>
                 <span>Quản lý phân quyền</span>
@@ -275,206 +336,235 @@
         </nav>
     </div>
 
+    <!-- Main Content -->
     <div class="main-content">
-        <div class="breadcrumb">
-            <a href="/dashboard">Trang chủ</a>
-            <i class="fas fa-chevron-right"></i>
-            <a href="/ad-zones">Quản lý vùng quảng cáo</a>
-            <i class="fas fa-chevron-right"></i>
-            <span>Thêm mới vùng quảng cáo</span>
+        <div class="header-content"
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <div style="display: flex; align-items: center; gap: 8px; color: #4F4F4F;">
+                <i class="fas fa-globe"></i>
+                <span style="font-size: 14px;">/ Quản lý website / Danh sách vùng quảng cáo / Thêm mới vùng quảng
+                    cáo</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div>
+                    <div style="font-weight: 500; color: #333; text-align: right;">Lê Bách</div>
+                    <div style="font-size: 12px; color: #828282;">Admin</div>
+                </div>
+                <img src="../assets/avatar.jpg" alt="User Avatar"
+                    style="width: 40px; height: 40px; border-radius: 4px;">
+            </div>
         </div>
 
         <div class="form-container">
-            <h1 class="form-title">Tạo vùng quảng cáo</h1>
+            <h1 style="margin: 0 0 24px 0; font-size: 20px; color: #333;">Tạo vùng quảng cáo</h1>
 
-            <form id="createAdZoneForm">
+            <form id="adZoneForm">
                 <div class="form-group">
-                    <label class="form-label">Website domain<span class="required">*</span></label>
-                    <select class="form-select" required>
+                    <label class="form-label">Website domain</label>
+                    <select id="websiteSelect" class="form-select" required>
                         <option value="">Chọn website domain</option>
-                        <option value="novanet.vn">Ads Manager.vn</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Tên vùng<span class="required">*</span></label>
-                    <input type="text" class="form-input" placeholder="Nhập tên vùng" required>
+                    <label class="form-label">Tên vùng</label>
+                    <input type="text" id="zoneName" class="form-input" placeholder="Tên vùng quảng cáo" required>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Kích thước quảng cáo<span class="required">*</span></label>
-                    <select class="form-select" id="adSize" required>
+                    <label class="form-label">Kích thước quảng cáo</label>
+                    <select id="sizeSelect" class="form-select" required>
                         <option value="">Chọn kích thước</option>
-                        <option value="375x400">375x400 - In page</option>
-                        <option value="300x600">300x600 - In page</option>
-                        <option value="375x600">375x600 - In page</option>
-                        <option value="300x250">300x250 - In page</option>
-                        <option value="375x810">375x810 - In page</option>
-                        <option value="359x70">359x70 - Top banner</option>
-                        <option value="640x320">640x320 - Top banner</option>
-                        <option value="375x180">375x180 - Top banner</option>
-                        <option value="375x810_popup">375x810 - Popup mobile</option>
-                        <option value="375x120">375x120 - In footer</option>
-                        <option value="320x100">320x100 - In footer</option>
-                        <option value="160x600">160x600 - Side page</option>
                     </select>
                 </div>
 
-                <div class="format-section">
-                    <div class="format-title">Chọn định dạng<span class="required">*</span></div>
-                    <div id="formatContainer">
-                        <div class="format-group native-ads" style="display: none;">
-                            <div class="format-label">Native Ads</div>
-                            <div class="format-grid">
-                                <!-- Native Ads formats will be populated here -->
-                            </div>
-                        </div>
-                        <div class="format-group display-ads" style="display: none;">
-                            <div class="format-label">Display ads</div>
-                            <div class="format-grid">
-                                <!-- Display Ads formats will be populated here -->
-                            </div>
-                        </div>
-                        <div class="format-group ecommerce" style="display: none;">
-                            <div class="format-label">Ecommerce</div>
-                            <div class="format-grid">
-                                <!-- Ecommerce formats will be populated here -->
-                            </div>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label class="form-label">Định dạng quảng cáo</label>
+                    <div id="formatContainer" class="format-container"></div>
                 </div>
 
-                <div class="backup-ads">
-                    <label class="switch">
-                        <input type="checkbox" id="backupAds">
-                        <span class="slider"></span>
-                    </label>
-                    <span style="margin-left: 8px;">Quảng cáo dự phòng</span>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary"
+                        onclick="window.location.href='ad-zones.html'">Hủy</button>
+                    <button type="button" class="btn btn-primary" onclick="saveAdZone()">Hoàn tất</button>
                 </div>
-
-                <div class="form-group" style="margin-top: 24px;">
-                    <label class="form-label">Mã quảng cáo</label>
-                    <input type="text" class="form-input" placeholder="Nhập mã quảng cáo">
-                </div>
-
-                <button type="submit" class="btn-submit">Hoàn tất</button>
             </form>
         </div>
     </div>
 
-    <script src="./script.js"></script>
-
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        const baseUrl = 'http://127.0.0.1:5000/api/v1';
+
+        document.addEventListener('DOMContentLoaded', function () {
             requireAuth();
+            loadWebsites();
+            loadAdSizes();
+            setupBackupAdsToggle();
+
+        });
+        // Thêm event listener cho select kích thước
+        const sizeSelect = document.getElementById('sizeSelect');
+        sizeSelect.addEventListener('change', function () {
+            const selectedSizeId = this.value;
+            if (selectedSizeId) {
+                loadAdFormatsBySize(selectedSizeId);
+            } else {
+                document.getElementById('formatContainer').innerHTML = '';
+            }
         });
 
-        document.getElementById('createAdZoneForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        async function loadWebsites() {
             try {
-                const formData = {
-                    // ... collect form data
+                const response = await fetchWithAuth(`${baseUrl}/websites`);
+                if (!response.ok) throw new Error('Failed to fetch websites');
+
+                const data = await response.json();
+                const select = document.getElementById('websiteSelect');
+
+                data.websites.forEach(website => {
+                    const option = document.createElement('option');
+                    option.value = website.website_id;
+                    option.textContent = `${website.domain_website}`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading websites:', error);
+                alert('Không thể tải danh sách website');
+            }
+        }
+
+        async function loadAdSizes() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/ads-zone-sizes`);
+                if (!response.ok) throw new Error('Failed to fetch ad sizes');
+
+                const data = await response.json();
+                const sizes = data.sizes;
+                const select = document.getElementById('sizeSelect');
+
+                sizes.forEach(size => {
+                    const option = document.createElement('option');
+                    option.value = size.size_id;
+                    option.textContent = size.ten_kich_thuoc;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading ad sizes:', error);
+                alert('Không thể tải danh sách kích thước quảng cáo');
+            }
+        }
+
+        function setupBackupAdsToggle() {
+            const toggle = document.getElementById('backupAdsToggle');
+            const section = document.getElementById('backupAdsSection');
+
+            toggle.addEventListener('change', function () {
+                section.style.display = this.checked ? 'block' : 'none';
+            });
+        }
+
+        async function saveAdZone() {
+            try {
+                const form = document.getElementById('adZoneForm');
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                const selectedFormats = Array.from(document.querySelectorAll('input[name="format"]:checked'))
+                    .map(cb => cb.value);
+
+                if (selectedFormats.length === 0) {
+                    alert('Vui lòng chọn ít nhất 1 định dạng');
+                    return;
+                }
+
+                const zoneData = {
+                    website_id: parseInt(document.getElementById('websiteSelect').value),
+                    ten_vung_quang_cao: document.getElementById('zoneName').value,
+                    size_id: parseInt(document.getElementById('sizeSelect').value),
+                    formats: selectedFormats
                 };
-                
-                const response = await fetchWithAuth(`${baseUrl}/ad-zones`, {
+
+                const response = await fetchWithAuth(`${baseUrl}/ads-zones`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify(zoneData)
                 });
-                
+
                 if (!response.ok) {
-                    throw new Error('Không thể tạo vùng quảng cáo');
+                    throw new Error('Failed to create ad zone');
                 }
-                
-                alert('Đã tạo vùng quảng cáo thành công!');
-                window.location.href = '/frontend/ad-zones.html';
+
+                window.location.href = 'ad-zones.html';
             } catch (error) {
-                console.error('Error:', error);
-                alert(error.message);
+                console.error('Error saving ad zone:', error);
+                alert('Không thể lưu vùng quảng cáo. Vui lòng thử lại sau.');
             }
-        });
+        }
 
-        document.getElementById('backupAds').addEventListener('change', function () {
-            // Xử lý logic khi toggle quảng cáo dự phòng
-        });
+        // Hàm load định dạng quảng cáo dựa theo kích thước
+        async function loadAdFormatsBySize(sizeId) {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/ad-size-formats/${sizeId}`);
+                if (!response.ok) throw new Error('Failed to fetch ad formats');
 
-        // Định nghĩa data mapping giữa size và format
-        const adFormats = {
-            "375x400": {
-                "Native Ads": ["Native video post", "Native post in read"],
-            },
-            "359x70": {
-                "Display ads": ["Notification Banner"],
-            },
-            "375x120": {
-                "Display ads": ["CatFish Collab Branding", "CatFish Collab Video"],
-                "Ecommerce": ["CatFish Ecom", "CatFish Video Ecom"]
-            },
-            "375x810": {
-                "Display ads": ["Popup Banner Branding", "Popup Banner Video", "Interactive Banner"],
-                "Ecommerce": ["Flying Carpet"]
-            },
-            "300x600": {
-                "Display ads": ["Interscroller Video Branding", "Text Ads 300x600"]
-            },
-            "375x600": {
-                "Display ads": ["In Read Branding"],
-                "Ecommerce": ["In Read Ecommerce", "Post In Read"]
-            },
-            "300x250": {
-                "Display ads": ["Banner Medium 300x250", "Text Ads 300x250"]
-            },
-            "640x320": {
-                "Display ads": ["Banner Standard 640x320"]
-            },
-            "160x600": {
-                "Display ads": ["Banner Standard 160x600"]
-            },
-            "320x100": {
-                "Display ads": ["CatFish Graphic Banner", "Text Ads 320x100"]
-            },
-            "375x180": {
-                "Display ads": ["Mobile Banner Card"]
-            }
-        };
+                const data = await response.json();
+                const formats = data.formats;
+                const formatContainer = document.getElementById('formatContainer');
+                formatContainer.innerHTML = ''; // Clear existing formats
 
-        document.getElementById('adSize').addEventListener('change', function () {
-            const selectedSize = this.value;
-            const formatContainer = document.getElementById('formatContainer');
+                // Group formats by campaign type
+                const formatsByType = formats.reduce((acc, format) => {
+                    if (!acc[format.ten_loai_chien_dich]) {
+                        acc[format.ten_loai_chien_dich] = [];
+                    }
+                    acc[format.ten_loai_chien_dich].push(format);
+                    return acc;
+                }, {});
 
-            // Reset all format groups
-            document.querySelectorAll('.format-group').forEach(group => {
-                group.style.display = 'none';
-                group.querySelector('.format-grid').innerHTML = '';
-            });
-
-            if (!selectedSize) return;
-
-            // Get formats for selected size
-            const formats = adFormats[selectedSize];
-            if (!formats) return;
-
-            // Populate formats
-            Object.entries(formats).forEach(([category, items]) => {
-                const groupElement = document.querySelector(`.format-group.${category.toLowerCase().replace(' ', '-')}`);
-                if (!groupElement) return;
-
-                groupElement.style.display = 'block';
-                const gridElement = groupElement.querySelector('.format-grid');
-
-                items.forEach(format => {
-                    const formatItem = document.createElement('div');
-                    formatItem.className = 'format-item';
-                    formatItem.innerHTML = `
-                        <label>
-                            <input type="checkbox" name="format" value="${format.toLowerCase().replace(/ /g, '_')}">
-                            <span>${format}</span>
-                        </label>
+                // Create HTML for each campaign type and its formats
+                Object.entries(formatsByType).forEach(([campaignType, formats]) => {
+                    const typeSection = document.createElement('div');
+                    typeSection.className = 'format-group';
+                    typeSection.innerHTML = `
+                        <div class="format-group-title">${campaignType}</div>
+                        <div class="checkbox-group">
+                            ${formats.map(format => `
+                                <label class="checkbox-item">
+                                    <input type="checkbox" 
+                                           name="format" 
+                                           value="${format.format_id}">
+                                    ${format.format_name}
+                                    <small class="format-size">${format.ten_kich_thuoc}</small>
+                                </label>
+                            `).join('')}
+                        </div>
                     `;
-                    gridElement.appendChild(formatItem);
+                    formatContainer.appendChild(typeSection);
                 });
+
+            } catch (error) {
+                console.error('Error loading ad formats:', error);
+                alert('Không thể tải danh sách định dạng quảng cáo');
+            }
+        }
+
+        // Thêm xử lý hiển thị/ẩn phần backup ads
+        document.addEventListener('DOMContentLoaded', function() {
+            const backupAdsToggle = document.getElementById('backupAdsToggle');
+            const backupAdsOptions = document.getElementById('backupAdsOptions');
+
+            backupAdsToggle.addEventListener('change', function() {
+                backupAdsOptions.style.display = this.checked ? 'block' : 'none';
+                
+                // Reset các trường backup ads khi tắt
+                if (!this.checked) {
+                    document.getElementById('backupAdsType').value = '';
+                    document.getElementById('backupAdsCode').value = '';
+                }
             });
         });
     </script>

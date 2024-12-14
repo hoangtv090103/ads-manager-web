@@ -1,5 +1,6 @@
 from flask import Blueprint, Flask, request, jsonify
 from flask_cors import CORS
+from flask_jwt_extended import jwt_required
 from flask_restful import Api
 from controllers.auth.auth_controller import LoginController, RegisterController
 from controllers.campaign.campaign_controller import CampaignController
@@ -22,6 +23,9 @@ from controllers.customer.customer_controller import CustomerController
 from controllers.remarketing.remarketing_controller import RemarketingController
 from controllers.website.website_controller import WebsiteController
 from controllers.ads_group.ads_group_controller import AdsGroupController
+from controllers.ads_zone_size.ads_zone_size_controller import AdsZoneSizeController
+from models.ads_format import AdsFormat
+from controllers.price.price_controller import PriceController
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Enable CORS for all routes
@@ -82,6 +86,7 @@ api.add_resource(WebsiteReportController,
 api.add_resource(AdsZoneController,
                  '/ads-zones',
                  '/ads-zones/<int:ads_zone_id>',
+                 '/ads-zones/<int:ads_zone_id>/formats',
                  resource_class_kwargs={'decorators': [token_required]}
                  )
 
@@ -198,7 +203,42 @@ api.add_resource(CustomerController,
                  )
 
 # Remarketing routes
-api.add_resource(RemarketingController, '/api/remarketing', '/api/remarketing/<int:remarketing_id>')
+api.add_resource(RemarketingController, '/api/remarketing',
+                 '/api/remarketing/<int:remarketing_id>')
+
+# Ads Zone Size routes
+api.add_resource(AdsZoneSizeController,
+                 '/ads-zone-sizes',
+                 '/ads-zone-sizes/<int:size_id>',
+                 resource_class_kwargs={'decorators': [token_required]}
+                 )
+
+# Price routes
+api.add_resource(PriceController,
+                 '/prices',
+                 '/prices/<int:price_id>',
+                 resource_class_kwargs={'decorators': [token_required]}
+                 )
+
+from flask import jsonify
+
+@app.route('/api/v1/ad-size-formats/<int:size_id>', methods=['GET'])
+def get_ad_formats_by_size(size_id):
+    try:
+        formats = AdsFormat.get_by_size_id(size_id)
+        if not formats:
+            return jsonify({'success': True, 'formats': []})  # Trả về mảng rỗng thay vì null
+        return jsonify({'success': True, 'formats': formats})
+    except Exception as e:
+        print(f"Error getting formats: {str(e)}")  # Log lỗi để debug
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        }), 500
+
+@app.route('/api/v1/prices/formats', methods=['GET'])
+def get_formats_for_pricing():
+    return PriceController().get_formats_for_pricing()
 
 create_all_tables()
 if __name__ == '__main__':

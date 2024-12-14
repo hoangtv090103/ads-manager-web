@@ -1,6 +1,7 @@
 # Auth
+from models.ads_zone_format import AdsZoneFormat
 from .auth import Auth
-from .role import Role 
+from .role import Role
 from .user import User
 
 # Trạng thái
@@ -51,15 +52,16 @@ from .publisher import Publisher
 from .customer import Customer
 from .transaction_system import TransactionSystem
 
+
 def create_all_tables():
     # 1. Bảng Auth
     Role.create_table()
     User.create_table()
-    
+
     # 2. Bảng Trạng thái
     Behaviour.create_table()
     CampStatus.create_table()
-    AdsGroupStatus.create_table() 
+    AdsGroupStatus.create_table()
     StatusAds.create_table()
     ProductStatus.create_table()
     SourceStatus.create_table()
@@ -103,3 +105,4 @@ def create_all_tables():
     AdsGroupWebsite.create_table()
     RemarketingSetting.create_table()
     RemarketingExcludedWebsite.create_table()
+    AdsZoneFormat.create_table()

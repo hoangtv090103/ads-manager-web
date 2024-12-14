@@ -5,13 +5,14 @@ import io
 
 class Product:
     def __init__(self, product_id=None, ten_san_pham="", mo_ta_san_pham="",
-                 lien_ket_san_pham="", hinh_anh_san_pham=None,
+                 bo_chi_so="", lien_ket_san_pham="", hinh_anh_san_pham=None,
                  source_id=None, productstatus_id=None,
                  gia_san_pham=None, gia_khuyen_mai=None,
                  created_at=None, updated_at=None, active=True):
         self.product_id = product_id
         self.ten_san_pham = ten_san_pham
         self.mo_ta_san_pham = mo_ta_san_pham
+        self.bo_chi_so = bo_chi_so
         self.lien_ket_san_pham = lien_ket_san_pham
         self.hinh_anh_san_pham = hinh_anh_san_pham
         self.source_id = source_id
@@ -31,6 +32,7 @@ class Product:
                     product_id SERIAL PRIMARY KEY,
                     ten_san_pham VARCHAR(255),
                     mo_ta_san_pham TEXT,
+                    bo_chi_so INTEGER,
                     lien_ket_san_pham VARCHAR(255),
                     hinh_anh_san_pham BYTEA,
                     source_id INTEGER,
@@ -54,12 +56,12 @@ class Product:
             cursor.execute('''
             INSERT INTO product (
                 ten_san_pham, mo_ta_san_pham, lien_ket_san_pham,
-                hinh_anh_san_pham, source_id, productstatus_id, gia_san_pham, gia_khuyen_mai, active
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+                hinh_anh_san_pham, source_id, productstatus_id, gia_san_pham, gia_khuyen_mai, bo_chi_so, active
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
             ''', (
                 self.ten_san_pham, self.mo_ta_san_pham,
                 self.lien_ket_san_pham, self.hinh_anh_san_pham,
-                self.source_id, self.productstatus_id, self.active
+                self.source_id, self.productstatus_id, self.gia_san_pham, self.gia_khuyen_mai, self.bo_chi_so, self.active
             ))
             conn.commit()
 
@@ -114,6 +116,7 @@ class Product:
                 productstatus_id = %s,
                 gia_san_pham = %s,
                 gia_khuyen_mai = %s,
+                bo_chi_so = %s,
                 updated_at = CURRENT_TIMESTAMP
             WHERE product_id = %s
             ''', (
@@ -121,7 +124,7 @@ class Product:
                 self.lien_ket_san_pham, self.hinh_anh_san_pham,
                 self.source_id, self.productstatus_id,
                 self.gia_san_pham, self.gia_khuyen_mai,
-                self.product_id
+                self.bo_chi_so, self.product_id
             ))
             conn.commit()
 
@@ -147,10 +150,12 @@ class Product:
             product = Product(
                 ten_san_pham=row[0].value,
                 mo_ta_san_pham=row[1].value,
-                lien_ket_san_pham=row[2].value,
-                source_id=row[3].value,
-                productstatus_id=row[4].value,
-                gia_san_pham=row[5].value,
+                bo_chi_so=row[2].value,
+                lien_ket_san_pham=row[3].value,
+                hinh_anh_san_pham=row[4].value,
+                source_id=row[5].value,
+                productstatus_id=row[6].value,
+                gia_san_pham=row[7].value,
                 gia_khuyen_mai=row[6].value
             )
             products.append(product)

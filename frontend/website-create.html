@@ -1,101 +1,119 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thêm mới Domain Website</title>
+    <title>Thêm mới Domain Website - Ads Manager</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <script src="./js/auth.js"></script>
+    <script src="./script.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            background: #fff;
+        .form-container {
+            background: white;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-
-        h1 {
-            font-size: 24px;
-            margin-bottom: 20px;
+            padding: 24px;
+            margin-top: 24px;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 24px;
         }
 
-        .form-group label {
-            font-size: 14px;
-            font-weight: bold;
+        .form-label {
             display: block;
-            margin-bottom: 5px;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 8px;
+            margin-bottom: 8px;
+            color: #4F4F4F;
+            font-weight: 500;
             font-size: 14px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
         }
 
-        .actions {
+        .form-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .form-input::placeholder {
+            color: #BDBDBD;
+        }
+
+        .form-actions {
             display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
+            gap: 16px;
+            margin-top: 32px;
         }
 
         .btn {
-            padding: 10px 20px;
+            padding: 8px 16px;
+            border-radius: 4px;
             font-size: 14px;
-            border: none;
-            border-radius: 5px;
+            font-weight: 500;
             cursor: pointer;
+            border: none;
         }
 
         .btn-primary {
-            background-color: #007bff;
-            color: #fff;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
+            background: #0061C1;
+            color: white;
         }
 
         .btn-secondary {
-            background-color: #6c757d;
-            color: #fff;
+            background: white;
+            color: #4F4F4F;
+            border: 1px solid #E0E0E0;
         }
 
-        .btn-secondary:hover {
-            background-color: #5a6268;
+        .domain-alias-section {
+            margin-top: 16px;
+        }
+
+        .add-alias-btn {
+            color: #0061C1;
+            background: none;
+            border: none;
+            padding: 0;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-alias-btn i {
+            font-size: 16px;
+        }
+
+        .domain-alias-list {
+            margin-top: 16px;
+        }
+
+        .domain-alias-item {
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 
 <body>
-    <!-- Toggle Menu Button -->
-    <button class="menu-toggle" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
-
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <img src="../assets/novanet-logo.png" alt="Ads Manager" class="logo">
+            
             <span class="logo-text">Ads Manager</span>
         </div>
 
@@ -123,15 +141,7 @@
                 <span>Quản lý đối tượng</span>
             </a>
 
-            <a href="/frontend/deposit.html" class="nav-item">
-                <i class="fas fa-wallet"></i>
-                <span>Nạp tiền tài khoản</span>
-            </a>
 
-            <a href="/frontend/deposit-history.html" class="nav-item">
-                <i class="fas fa-history"></i>
-                <span>Lịch sử nạp tiền</span>
-            </a>
 
             <div class="nav-group">
                 <div class="nav-item" onclick="toggleSubmenu(this)">
@@ -170,91 +180,126 @@
             </a>
         </nav>
     </div>
-    <div class="container">
-        <h1>Thêm mới Domain Website</h1>
-        <form id="domain-form">
-            <!-- Email Publisher -->
-            <div class="form-group">
-                <label for="email-publisher">Email Publisher</label>
-                <select id="email-publisher">
-                    <option value="">Chọn Publisher</option>
-                    <option value="publisher1@gmail.com">Publisher 1</option>
-                    <option value="publisher2@gmail.com">Publisher 2</option>
-                </select>
-            </div>
 
-            <!-- Domain Website -->
-            <div class="form-group">
-                <label for="domain-website">Domain Website</label>
-                <input type="text" id="domain-website" placeholder="Nhập Domain website">
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header-content" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <div style="display: flex; align-items: center; gap: 8px; color: #4F4F4F;">
+                <i class="fas fa-globe"></i>
+                <span style="font-size: 14px;">/ Danh sách website / Tạo website</span>
             </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div>
+                    <div style="font-weight: 500; color: #333; text-align: right;">BA team</div>
+                    <div style="font-size: 12px; color: #828282;">bateam@gmail.com</div>
+                </div>
+                <img src="../assets/avatar.jpg" alt="User Avatar" style="width: 40px; height: 40px; border-radius: 4px;">
+            </div>
+        </div>
 
-            <!-- URL -->
-            <div class="form-group">
-                <label for="url">URL (Sau khi lưu thì không được sửa)</label>
-                <input type="text" id="url" placeholder="Nhập Url">
-            </div>
+        <div class="form-container">
+            <h1 style="margin: 0 0 24px 0; font-size: 20px; color: #333;">Thêm mới Domain Website</h1>
 
-            <!-- Action Buttons -->
-            <div class="actions">
-                <button type="button" class="btn btn-secondary" onclick="saveData()">Lưu</button>
-                <button type="button" class="btn btn-primary" onclick="saveAndCreateAds()">Lưu và tạo vùng quảng
-                    cáo</button>
-            </div>
-        </form>
+            <form id="websiteForm" onsubmit="return false;">
+                <div class="form-group">
+                    <label class="form-label">Email Publisher</label>
+                    <select id="publisherSelect" class="form-input" required>
+                        <option value="">Chọn Publisher</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Domain Website</label>
+                    <input type="text" id="domainWebsite" class="form-input" placeholder="Nhập Domain website" oninput="updateUrl(this.value)" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">URL (Bao khí khi không được phê duyệt)</label>
+                    <input type="url" id="linkUrl" class="form-input" placeholder="Nhập Url" required>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='websites.html'">Hủy</button>
+                    <button type="button" class="btn btn-secondary" onclick="saveWebsite(false)">Lưu</button>
+                    <button type="button" class="btn btn-primary" onclick="saveWebsite(true)">Lưu và tạo vùng quảng cáo</button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <script src="./script.js"></script>
-
     <script>
+        const baseUrl = 'http://127.0.0.1:5000/api/v1';
+
+        // Load publishers when page loads
         document.addEventListener('DOMContentLoaded', function() {
             requireAuth();
+            loadPublishers();
         });
 
-        async function saveData() {
-            const emailPublisher = document.getElementById('email-publisher').value;
-            const domainWebsite = document.getElementById('domain-website').value;
-            const url = document.getElementById('url').value;
-
-            if (!emailPublisher || !domainWebsite || !url) {
-                alert('Vui lòng điền đầy đủ thông tin!');
-                return;
-            }
-
+        async function loadPublishers() {
             try {
+                const response = await fetchWithAuth(`${baseUrl}/publishers`);
+                if (!response.ok) throw new Error('Failed to fetch publishers');
+                
+                const data = await response.json();
+                const select = document.getElementById('publisherSelect');
+                
+                data.publishers.forEach(publisher => {
+                    const option = document.createElement('option');
+                    option.value = publisher.publisher_id;
+                    option.textContent = publisher.email;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading publishers:', error);
+                alert('Không thể tải danh sách publisher');
+            }
+    }
+
+
+        async function saveWebsite(createZone) {
+            try {
+                const form = document.getElementById('websiteForm');
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                const websiteData = {
+                    publisher_id: parseInt(document.getElementById('publisherSelect').value),
+                    link_url: document.getElementById('linkUrl').value,
+                    tong_so_luong_vung: 0,
+                    active: true
+                };
+
                 const response = await fetchWithAuth(`${baseUrl}/websites`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ emailPublisher, domainWebsite, url })
+                    body: JSON.stringify(websiteData)
                 });
-                
+
                 if (!response.ok) {
-                    throw new Error('Không thể tạo website');
+                    throw new Error('Failed to create website');
                 }
+
+                const result = await response.json();
                 
-                alert('Thông tin Domain Website đã được lưu.');
-                window.location.href = '/frontend/websites.html';
+                if (createZone) {
+                    window.location.href = `ad-zones-create.html?website_id=${result.website_id}`;
+                } else {
+                    window.location.href = 'websites.html';
+                }
             } catch (error) {
-                console.error('Error:', error);
-                alert(error.message);
+                console.error('Error saving website:', error);
+                alert('Không thể lưu website. Vui lòng thử lại sau.');
             }
         }
 
-        function saveAndCreateAds() {
-            const emailPublisher = document.getElementById('email-publisher').value;
-            const domainWebsite = document.getElementById('domain-website').value;
-            const url = document.getElementById('url').value;
-
-            if (!emailPublisher || !domainWebsite || !url) {
-                alert('Vui lòng điền đầy đủ thông tin!');
-                return;
-            }
-
-            alert('Thông tin đã được lưu và tạo vùng quảng cáo.');
-            // Code logic xử lý lưu thông tin và tạo vùng quảng cáo
-            console.log({ emailPublisher, domainWebsite, url });
+        function updateUrl(domain) {
+            const urlInput = document.getElementById('linkUrl');
+            urlInput.value = `https://${domain}`;
         }
     </script>
 </body>

@@ -26,12 +26,12 @@ class PriceType:
             cursor = conn.cursor()
             cursor.execute('''
             INSERT INTO price_type (price_type_name) 
-            VALUES (?)
+            VALUES (%s)
             ''', (self.price_type_name,))
             conn.commit()
 
     @staticmethod
-    def get_all_types():
+    def get_all():
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
@@ -39,14 +39,24 @@ class PriceType:
             ''')
             rows = cursor.fetchall()
             return [dict(zip([column[0] for column in cursor.description], row)) for row in rows]
+        
+    @staticmethod
+    def get_by_name(price_type_name):
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+            SELECT * FROM price_type WHERE price_type_name = %s
+            ''', (price_type_name,))
+            row = cursor.fetchone()
+            return dict(zip([column[0] for column in cursor.description], row)) if row else None    
 
     def update(self):
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
             UPDATE price_type
-            SET price_type_name = ?
-            WHERE price_type_id = ?
+            SET price_type_name = %s
+            WHERE price_type_id = %s
             ''', (self.price_type_name, self.price_type_id))
             conn.commit()
 
@@ -55,6 +65,6 @@ class PriceType:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-            UPDATE price_type SET active = 0 WHERE price_type_id = ?
+            UPDATE price_type SET active = 0 WHERE price_type_id = %s
             ''', (price_type_id,))
             conn.commit()

@@ -14,7 +14,7 @@ class WebsiteController(BaseController):
                 websites = Website.get_all_has_price_list()
             else:
                 websites = Website.get_all()
-            return jsonify(websites)
+            return jsonify({"websites": websites})
         except Exception as e:
             return jsonify({'message': str(e)})
 

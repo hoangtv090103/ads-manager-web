@@ -35,9 +35,7 @@ class AdsZoneSize:
             cursor = conn.cursor()
             cursor.execute('''
             SELECT * FROM ads_zone_size
-            LEFT JOIN ads_format ON ads_zone_size.format_id = ads_format.format_id
-            LEFT JOIN campaign_type ON ads_format.campaign_type_id = campaign_type.campaign_type_id
-            WHERE ads_zone_size.active = true
+            WHERE active = true
             ''')
             rows = cursor.fetchall()
             return [dict(zip([column[0] for column in cursor.description], row)) for row in rows]

@@ -54,7 +54,7 @@ class AdSizeFormat:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-            SELECT asf.*, azs.ten_kich_thuoc
+            SELECT asf.*, azs.*
             FROM ad_size_format asf
             LEFT JOIN ads_zone_size azs ON asf.size_id = azs.size_id
             WHERE asf.format_id = %s AND asf.active = true
@@ -67,10 +67,16 @@ class AdSizeFormat:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-            SELECT asf.*, af.format_name
-            FROM ad_size_format asf
-            LEFT JOIN ads_format af ON asf.format_id = af.format_id
-            WHERE asf.size_id = %s AND asf.active = true
+                SELECT DISTINCT 
+                    af.format_id,
+                    af.format_name,
+                    ct.ten_loai_chien_dich,
+                    azs.ten_kich_thuoc
+                FROM ad_size_format asf
+                JOIN ads_format af ON asf.format_id = af.format_id
+                JOIN campaign_type ct ON af.campaign_type_id = ct.camp_type_id
+                JOIN ads_zone_size azs ON asf.size_id = azs.size_id
+                WHERE asf.size_id = %s AND asf.active = true
             ''', (size_id,))
             rows = cursor.fetchall()
             return [dict(zip([column[0] for column in cursor.description], row)) for row in rows]

@@ -10,7 +10,6 @@ class Website:
         self.link_url = link_url
         self.tong_so_luong_vung = tong_so_luong_vung
         self.publisher_id = publisher_id
-        self.webstatus_id = webstatus_id
         self.active = active
 
     @staticmethod
@@ -37,9 +36,9 @@ class Website:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-            INSERT INTO website (domain_website, link_url, tong_so_luong_vung, publisher_id, webstatus_id)
-            VALUES (%s, %s, %s, %s, %s)
-            ''', (self.domain_website, self.link_url, self.tong_so_luong_vung, self.publisher_id, self.webstatus_id))
+            INSERT INTO website (domain_website, link_url, tong_so_luong_vung, publisher_id)
+            VALUES (%s, %s, %s, %s)
+            ''', (self.domain_website, self.link_url, self.tong_so_luong_vung, self.publisher_id))
             conn.commit()
 
     @staticmethod
@@ -47,8 +46,10 @@ class Website:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-            SELECT website_id, domain_website, link_url, tong_so_luong_vung, publisher_id, webstatus_id, created_at, updated_at, active 
-            FROM website WHERE active = true
+            SELECT website_id, domain_website, link_url, tong_so_luong_vung, website.publisher_id, publisher.ten_publisher, publisher.email, website.created_at, website.updated_at, website.active 
+            FROM website 
+            LEFT JOIN publisher ON website.publisher_id = publisher.publisher_id
+            WHERE website.active = true
             ''')
             rows = cursor.fetchall()
             if not rows:
@@ -86,9 +87,9 @@ class Website:
             cursor = conn.cursor()
             cursor.execute('''
             UPDATE website
-            SET domain_website = %s, link_url = %s, tong_so_luong_vung = %s, publisher_id = %s, webstatus_id = %s
+            SET domain_website = %s, link_url = %s, tong_so_luong_vung = %s, publisher_id = %s
             WHERE website_id = %s
-            ''', (self.domain_website, self.link_url, self.tong_so_luong_vung, self.publisher_id, self.webstatus_id, self.website_id))
+            ''', (self.domain_website, self.link_url, self.tong_so_luong_vung, self.publisher_id, self.website_id))
             conn.commit()
 
     @staticmethod

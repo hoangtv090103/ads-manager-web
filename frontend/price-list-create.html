@@ -9,6 +9,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./css/toast.css">
+    <script src="./js/auth.js"></script>
+    <script src="./js/toast.js"></script> <!-- Đảm bảo toast.js được load sau auth.js -->
+    <script src="./script.js"></script>
+
     <style>
         body {
             margin: 0;
@@ -74,6 +79,7 @@
 
         .radio-group {
             display: flex;
+            flex-direction: column;
             gap: 24px;
             margin-top: 8px;
         }
@@ -231,6 +237,152 @@
                 padding: 24px 20px;
             }
         }
+
+        .price-inputs {
+            background: #F8F9FA;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .price-inputs .form-group {
+            margin-bottom: 16px;
+        }
+
+        .price-inputs .btn-primary {
+            margin-top: 16px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            border-color: #0061C1;
+            outline: none;
+        }
+
+        /* Add these styles for multi-tag select */
+        .multi-tag-select {
+            min-height: 38px;
+            padding: 4px 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            align-items: center;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .selected-tag {
+            background: #E3F2FD;
+            color: #0061C1;
+            padding: 2px 8px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+        }
+
+        .selected-tag .remove {
+            cursor: pointer;
+            color: #0061C1;
+        }
+
+        .tag-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            margin-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .tag-option {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .tag-option:hover {
+            background: #F8F9FA;
+        }
+
+        .tag-select-container {
+            position: relative;
+        }
+
+        .selected-zones-prices {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .zone-price-section {
+            margin-top: 20px;
+        }
+
+        .zone-header {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .price-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+            background: white;
+        }
+
+        .price-table th {
+            background: #F0F7FF;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 500;
+            color: #333;
+            border: none;
+        }
+
+        .price-table td {
+            padding: 12px 16px;
+            border: none;
+            background: white;
+        }
+
+        .price-table tr:not(:last-child) td {
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .price-input-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .price-type-select {
+            padding: 6px 8px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            width: 80px;
+        }
+
+        .price-input {
+            padding: 6px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            width: 120px;
+        }
     </style>
 </head>
 
@@ -243,7 +395,7 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <img src="../assets/novanet-logo.png" alt="Ads Manager" class="logo">
+
             <span class="logo-text">Ads Manager</span>
         </div>
 
@@ -271,15 +423,7 @@
                 <span>Quản lý đối tượng</span>
             </a>
 
-            <a href="/frontend/deposit.html" class="nav-item">
-                <i class="fas fa-wallet"></i>
-                <span>Nạp tiền tài khoản</span>
-            </a>
 
-            <a href="/frontend/deposit-history.html" class="nav-item">
-                <i class="fas fa-history"></i>
-                <span>Lịch sử nạp tiền</span>
-            </a>
 
             <div class="nav-group">
                 <div class="nav-item" onclick="toggleSubmenu(this)">
@@ -345,8 +489,6 @@
                     <label>Website domain - Publisher</label>
                     <select class="form-control">
                         <option value="" disabled selected>Website - Publisher</option>
-                        <option>Kinhdoanh.tuoitre.vn - publisher@gmail.com</option>
-                        <option>Phunutoday.vn - zmedia@gmail.com</option>
                     </select>
                 </div>
             </div>
@@ -354,30 +496,57 @@
             <!-- Price Type Selection -->
             <div class="form-section">
                 <label class="section-label">Loại bảng giá</label>
-                <label class="radio-option">
-                    <input type="radio" name="price-type" checked>
-                    <span>Tạo giá chung cho toàn bộ vùng quảng cáo trên website</span>
-                </label>
-
-                <label class="radio-option">
-                    <input type="radio" name="price-type">
-                    <span>Tạo giá riêng cho từng vùng quảng cáo</span>
-                </label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="price-type" value="uniform" checked>
+                        <span>Tạo giá chung cho toàn bộ vùng quảng cáo trên website</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="price-type" value="individual">
+                        <span>Tạo giá riêng cho từng vùng quảng cáo</span>
+                    </label>
+                </div>
             </div>
 
-            <!-- Application Time -->
-            <div class="form-section">
-                <label class="section-label">Thời gian áp dụng</label>
-                <input type="datetime-local" class="form-control">
+            <div class="zone-selection" style="display: none;">
+                <div style="display: flex; gap: 16px; align-items: center; justify-content: space-between;">
+                    <div class="form-group col-md-6" style="flex: 1 1 auto;">
+                        <label class="form-label">Chọn vùng quảng cáo</label>
+                        <div class="tag-select-container">
+                            <div class="multi-tag-select" onclick="toggleTagDropdown(this)">
+                                <div class="selected-tags"></div>
+                                <div class="placeholder">Chọn vùng quảng cáo</div>
+                            </div>
+                            <div class="tag-dropdown"></div>
+                        </div>
+                        <div class="selected-tag-count" style="margin-top: 4px; color: #666; font-size: 12px;"></div>
+                    </div>
+                    <div class="form-group col-md-6" style="flex: 1 1 auto;">
+                        <label class="form-label">Thời gian áp dụng</label>
+                        <input type="date" class="form-control" style="max-width: 300px;">
+                    </div>
+                </div>
+
+                <!-- Bảng giá cho các vùng quảng cáo đã chọn -->
+                <div class="selected-zones-prices">
+                    <div class="zone-price-section" style="margin-bottom: 24px;">
+                        <!-- Dynamic zone sections will be inserted here -->
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" onclick="window.location.href='price-lists.html'">Hủy</button>
+                    <button class="btn btn-primary" onclick="saveZonePrices()">Tạo bảng giá</button>
+                </div>
             </div>
 
             <div class="price-section">
-                <div class="toggle-container">
-                    <!-- <label class="toggle-switch">
-                        <input type="checkbox">
-                        <span class="slider"></span>
-                    </label>
-                    <span>Đồng nhất giá cho toàn bộ loại định dạng</span> -->
+                <!-- Add start date input -->
+                <div style="margin-bottom: 24px;">
+                    <div class="form-group" style="max-width: 300px;">
+                        <label class="form-label">Thời gian áp dụng</label>
+                        <input type="date" class="form-control" id="uniform-start-date">
+                    </div>
                 </div>
 
                 <table class="price-table">
@@ -402,7 +571,8 @@
                                             <option>CPC</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá mua">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá mua">
                                 </div>
                             </td>
                             <td>
@@ -413,7 +583,8 @@
                                             <option>CPM</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá bán">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá bán">
                                 </div>
                             </td>
                         </tr>
@@ -427,7 +598,8 @@
                                             <option>CPC</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá mua">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá mua">
                                 </div>
                             </td>
                             <td>
@@ -438,7 +610,8 @@
                                             <option>CPM</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá bán">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá bán">
                                 </div>
                             </td>
                         </tr>
@@ -452,7 +625,8 @@
                                             <option>CPC</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá mua">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá mua">
                                 </div>
                             </td>
                             <td>
@@ -463,7 +637,8 @@
                                             <option>CPM</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá bán">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá bán">
                                 </div>
                             </td>
                         </tr>
@@ -477,7 +652,8 @@
                                             <option>CPC</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá mua">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá mua">
                                 </div>
                             </td>
                             <td>
@@ -488,7 +664,8 @@
                                             <option>CPM</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá bán">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá bán">
                                 </div>
                             </td>
                         </tr>
@@ -502,7 +679,8 @@
                                             <option>CPC</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá mua">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá mua">
                                 </div>
                             </td>
                             <td>
@@ -513,7 +691,8 @@
                                             <option>CPM</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá bán">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá bán">
                                 </div>
                             </td>
                         </tr>
@@ -527,7 +706,8 @@
                                             <option>CPC</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá mua">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá mua">
                                 </div>
                             </td>
                             <td>
@@ -538,7 +718,8 @@
                                             <option>CPM</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá bán">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá bán">
                                 </div>
                             </td>
                         </tr>
@@ -552,7 +733,8 @@
                                             <option>CPC</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá mua">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá mua">
                                 </div>
                             </td>
                             <td>
@@ -563,7 +745,8 @@
                                             <option>CPM</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá bán">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá bán">
                                 </div>
                             </td>
                         </tr>
@@ -577,7 +760,8 @@
                                             <option>CPC</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá mua">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá mua">
                                 </div>
                             </td>
                             <td>
@@ -588,7 +772,8 @@
                                             <option>CPM</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá bán">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá bán">
                                 </div>
                             </td>
                         </tr>
@@ -605,7 +790,8 @@
                                             <option>CPC</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá mua">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá mua">
                                 </div>
                             </td>
                             <td>
@@ -616,7 +802,8 @@
                                             <option>CPM</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá bán">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá bán">
                                 </div>
                             </td>
                         </tr>
@@ -630,7 +817,8 @@
                                             <option>CPC</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá mua">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá mua">
                                 </div>
                             </td>
                             <td>
@@ -641,7 +829,8 @@
                                             <option>CPM</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá bán">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá bán">
                                 </div>
                             </td>
                         </tr>
@@ -655,7 +844,8 @@
                                             <option>CPC</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá mua">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá mua">
                                 </div>
                             </td>
                             <td>
@@ -666,7 +856,8 @@
                                             <option>CPM</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá bán">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá bán">
                                 </div>
                             </td>
                         </tr>
@@ -680,7 +871,8 @@
                                             <option>CPC</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá mua">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá mua">
                                 </div>
                             </td>
                             <td>
@@ -691,7 +883,8 @@
                                             <option>CPM</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá bán">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá bán">
                                 </div>
                             </td>
                         </tr>
@@ -705,7 +898,8 @@
                                             <option>CPC</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá mua">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá mua">
                                 </div>
                             </td>
                             <td>
@@ -716,7 +910,8 @@
                                             <option>CPM</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá bán">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá bán">
                                 </div>
                             </td>
                         </tr>
@@ -730,7 +925,8 @@
                                             <option>CPC</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá mua">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá mua">
                                 </div>
                             </td>
                             <td>
@@ -741,7 +937,8 @@
                                             <option>CPM</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá bán">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá bán">
                                 </div>
                             </td>
                         </tr>
@@ -755,7 +952,8 @@
                                             <option>CPC</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá mua">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá mua">
                                 </div>
                             </td>
                             <td>
@@ -766,7 +964,8 @@
                                             <option>CPM</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá bán">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá bán">
                                 </div>
                             </td>
                         </tr>
@@ -780,7 +979,8 @@
                                             <option>CPC</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá mua">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá mua">
                                 </div>
                             </td>
                             <td>
@@ -791,7 +991,8 @@
                                             <option>CPM</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá bán">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá bán">
                                 </div>
                             </td>
                         </tr>
@@ -805,7 +1006,8 @@
                                             <option>CPC</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá mua">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá mua">
                                 </div>
                             </td>
                             <td>
@@ -816,7 +1018,8 @@
                                             <option>CPM</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá bán">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá bán">
                                 </div>
                             </td>
                         </tr>
@@ -833,7 +1036,8 @@
                                             <option>CPC</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá mua">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá mua">
                                 </div>
                             </td>
                             <td>
@@ -844,7 +1048,8 @@
                                             <option>CPM</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá bán">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá bán">
                                 </div>
                             </td>
                         </tr>
@@ -858,7 +1063,8 @@
                                             <option>CPC</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá mua">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá mua">
                                 </div>
                             </td>
                             <td>
@@ -869,7 +1075,8 @@
                                             <option>CPM</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá bán">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá bán">
                                 </div>
                             </td>
                         </tr>
@@ -883,7 +1090,8 @@
                                             <option>CPC</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá mua">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá mua">
                                 </div>
                             </td>
                             <td>
@@ -894,7 +1102,8 @@
                                             <option>CPM</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá bán">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá bán">
                                 </div>
                             </td>
                         </tr>
@@ -908,7 +1117,8 @@
                                             <option>CPC</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá mua">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá mua">
                                 </div>
                             </td>
                             <td>
@@ -919,7 +1129,8 @@
                                             <option>CPM</option>
                                         </select>
                                     </div>
-                                    <input type="text" class="price-input" placeholder="Nhập giá bán">
+                                    <input type="number" class="price-input" value="0" min="0"
+                                        placeholder="Nhập giá bán">
                                 </div>
                             </td>
                         </tr>
@@ -927,64 +1138,597 @@
                 </table>
 
                 <div class="action-buttons">
-                    <button class="btn btn-secondary">Hủy</button>
-                    <button class="btn btn-primary">Tạo bảng giá</button>
+                    <button class="btn btn-secondary" onclick="window.location.href='price-lists.html'">Hủy</button>
+                    <button class="btn btn-primary" onclick="savePriceList()">Tạo bảng giá</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="./script.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        const baseUrl = 'http://127.0.0.1:5000/api/v1';
+
+        document.addEventListener('DOMContentLoaded', function () {
             requireAuth();
             loadWebsites();
+            setupPriceTypeToggle();
         });
+
+        function setupPriceTypeToggle() {
+            const priceTypeRadios = document.querySelectorAll('input[name="price-type"]');
+            const priceTable = document.querySelector('.price-section');
+            const zoneSelection = document.querySelector('.zone-selection');
+
+            // Hide both sections initially
+            priceTable.style.display = 'none';
+            zoneSelection.style.display = 'none';
+
+            // Show default section (uniform price)
+            if (document.querySelector('input[name="price-type"][value="uniform"]').checked) {
+                priceTable.style.display = 'block';
+            }
+
+            priceTypeRadios.forEach(radio => {
+                radio.addEventListener('change', function () {
+                    const websiteId = document.querySelector('select.form-control').value;
+
+                    if (this.value === 'individual') {
+                        if (websiteId) {
+                            console.log('Loading ad zones for website:', websiteId);
+                            loadAdZones(websiteId);
+                            priceTable.style.display = 'none';
+                            zoneSelection.style.display = 'block';
+                        } else {
+                            Toast.error('Vui lòng chọn website trước khi chọn "Tạo giá riêng"', 'Lỗi');
+                            document.querySelector('input[name="price-type"][value="uniform"]').checked = true;
+                            priceTable.style.display = 'block';
+                            zoneSelection.style.display = 'none';
+                        }
+                    } else {
+                        // Reset zone selection when switching to uniform pricing
+                        resetZoneSelection();
+                        priceTable.style.display = 'block';
+                        zoneSelection.style.display = 'none';
+                    }
+                });
+            });
+
+            // Add change event for website select
+            document.querySelector('select.form-control').addEventListener('change', function() {
+                const selectedPriceType = document.querySelector('input[name="price-type"]:checked').value;
+                if (selectedPriceType === 'individual' && this.value) {
+                    loadAdZones(this.value);
+                    priceTable.style.display = 'none';
+                    zoneSelection.style.display = 'block';
+                }
+            });
+        }
+
+        function resetZoneSelection() {
+            // Clear selected tags
+            const selectedTags = document.querySelector('.selected-tags');
+            if (selectedTags) {
+                selectedTags.innerHTML = '';
+            }
+
+            // Show placeholder
+            const placeholder = document.querySelector('.placeholder');
+            if (placeholder) {
+                placeholder.style.display = 'block';
+            }
+
+            // Hide price table
+            const selectedZonesPrices = document.querySelector('.selected-zones-prices');
+            if (selectedZonesPrices) {
+                selectedZonesPrices.style.display = 'none';
+            }
+
+            // Clear dropdown
+            const tagDropdown = document.querySelector('.tag-dropdown');
+            if (tagDropdown) {
+                tagDropdown.innerHTML = '';
+            }
+
+            // Reset tag count
+            const tagCount = document.querySelector('.selected-tag-count');
+            if (tagCount) {
+                tagCount.textContent = '0/5 vùng quảng cáo';
+            }
+        }
 
         async function loadWebsites() {
             try {
                 const response = await fetchWithAuth(`${baseUrl}/websites`);
                 const data = await response.json();
-                
+
                 if (!response.ok) {
-                    throw new Error('Không thể tải danh sách website');
+                    throw new Error('Failed to load websites');
                 }
-                
-                populateWebsiteSelect(data.websites);
+
+                const select = document.querySelector('select.form-control');
+                select.innerHTML = '<option value="" disabled selected>Chọn website</option>';
+
+                data.websites.forEach(website => {
+                    const option = document.createElement('option');
+                    option.value = website.website_id;
+                    option.textContent = `${website.domain_website} - ${website.email}`;
+                    select.appendChild(option);
+                });
+
+                // Load formats after loading websites
+                loadFormats();
+
             } catch (error) {
                 console.error('Error:', error);
-                if (error.message === 'Unauthorized') {
-                    window.location.href = '/frontend/login.html';
-                } else {
-                    alert('Đã xảy ra lỗi khi tải dữ liệu');
-                }
+                Toast.error('Không thể tải danh sách website', 'Lỗi');
             }
         }
 
-        document.getElementById('priceListForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        async function loadFormats() {
             try {
-                const formData = new FormData(this);
-                
-                const response = await fetchWithAuth(`${baseUrl}/price-lists`, {
+                const response = await fetchWithAuth(`${baseUrl}/prices/formats`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error('Failed to load formats');
+                }
+
+                const { formats_by_type, price_types } = data.data;
+
+                // Generate price table
+                const tbody = document.querySelector('.price-table tbody');
+                tbody.innerHTML = ''; // Clear existing content
+
+                Object.entries(formats_by_type).forEach(([campaignType, formats]) => {
+                    // Add campaign type row
+                    const typeRow = document.createElement('tr');
+                    typeRow.innerHTML = `
+                        <td rowspan="${formats.length}" class="ad-type">${campaignType}</td>
+                        <td data-format-id="${formats[0].format_id}">${formats[0].format_name}</td>
+                        <td>
+                            <div class="price-input-group">
+                                <div class="select-wrapper">
+                                    <select class="price-type-select" name="buy_type">
+                                        ${price_types.map(type => `
+                                            <option value="${type.price_type_name}">${type.price_type_name}</option>
+                                        `).join('')}
+                                    </select>
+                                </div>
+                                <input type="number" 
+                                       class="price-input" 
+                                       name="buy_price"
+                                       value="0" 
+                                       min="0"
+                                       step="1000"
+                                       placeholder="Nhập giá mua">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="price-input-group">
+                                <div class="select-wrapper">
+                                    <select class="price-type-select" name="sell_type">
+                                        ${price_types.map(type => `
+                                            <option value="${type.price_type_name}">${type.price_type_name}</option>
+                                        `).join('')}
+                                    </select>
+                                </div>
+                                <input type="number" 
+                                       class="price-input" 
+                                       name="sell_price"
+                                       value="0" 
+                                       min="0"
+                                       step="1000"
+                                       placeholder="Nhập giá bán">
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(typeRow);
+
+                    // Add remaining format rows
+                    formats.slice(1).forEach(format => {
+                        const formatRow = document.createElement('tr');
+                        formatRow.innerHTML = `
+                            <td data-format-id="${format.format_id}">${format.format_name}</td>
+                            <td>
+                                <div class="price-input-group">
+                                    <div class="select-wrapper">
+                                        <select class="price-type-select" name="buy_type">
+                                            ${price_types.map(type => `
+                                                <option value="${type.price_type_name}">${type.price_type_name}</option>
+                                            `).join('')}
+                                        </select>
+                                    </div>
+                                    <input type="number" 
+                                           class="price-input" 
+                                           name="buy_price"
+                                           value="0" 
+                                           min="0"
+                                           step="1000"
+                                           placeholder="Nhập giá mua">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="price-input-group">
+                                    <div class="select-wrapper">
+                                        <select class="price-type-select" name="sell_type">
+                                            ${price_types.map(type => `
+                                                <option value="${type.price_type_name}">${type.price_type_name}</option>
+                                            `).join('')}
+                                        </select>
+                                    </div>
+                                    <input type="number" 
+                                           class="price-input" 
+                                           name="sell_price"
+                                           value="0" 
+                                           min="0"
+                                           step="1000"
+                                           placeholder="Nhập giá bán">
+                                </div>
+                            </td>
+                        `;
+                        tbody.appendChild(formatRow);
+                    });
+                });
+
+            } catch (error) {
+                console.error('Error:', error);
+                Toast.error('Không thể tải danh sách định dạng quảng cáo', 'Lỗi');
+            }
+        }
+
+        async function loadAdZones(websiteId) {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/ads-zones?website_id=${websiteId}`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error('Failed to load ad zones');
+                }
+
+                const dropdown = document.querySelector('.tag-dropdown');
+                dropdown.innerHTML = '';
+
+                if (!data.ads_zones || data.ads_zones.length === 0) {
+                    // Add empty state message to dropdown
+                    const emptyState = document.createElement('div');
+                    emptyState.className = 'tag-option empty-state';
+                    emptyState.style.textAlign = 'center';
+                    emptyState.style.color = '#666';
+                    emptyState.style.padding = '20px';
+                    emptyState.textContent = 'Không có vùng quảng cáo nào';
+                    dropdown.appendChild(emptyState);
+                    return;
+                }
+
+                data.ads_zones.forEach(zone => {
+                    const option = document.createElement('div');
+                    option.className = 'tag-option';
+                    option.textContent = zone.ten_vung_quang_cao;
+                    option.onclick = () => selectTag(zone.zone_id, zone.ten_vung_quang_cao);
+                    dropdown.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error:', error);
+                Toast.error('Không thể tải danh sách vùng quảng cáo', 'Lỗi');
+            }
+        }
+
+        async function loadZoneFormats(zoneIds) {
+            try {
+                const formatPromises = zoneIds.map(zoneId =>
+                    fetchWithAuth(`${baseUrl}/ads-zones/${zoneId}/formats`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                );
+
+                const data = await Promise.all(formatPromises);
+                const zonePriceSection = document.querySelector('.zone-price-section');
+                zonePriceSection.innerHTML = '';
+
+                data.forEach((zoneData, index) => {
+                    const zoneId = zoneIds[index];
+                    const zoneName = document.querySelector(`[data-zone-id="${zoneId}"]`).textContent.trim();
+
+                    // Create section for each zone
+                    const zoneSection = document.createElement('div');
+                    zoneSection.className = 'zone-section';
+                    zoneSection.setAttribute('data-zone-id', zoneId);
+
+                    // Group formats by campaign type
+                    const formatsByType = {};
+                    zoneData.formats.forEach(format => {
+                        if (!formatsByType[format.ten_loai_chien_dich]) {
+                            formatsByType[format.ten_loai_chien_dich] = [];
+                        }
+                        formatsByType[format.ten_loai_chien_dich].push(format);
+                    });
+
+                    // Create table for each campaign type
+                    Object.entries(formatsByType).forEach(([campaignType, formats]) => {
+                        const table = document.createElement('div');
+                        table.innerHTML = `
+                            <div class="zone-header" data-zone-id="${zoneId}">${zoneName} - ${campaignType}</div>
+                            <table class="price-table" data-zone-id="${zoneId}">
+                                <thead>
+                                    <tr>
+                                        <th>Loại quảng cáo</th>
+                                        <th>Loại định dạng</th>
+                                        <th>Giá mua (VND)</th>
+                                        <th>Giá bán (VND)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${formats.map(format => `
+                                        <tr data-format-id="${format.format_id}">
+                                            <td>${format.format_name}</td>
+                                            <td>${format.format_name}</td>
+                                            <td>
+                                                <div class="price-input-group">
+                                                    <select class="price-type-select" name="buy_type">
+                                                        <option value="CPM">CPM</option>
+                                                        <option value="CPC">CPC</option>
+                                                    </select>
+                                                    <input type="number" 
+                                                           class="price-input" 
+                                                           name="buy_price" 
+                                                           value="0"
+                                                           min="0"
+                                                           step="1000"
+                                                           placeholder="Nhập giá mua">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="price-input-group">
+                                                    <select class="price-type-select" name="sell_type">
+                                                        <option value="CPM">CPM</option>
+                                                        <option value="CPC">CPC</option>
+                                                    </select>
+                                                    <input type="number" 
+                                                           class="price-input" 
+                                                           name="sell_price"
+                                                           value="0"
+                                                           min="0"
+                                                           step="1000"
+                                                           placeholder="Nhập giá bán">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        `;
+                        zoneSection.appendChild(table);
+                    });
+
+                    zonePriceSection.appendChild(zoneSection);
+                });
+
+                // Update selected tag count
+                const tagCount = document.querySelector('.selected-tag-count');
+                tagCount.textContent = `${zoneIds.length}/5 vùng quảng cáo`;
+
+                // Show price section if we have data
+                document.querySelector('.selected-zones-prices').style.display = 'block';
+            } catch (error) {
+                console.error('Error:', error);
+                Toast.error('Không thể tải thông tin định dạng quảng cáo', 'Lỗi');
+            }
+        }
+
+        async function savePriceList() {
+            try {
+                const websiteId = document.querySelector('select.form-control').value;
+                const startDate = document.querySelector('#uniform-start-date').value;
+
+                if (!websiteId || !startDate) {
+                    Toast.error('Vui lòng điền đầy đủ thông tin', 'Lỗi');
+                    return;
+                }
+
+                // Collect prices from table
+                const prices = [];
+                document.querySelectorAll('.price-table tbody tr').forEach(tr => {
+                    // Get format cell which contains the format_id
+                    const formatCell = tr.querySelector('td[data-format-id]');
+                    if (!formatCell) return; // Skip if no format cell (e.g. header rows)
+
+                    const formatId = formatCell.getAttribute('data-format-id');
+                    const formatName = formatCell.textContent;
+                    const buyTypeSelect = tr.querySelector('select[name="buy_type"]');
+                    const sellTypeSelect = tr.querySelector('select[name="sell_type"]');
+                    const buyPriceInput = tr.querySelector('input[name="buy_price"]');
+                    const sellPriceInput = tr.querySelector('input[name="sell_price"]');
+
+                    // Skip if any required element is missing
+                    if (!buyTypeSelect || !sellTypeSelect || !buyPriceInput || !sellPriceInput) {
+                        return;
+                    }
+
+                    const buyType = buyTypeSelect.value;
+                    const sellType = sellTypeSelect.value;
+                    const buyPrice = buyPriceInput.value;
+                    const sellPrice = sellPriceInput.value;
+
+                    // Add price data with format_id
+                    prices.push({
+                        format_id: parseInt(formatId),
+                        format_name: formatName,
+                        buy_type: buyType,
+                        buy_price: parseFloat(buyPrice || 0),
+                        sell_type: sellType,
+                        sell_price: parseFloat(sellPrice || 0)
+                    });
+                });
+
+                if (prices.length === 0) {
+                    Toast.error('Không thể thu thập thông tin giá', 'Lỗi');
+                    return;
+                }
+
+                const response = await fetchWithAuth(`${baseUrl}/prices`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(Object.fromEntries(formData))
+                    body: JSON.stringify({
+                        website_id: parseInt(websiteId),
+                        type: 'uniform',
+                        start_date: startDate,
+                        prices: prices
+                    })
                 });
 
                 if (!response.ok) {
-                    throw new Error('Không thể tạo bảng giá');
+                    throw new Error('Failed to create price list');
                 }
 
-                alert('Đã tạo bảng giá thành công!');
-                window.location.href = '/frontend/price-lists.html';
+                const result = await response.json();
+                if (result.success) {
+                    Toast.success('Tạo bảng giá thành công', 'Thành công');
+                    window.location.href = 'price-lists.html';
+                } else {
+                    throw new Error(result.message);
+                }
             } catch (error) {
                 console.error('Error:', error);
-                alert(error.message);
+                Toast.error('Không thể tạo bảng giá', 'Lỗi');
             }
-        });
+        }
+
+        async function saveZonePrices() {
+            try {
+                const websiteId = document.querySelector('select.form-control').value;
+                const startDate = document.querySelector('input[type="date"]').value;
+
+                if (!websiteId || !startDate) {
+                    Toast.error('Vui lòng điền đầy đủ thông tin', 'Lỗi');
+                    return;
+                }
+
+                // Collect all prices from all zone tables
+                const prices = [];
+                document.querySelectorAll('.zone-section').forEach(zoneSection => {
+                    const zoneId = zoneSection.getAttribute('data-zone-id');
+
+                    // Process each format row in the zone's table
+                    zoneSection.querySelectorAll('.price-table tbody tr').forEach(tr => {
+                        const formatName = tr.querySelector('td:first-child').textContent;
+                        const buyType = tr.querySelector('select[name="buy_type"]').value;
+                        const buyPrice = tr.querySelector('input[name="buy_price"]').value;
+                        const sellType = tr.querySelector('select[name="sell_type"]').value;
+                        const sellPrice = tr.querySelector('input[name="sell_price"]').value;
+                        
+                        // Get format_id from the row's data attribute
+                        const formatId = tr.getAttribute('data-format-id');
+
+                        if (buyPrice && sellPrice && formatId) {
+                            prices.push({
+                                zone_id: parseInt(zoneId),
+                                format_id: parseInt(formatId),
+                                buy_type: buyType,
+                                buy_price: parseFloat(buyPrice),
+                                sell_price: parseFloat(sellPrice),
+                                sell_type: sellType,
+                                buy_price_unit_name: buyType,
+                                sell_price_unit_name: sellType
+                            });
+                        }
+                    });
+                });
+
+                if (prices.length === 0) {
+                    Toast.error('Vui lòng nhập ít nhất một mức giá', 'Lỗi');
+                    return;
+                }
+
+                const response = await fetchWithAuth(`${baseUrl}/prices`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        website_id: parseInt(websiteId),
+                        type: 'zone',
+                        start_date: startDate,
+                        prices: prices
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to create price list');
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    Toast.success('Tạo bảng giá thành công', 'Thành công');
+                    window.location.href = 'price-lists.html';
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Toast.error('Không thể tạo bảng giá', 'Lỗi');
+            }
+        }
+
+        // Add these functions for multi-tag select
+        function toggleTagDropdown(element) {
+            const dropdown = element.parentElement.querySelector('.tag-dropdown');
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function selectTag(zoneId, zoneName) {
+            const selectedTags = document.querySelector('.selected-tags');
+            const placeholder = document.querySelector('.placeholder');
+
+            // Check if tag already exists
+            if (!document.querySelector(`[data-zone-id="${zoneId}"]`)) {
+                const tag = document.createElement('div');
+                tag.className = 'selected-tag';
+                tag.setAttribute('data-zone-id', zoneId);
+                tag.innerHTML = `
+                    ${zoneName}
+                    <span class="remove" onclick="removeTag('${zoneId}', event)">×</span>
+                `;
+                selectedTags.appendChild(tag);
+                placeholder.style.display = 'none';
+
+                // Update formats table
+                const selectedZoneIds = Array.from(document.querySelectorAll('.selected-tag'))
+                    .map(tag => tag.getAttribute('data-zone-id'));
+                loadZoneFormats(selectedZoneIds);
+            }
+
+            // Show price table if at least one zone is selected
+            const priceTable = document.querySelector('.selected-zones-prices');
+            priceTable.style.display = 'block';
+
+            // Hide dropdown
+            document.querySelector('.tag-dropdown').style.display = 'none';
+        }
+
+        function removeTag(zoneId, event) {
+            event.stopPropagation();
+            const tag = document.querySelector(`[data-zone-id="${zoneId}"]`);
+            tag.remove();
+
+            const selectedTags = document.querySelector('.selected-tags');
+            const placeholder = document.querySelector('.placeholder');
+
+            if (selectedTags.children.length === 0) {
+                placeholder.style.display = 'block';
+                document.querySelector('.selected-zones-prices').style.display = 'none';
+            } else {
+                // Update formats table
+                const selectedZoneIds = Array.from(document.querySelectorAll('.selected-tag'))
+                    .map(tag => tag.getAttribute('data-zone-id'));
+                loadZoneFormats(selectedZoneIds);
+            }
+        }
     </script>
 </body>
 

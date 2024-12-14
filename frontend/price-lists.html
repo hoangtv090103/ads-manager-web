@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <script src="./js/auth.js"></script>
+    <script src="./js/toast.js"></script>
+    <script src="./script.js"></script>
+
     <style>
         .tabs {
             display: flex;
@@ -209,6 +212,293 @@
             color: #666;
             font-size: 13px;
         }
+
+        .btn-secondary {
+            background: #FFFFFF;
+            color: #333333;
+            border: 1px solid #E0E0E0;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary:hover {
+            background: #F8F9FA;
+        }
+
+        .column-customize {
+            position: relative;
+        }
+
+        .column-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 16px;
+            width: 320px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            margin-top: 8px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .column-group {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .column-group h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0 0 16px;
+            color: #333;
+            padding: 0 4px;
+        }
+
+        #formatGroups {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 8px;
+            margin: 0 -4px;
+            max-height: calc(80vh - 120px);
+            /* Custom scrollbar styles */
+            scrollbar-width: thin;
+            scrollbar-color: #E0E0E0 transparent;
+        }
+
+        #formatGroups::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #formatGroups::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        #formatGroups::-webkit-scrollbar-thumb {
+            background-color: #E0E0E0;
+            border-radius: 3px;
+        }
+
+        .format-group {
+            margin: 0 4px 12px 4px;
+            border: 1px solid #E0E0E0;
+            border-radius: 6px;
+            background: white;
+        }
+
+        .format-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .format-group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #F8F9FA;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .format-group-header label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            user-select: none;
+            color: #333;
+        }
+
+        .format-group-header .count {
+            color: #666;
+            font-size: 13px;
+            margin-left: 4px;
+        }
+
+        .format-list {
+            padding: 8px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-top: 1px solid #E0E0E0;
+            background: white;
+            max-height: none !important;
+            overflow: visible !important;
+        }
+
+        .format-list label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+            color: #4F4F4F;
+            padding: 4px 0;
+        }
+
+        .format-list label:hover {
+            color: #0061C1;
+        }
+
+        .dropdown-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #E0E0E0;
+            background: white;
+        }
+
+        /* Checkbox styles */
+        .format-group input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            border: 1.5px solid #E0E0E0;
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+            appearance: none;
+            background: white;
+            flex-shrink: 0;
+        }
+
+        .format-group input[type="checkbox"]:checked {
+            background-color: #0061C1;
+            border-color: #0061C1;
+        }
+
+        .format-group input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 2px;
+            width: 4px;
+            height: 8px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        /* Expand/collapse animation */
+        .format-list {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out;
+        }
+
+        .format-group.expanded .format-list {
+            max-height: 500px;
+        }
+
+        .format-group-header i {
+            transition: transform 0.2s ease;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .format-group.expanded .format-group-header i {
+            transform: rotate(180deg);
+        }
+
+        /* Add styles for table scrolling */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 24px;
+            /* Custom scrollbar styles */
+            scrollbar-width: thin;
+            scrollbar-color: #E0E0E0 transparent;
+        }
+
+        .table-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .table-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background-color: #E0E0E0;
+            border-radius: 3px;
+        }
+
+        .table {
+            min-width: 1200px; /* Minimum width to ensure scrolling */
+        }
+
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            display: inline-block;
+        }
+
+        .status.running {
+            background: #E3F2FD;
+            color: #2F80ED;
+        }
+
+        .status.pending {
+            background: #FFF3E0;
+            color: #F2994A;
+        }
+
+        .status.paused {
+            background: #FFEBEE;
+            color: #EB5757;
+        }
+
+        .sub-row {
+            background: #F8F9FA;
+        }
+
+        .sub-row .start-date {
+            color: #666;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sub-row .start-date i {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .zone-size {
+            color: #666;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .price-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .price-info .sell-price {
+            color: #27AE60;
+        }
+
+        .price-info .buy-price {
+            color: #EB5757;
+        }
     </style>
 </head>
 
@@ -221,7 +511,7 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <img src="../assets/novanet-logo.png" alt="Ads Manager" class="logo">
+            
             <span class="logo-text">Ads Manager</span>
         </div>
 
@@ -249,15 +539,7 @@
                 <span>Quản lý đối tượng</span>
             </a>
 
-            <a href="/frontend/deposit.html" class="nav-item">
-                <i class="fas fa-wallet"></i>
-                <span>Nạp tiền tài khoản</span>
-            </a>
 
-            <a href="/frontend/deposit-history.html" class="nav-item">
-                <i class="fas fa-history"></i>
-                <span>Lịch sử nạp tiền</span>
-            </a>
 
             <div class="nav-group">
                 <div class="nav-item" onclick="toggleSubmenu(this)">
@@ -326,179 +608,478 @@
 
         <div class="action-bar">
             <div class="controls">
-                <select class="dropdown" id="websiteSelect">
-                    <option value="" selected disabled>Ads Manager.vn - Lebach@example.vn</option>
-                    <option value="website1">Kinhdoanh.tuoitre.vn - publisher@gmail.com</option>
-                    <option value="website2">Phunutoday.vn - zmedia@gmail.com</option>
+                <select class="dropdown" id="websiteSelect" style="display: none;">
+                    <option value="" disabled selected>Chọn website</option>
                 </select>
+                
+                <!-- Add column customization dropdown -->
+                <div class="column-customize">
+                    <button class="btn-secondary" onclick="toggleColumnCustomize()">
+                        <i class="fas fa-columns"></i>
+                        Tùy chỉnh cột
+                    </button>
+                    <div class="column-dropdown" id="columnDropdown" style="display: none;">
+                        <div class="column-group">
+                            <h3>Chọn bảng giá hiển thị</h3>
+                            <div id="formatGroups">
+                                <!-- Format groups will be populated dynamically -->
+                            </div>
+                        </div>
+                        <div class="dropdown-footer">
+                            <button class="btn-secondary" onclick="resetColumns()">Đặt lại</button>
+                            <button class="btn-primary" onclick="applyColumns()">Áp dụng</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div id="websiteView">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Website</th>
-                        <th>Loại QC</th>
-                        <th>Trạng thái giá</th>
-                        <th>Loại giá</th>
-                        <th>CatFish Ecom (VND)</th>
-                        <th>Mobile Banner Card (VND)</th>
-                        <th>Interactive Banner (VND)</th>
-                        <th>Flying Carpet (VND)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            Kinhdoanh.tuoitre.vn<br>
-                            <span class="publisher-email">publisher@gmail.com</span>
-                        </td>
-                        <td>
-                            <div>Ecommerce</div>
-                            <div>Display ads</div>
-                        </td>
-                        <td><span class="status running">Đang chạy</span></td>
-                        <td>
-                            <div class="price-type">
-                                <span class="sell-price">Giá bán</span>
-                                <span class="buy-price">Giá mua</span>
-                            </div>
-                        </td>
-                        <td>
-                            <div>CPC 2.000</div>
-                            <div>CPC 50.000</div>
-                        </td>
-                        <td>
-                            <div>CPC 2.000</div>
-                            <div>CPC 50.000</div>
-                        </td>
-                        <td>
-                            <div>CPC 2.000</div>
-                            <div>CPC 2.000</div>
-                        </td>
-                        <td>
-                            <div>CPC 2.000</div>
-                            <div>CPC 2.000</div>
-                        </td>
-                    </tr>
-                    <tr class="sub-row">
-                        <td colspan="3">
-                            <div class="start-date">Ngày bắt đầu 28/03/2022 15:00</div>
-                        </td>
-                        <td colspan="5">
-                            <button class="edit-btn"><i class="fas fa-pen"></i></button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Website</th>
+                            <th>Loại QC</th>
+                            <th>Trạng thái giá</th>
+                            <th>Loại giá</th>
+                            <th>CatFish Ecom (VND)</th>
+                            <th>Mobile Banner Card (VND)</th>
+                            <th>Interactive Banner (VND)</th>
+                            <th>Flying Carpet (VND)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                Kinhdoanh.tuoitre.vn<br>
+                                <span class="publisher-email">publisher@gmail.com</span>
+                            </td>
+                            <td>
+                                <div>Ecommerce</div>
+                                <div>Display ads</div>
+                            </td>
+                            <td><span class="status running">Đang chạy</span></td>
+                            <td>
+                                <div class="price-type">
+                                    <span class="sell-price">Giá bán</span>
+                                    <span class="buy-price">Giá mua</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div>CPC 2.000</div>
+                                <div>CPC 50.000</div>
+                            </td>
+                            <td>
+                                <div>CPC 2.000</div>
+                                <div>CPC 50.000</div>
+                            </td>
+                            <td>
+                                <div>CPC 2.000</div>
+                                <div>CPC 2.000</div>
+                            </td>
+                            <td>
+                                <div>CPC 2.000</div>
+                                <div>CPC 2.000</div>
+                            </td>
+                        </tr>
+                        <tr class="sub-row">
+                            <td colspan="3">
+                                <div class="start-date">Ngày bắt đầu 28/03/2022 15:00</div>
+                            </td>
+                            <td colspan="5">
+                                <button class="edit-btn"><i class="fas fa-pen"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <div id="adzoneView" style="display: none;">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Stt</th>
-                        <th>Bật/tắt</th>
-                        <th>Vùng quảng cáo</th>
-                        <th>Loại QC</th>
-                        <th>Trạng thái giá</th>
-                        <th>Loại giá</th>
-                        <th>CatFish (VND)</th>
-                        <th>Mobile Banner Card (VND)</th>
-                        <th>Interactive Banner (VND)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>
-                            <label class="switch">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
-                        </td>
-                        <td>
-                            Vùng ABC
-                            <div class="zone-size">375×270</div>
-                        </td>
-                        <td>Ecommerce</td>
-                        <td><span class="status running">Đang chạy</span></td>
-                        <td>
-                            <div class="price-type">
-                                <span class="sell-price">Giá bán</span>
-                                <span class="buy-price">Giá mua</span>
-                            </div>
-                        </td>
-                        <td>
-                            <div>CPC 2.000</div>
-                            <div>CPC 50.000</div>
-                        </td>
-                        <td>
-                            <div>CPC 2.000</div>
-                            <div>CPC 50.000</div>
-                        </td>
-                        <td>
-                            <div>CPC 2.000</div>
-                            <div>CPC 2.000</div>
-                        </td>
-                    </tr>
-                    <tr class="sub-row">
-                        <td colspan="4">
-                            <div class="start-date">Ngày bắt đầu 03/03/2022 15:00</div>
-                        </td>
-                        <td colspan="5">
-                            <button class="edit-btn"><i class="fas fa-pen"></i></button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">Stt</th>
+                            <th style="width: 80px;">Bật/tắt</th>
+                            <th style="width: 200px;">Vùng quảng cáo</th>
+                            <th style="width: 120px;">Trạng thái giá</th>
+                            <th style="width: 100px;">Loại giá</th>
+                            <!-- Dynamic format columns will be added here -->
+                            <th style="width: 120px;">Ngày kết thúc</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic content will be added here -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <script src="./script.js"></script>
 
     <script>
+        const baseUrl = 'http://127.0.0.1:5000/api/v1';
         document.addEventListener('DOMContentLoaded', function() {
             requireAuth();
             loadPriceLists();
         });
 
+        let selectedColumns = {};
+        let allFormats = {};
+        let currentPrices = []; // Store current prices
+        let pricesByWebsite = {}; // Store grouped prices
+
         async function loadPriceLists() {
             try {
-                const response = await fetchWithAuth(`${baseUrl}/price-lists`);
+                const viewType = document.querySelector('.tab.active').dataset.view;
+                const websiteId = document.querySelector('#websiteSelect').value;
+                
+                const response = await fetchWithAuth(
+                    `${baseUrl}/prices?view_type=${viewType}${websiteId ? `&website_id=${websiteId}` : ''}`
+                );
                 const data = await response.json();
                 
                 if (!response.ok) {
                     throw new Error('Không thể tải dữ liệu bảng giá');
                 }
+
+                // Store all formats and prices
+                allFormats = data.formats;
+                currentPrices = data.prices;
                 
-                renderPriceLists(data.price_lists);
+                // Group prices by website
+                pricesByWebsite = {};
+                currentPrices.forEach(price => {
+                    if (!pricesByWebsite[price.website_id]) {
+                        pricesByWebsite[price.website_id] = {
+                            website_name: price.domain_website,
+                            email: price.email,
+                            prices: []
+                        };
+                    }
+                    pricesByWebsite[price.website_id].prices.push(price);
+                });
+                
+                // Initialize column selection if not already set
+                if (Object.keys(selectedColumns).length === 0) {
+                    initializeColumnSelection(allFormats);
+                }
+
+                // Update column customization dropdown
+                updateColumnCustomizationDropdown(allFormats);
+
+                if (viewType === 'website') {
+                    renderGlobalPrices(currentPrices, allFormats);
+                } else {
+                    renderZonePrices(currentPrices, allFormats);
+                }
+
             } catch (error) {
                 console.error('Error:', error);
-                if (error.message === 'Unauthorized') {
-                    window.location.href = '/frontend/login.html';
-                } else {
-                    alert('Đã xảy ra lỗi khi tải dữ liệu');
-                }
+                Toast.error('Không thể tải dữ liệu bảng giá', 'Lỗi');
             }
         }
 
-        document.getElementById('websiteSelect').addEventListener('change', async function() {
-            if (this.value) {
-                try {
-                    const response = await fetchWithAuth(`${baseUrl}/price-lists?website_id=${this.value}`);
-                    const data = await response.json();
-                    
-                    if (!response.ok) {
-                        throw new Error('Không thể tải dữ liệu bảng giá');
+        function initializeColumnSelection(formats) {
+            selectedColumns = {};
+            Object.entries(formats).forEach(([type, formatList]) => {
+                selectedColumns[type] = formatList.map(f => ({
+                    id: f.format_id,
+                    name: f.format_name,
+                    selected: true
+                }));
+            });
+        }
+
+        function updateColumnCustomizationDropdown(formats) {
+            const container = document.getElementById('formatGroups');
+            container.innerHTML = '';
+            const viewType = document.querySelector('.tab.active').dataset.view;
+            const selectedColumnsObj = viewType === 'website' ? selectedColumns : zoneSelectedColumns;
+
+            Object.entries(formats).forEach(([type, formatList]) => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'format-group expanded';
+                
+                const header = document.createElement('div');
+                header.className = 'format-group-header';
+                
+                const groupCheckbox = document.createElement('input');
+                groupCheckbox.type = 'checkbox';
+                groupCheckbox.checked = viewType === 'website' ? 
+                    isGroupFullySelected(type) : 
+                    isZoneGroupFullySelected(type);
+                groupCheckbox.onchange = (e) => {
+                    e.stopPropagation();
+                    if (viewType === 'website') {
+                        toggleGroup(type);
+                    } else {
+                        toggleZoneGroup(type);
                     }
+                };
+                
+                const groupLabel = document.createElement('label');
+                groupLabel.appendChild(groupCheckbox);
+                
+                const groupName = document.createElement('span');
+                groupName.textContent = type;
+                groupLabel.appendChild(groupName);
+                
+                const countSpan = document.createElement('span');
+                countSpan.className = 'count';
+                countSpan.textContent = `(${viewType === 'website' ? 
+                    getSelectedCount(type) : 
+                    getZoneSelectedCount(type)}/${formatList.length})`;
+                groupLabel.appendChild(countSpan);
+                
+                header.appendChild(groupLabel);
+                
+                const formatsList = document.createElement('div');
+                formatsList.className = 'format-list';
+                
+                formatList.forEach(format => {
+                    const formatLabel = document.createElement('label');
+                    const formatCheckbox = document.createElement('input');
+                    formatCheckbox.type = 'checkbox';
+                    formatCheckbox.value = format.format_id;
+                    formatCheckbox.checked = viewType === 'website' ? 
+                        isFormatSelected(type, format.format_id) : 
+                        isZoneFormatSelected(type, format.format_id);
+                    formatCheckbox.onchange = (e) => {
+                        e.stopPropagation();
+                        if (viewType === 'website') {
+                            toggleFormat(type, format.format_id);
+                        } else {
+                            toggleZoneFormat(type, format.format_id);
+                        }
+                    };
                     
-                    renderPriceLists(data.price_lists);
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Đã xảy ra lỗi khi tải dữ liệu');
+                    formatLabel.appendChild(formatCheckbox);
+                    formatLabel.appendChild(document.createTextNode(format.format_name));
+                    formatsList.appendChild(formatLabel);
+                });
+
+                groupDiv.appendChild(header);
+                groupDiv.appendChild(formatsList);
+                container.appendChild(groupDiv);
+            });
+        }
+
+        function renderGlobalPrices(prices, formats) {
+            const tbody = document.querySelector('#websiteView tbody');
+            tbody.innerHTML = '';
+
+            // Render each website group
+            Object.entries(pricesByWebsite).forEach(([websiteId, websiteData]) => {
+                // Create header row for website
+                const headerRow = document.createElement('tr');
+                headerRow.className = 'website-header';
+                headerRow.innerHTML = `
+                    <td colspan="${4 + getVisibleColumnsCount()}">
+                        <strong>${websiteData.website_name}</strong>
+                        <span class="publisher-email">${websiteData.email || ''}</span>
+                    </td>
+                `;
+                tbody.appendChild(headerRow);
+
+                // Create price rows
+                websiteData.prices.forEach(price => {
+                    const mainRow = document.createElement('tr');
+                    mainRow.dataset.websiteId = websiteId; // Add website ID to row
+                    mainRow.innerHTML = `
+                        <td>
+                            ${price.domain_website}<br>
+                            <span class="publisher-email">${price.email || ''}</span>
+                        </td>
+                        <td>${Object.keys(formats).join(', ')}</td>
+                        <td><span class="status running">Đang chạy</span></td>
+                        <td>
+                            <div class="price-type">
+                                <span class="sell-price">Giá bán</span>
+                                <span class="buy-price">Giá mua</span>
+                            </div>
+                        </td>
+                    `;
+
+                    // Add price columns based on selected formats
+                    Object.entries(formats).forEach(([type, formatList]) => {
+                        formatList.forEach(format => {
+                            if (isFormatSelected(type, format.format_id)) {
+                                const formatPrice = websiteData.prices.find(p => p.format_id === format.format_id);
+                                mainRow.innerHTML += `
+                                    <td>
+                                        <div class="price-info">
+                                            <div class="sell-price">
+                                                ${formatPrice ? `${formatPrice.sell_price_type_name} ${formatPrice.sell_price.toLocaleString('vi-VN')}` : '-'}
+                                            </div>
+                                            <div class="buy-price">
+                                                ${formatPrice ? `${formatPrice.buy_price_type_name} ${formatPrice.buy_price.toLocaleString('vi-VN')}` : '-'}
+                                            </div>
+                                        </div>
+                                    </td>
+                                `;
+                            }
+                        });
+                    });
+
+                    tbody.appendChild(mainRow);
+
+                    // Add sub-row with date and edit button
+                    const subRow = document.createElement('tr');
+                    subRow.className = 'sub-row';
+                    subRow.innerHTML = `
+                        <td colspan="3">
+                            <div class="start-date">Ngày bắt đầu ${new Date(price.start_date).toLocaleDateString('vi-VN')}</div>
+                        </td>
+                        <td colspan="${getVisibleColumnsCount() + 1}">
+                            <button class="edit-btn" onclick="editPriceList(${websiteId})">
+                                <i class="fas fa-pen"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(subRow);
+                });
+            });
+
+            // Update table headers based on selected columns
+            updateTableHeaders(formats);
+        }
+
+        function updateTableHeaders(formats) {
+            const thead = document.querySelector('#websiteView thead tr');
+            thead.innerHTML = `
+                <th>Website</th>
+                <th>Loại QC</th>
+                <th>Trạng thái giá</th>
+                <th>Loại giá</th>
+            `;
+
+            // Add headers for selected format columns
+            Object.entries(formats).forEach(([type, formatList]) => {
+                formatList.forEach(format => {
+                    if (isFormatSelected(type, format.format_id)) {
+                        thead.innerHTML += `<th>${format.format_name} (VND)</th>`;
+                    }
+                });
+            });
+        }
+
+        function toggleGroup(type) {
+            const isChecked = !isGroupFullySelected(type);
+            selectedColumns[type].forEach(format => {
+                format.selected = isChecked;
+            });
+            updateColumnCustomizationDropdown(allFormats);
+            updateTableColumns();
+        }
+
+        function toggleFormat(type, formatId) {
+            const format = selectedColumns[type].find(f => f.id === formatId);
+            if (format) {
+                format.selected = !format.selected;
+                updateColumnCustomizationDropdown(allFormats);
+                updateTableColumns();
+            }
+        }
+
+        function isGroupFullySelected(type) {
+            return selectedColumns[type]?.every(format => format.selected) ?? false;
+        }
+
+        function getSelectedCount(type) {
+            return selectedColumns[type]?.filter(format => format.selected).length ?? 0;
+        }
+
+        function isFormatSelected(type, formatId) {
+            return selectedColumns[type]?.find(f => f.id === formatId)?.selected ?? false;
+        }
+
+        function getVisibleColumnsCount() {
+            let count = 0;
+            Object.entries(selectedColumns).forEach(([type, formats]) => {
+                count += formats.filter(f => f.selected).length;
+            });
+            return count;
+        }
+
+        function resetColumns() {
+            const viewType = document.querySelector('.tab.active').dataset.view;
+            if (viewType === 'website') {
+                initializeColumnSelection(allFormats);
+                updateColumnCustomizationDropdown(allFormats);
+                renderGlobalPrices(currentPrices, allFormats);
+            } else {
+                initializeZoneColumnSelection(zoneAllFormats);
+                updateColumnCustomizationDropdown(zoneAllFormats);
+                renderZonePrices(currentZonePrices, zoneAllFormats);
+            }
+        }
+
+        function applyColumns() {
+            document.getElementById('columnDropdown').style.display = 'none';
+            const viewType = document.querySelector('.tab.active').dataset.view;
+            if (viewType === 'website') {
+                renderGlobalPrices(currentPrices, allFormats);
+            } else {
+                renderZonePrices(currentZonePrices, zoneAllFormats);
+            }
+        }
+
+        function toggleColumnCustomize() {
+            const dropdown = document.getElementById('columnDropdown');
+            if (dropdown.style.display === 'none' || !dropdown.style.display) {
+                dropdown.style.display = 'block';
+                // Close dropdown when clicking outside
+                document.addEventListener('click', closeDropdownOutside);
+            } else {
+                dropdown.style.display = 'none';
+                document.removeEventListener('click', closeDropdownOutside);
+            }
+        }
+
+        function closeDropdownOutside(event) {
+            const dropdown = document.getElementById('columnDropdown');
+            const customizeButton = document.querySelector('.column-customize button');
+            
+            if (!dropdown.contains(event.target) && !customizeButton.contains(event.target)) {
+                dropdown.style.display = 'none';
+                document.removeEventListener('click', closeDropdownOutside);
+            }
+        }
+
+        function toggleGroupExpand(groupDiv) {
+            groupDiv.classList.toggle('expanded');
+        }
+
+        function editPriceList(websiteId) {
+            window.location.href = `price-list-create.html?website_id=${websiteId}`;
+        }
+
+        // Update website filter handler
+        document.getElementById('websiteSelect').addEventListener('change', async function() {
+            try {
+                const websiteId = this.value;
+                if (!websiteId) return;
+
+                const response = await fetchWithAuth(`${baseUrl}/prices?website_id=${websiteId}`);
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error('Không thể tải dữ liệu bảng giá');
                 }
+
+                // Re-render price list with filtered data
+                const websiteView = document.getElementById('websiteView');
+                const tbody = websiteView.querySelector('tbody');
+                tbody.innerHTML = '';
+
+                // ... (same rendering logic as in loadPriceLists)
+            } catch (error) {
+                console.error('Error:', error);
+                Toast.error('Không thể tải dữ liệu bảng giá', 'Lỗi');
             }
         });
 
@@ -511,12 +1092,18 @@
             const adzoneTab = document.querySelector('[data-view="adzone"]');
             const websiteView = document.getElementById('websiteView');
             const adzoneView = document.getElementById('adzoneView');
+            const websiteSelect = document.getElementById('websiteSelect');
+
+            // Load all formats first
+            loadAllFormats();
 
             websiteTab.addEventListener('click', () => {
                 websiteTab.classList.add('active');
                 adzoneTab.classList.remove('active');
                 websiteView.style.display = 'block';
                 adzoneView.style.display = 'none';
+                websiteSelect.style.display = 'block'; // Show website select for website view
+                loadPriceLists();
             });
 
             adzoneTab.addEventListener('click', () => {
@@ -524,8 +1111,424 @@
                 websiteTab.classList.remove('active');
                 adzoneView.style.display = 'block';
                 websiteView.style.display = 'none';
+                websiteSelect.style.display = 'none'; // Hide website select for adzone view
+                loadZonePrices();
             });
+
+            // Initial load and set visibility
+            if (adzoneTab.classList.contains('active')) {
+                websiteSelect.style.display = 'none';
+                loadZonePrices();
+            } else {
+                websiteSelect.style.display = 'block';
+                loadPriceLists();
+            }
         });
+
+        function updateTableColumns() {
+            // Update table headers
+            updateTableHeaders(allFormats);
+            
+            // Update table rows
+            const tbody = document.querySelector('#websiteView tbody');
+            const rows = tbody.querySelectorAll('tr:not(.sub-row)');
+            
+            rows.forEach(row => {
+                // Skip website header rows
+                if (row.classList.contains('website-header')) {
+                    // Update colspan for header rows
+                    const headerCell = row.querySelector('td');
+                    if (headerCell) {
+                        headerCell.colSpan = 4 + getVisibleColumnsCount();
+                    }
+                    return;
+                }
+
+                // Get the base cells (first 4 columns)
+                const baseCells = Array.from(row.querySelectorAll('td')).slice(0, 4);
+                
+                // Clear existing row content
+                row.innerHTML = '';
+                
+                // Add back the base cells
+                baseCells.forEach(cell => row.appendChild(cell));
+                
+                // Add price columns based on selected formats
+                Object.entries(allFormats).forEach(([type, formatList]) => {
+                    formatList.forEach(format => {
+                        if (isFormatSelected(type, format.format_id)) {
+                            const priceCell = document.createElement('td');
+                            const formatPrice = findPriceForFormat(row, format.format_id);
+                            priceCell.innerHTML = `
+                                <div class="price-info">
+                                    <div class="sell-price">
+                                        ${formatPrice ? `${formatPrice.sell_price_type_name} ${formatPrice.sell_price.toLocaleString('vi-VN')}` : '-'}
+                                    </div>
+                                    <div class="buy-price">
+                                        ${formatPrice ? `${formatPrice.buy_price_type_name} ${formatPrice.buy_price.toLocaleString('vi-VN')}` : '-'}
+                                    </div>
+                                </div>
+                            `;
+                            row.appendChild(priceCell);
+                        }
+                    });
+                });
+            });
+
+            // Update sub-rows
+            const subRows = tbody.querySelectorAll('tr.sub-row');
+            subRows.forEach(subRow => {
+                const dateTd = subRow.querySelector('td:first-child');
+                const buttonTd = subRow.querySelector('td:last-child');
+                subRow.innerHTML = '';
+                if (dateTd) subRow.appendChild(dateTd);
+                if (buttonTd) {
+                    buttonTd.colSpan = getVisibleColumnsCount() + 1;
+                    subRow.appendChild(buttonTd);
+                }
+            });
+        }
+
+        function findPriceForFormat(row, formatId) {
+            // Get website ID from the row
+            const websiteId = row.dataset.websiteId;
+            if (!websiteId) return null;
+
+            // Find price data for this website and format
+            const websiteData = pricesByWebsite[websiteId];
+            if (!websiteData) return null;
+
+            return websiteData.prices.find(p => p.format_id === formatId);
+        }
+
+        let zoneSelectedColumns = {};
+        let zoneAllFormats = {};
+        let currentZonePrices = [];
+        let pricesByZone = {};
+
+        async function loadZonePrices() {
+            try {
+                const websiteId = document.querySelector('#websiteSelect').value;
+                const url = `${baseUrl}/prices?view_type=adzone${websiteId ? `&website_id=${websiteId}` : ''}`;
+                
+                const response = await fetchWithAuth(url);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error('Failed to load zone prices');
+                }
+
+                // Store formats and prices globally
+                currentZonePrices = data.prices;
+                
+                // Group prices by zone
+                pricesByZone = {};
+                if (data.prices && data.prices.zone_prices) {
+                    Object.entries(data.prices.zone_prices).forEach(([zoneId, zoneData]) => {
+                        pricesByZone[zoneId] = zoneData;
+                    });
+                }
+                        
+                // Render zone prices using all formats
+                renderZonePrices(currentZonePrices, zoneAllFormats);
+            } catch (error) {
+                console.error('Error:', error);
+                Toast.error('Không thể tải dữ liệu bảng giá vùng', 'Lỗi');
+            }
+        }
+
+        function initializeZoneColumnSelection(formats) {
+            zoneSelectedColumns = {};
+            Object.entries(formats).forEach(([type, formatList]) => {
+                zoneSelectedColumns[type] = formatList.map(f => ({
+                    id: f.format_id,
+                    name: f.format_name,
+                    selected: true
+                }));
+            });
+        }
+
+        function updateZoneColumnCustomizationDropdown(formats) {
+            const container = document.getElementById('formatGroups');
+            container.innerHTML = '';
+
+            Object.entries(formats).forEach(([type, formatList]) => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'format-group expanded';
+                
+                const header = document.createElement('div');
+                header.className = 'format-group-header';
+                
+                const groupCheckbox = document.createElement('input');
+                groupCheckbox.type = 'checkbox';
+                groupCheckbox.checked = isZoneGroupFullySelected(type);
+                groupCheckbox.onchange = (e) => {
+                    e.stopPropagation();
+                    toggleZoneGroup(type);
+                };
+                
+                const groupLabel = document.createElement('label');
+                groupLabel.appendChild(groupCheckbox);
+                
+                const groupName = document.createElement('span');
+                groupName.textContent = type;
+                groupLabel.appendChild(groupName);
+                
+                const countSpan = document.createElement('span');
+                countSpan.className = 'count';
+                countSpan.textContent = `(${getZoneSelectedCount(type)}/${formatList.length})`;
+                groupLabel.appendChild(countSpan);
+                
+                header.appendChild(groupLabel);
+                
+                const formatsList = document.createElement('div');
+                formatsList.className = 'format-list';
+                
+                formatList.forEach(format => {
+                    const formatLabel = document.createElement('label');
+                    const formatCheckbox = document.createElement('input');
+                    formatCheckbox.type = 'checkbox';
+                    formatCheckbox.value = format.format_id;
+                    formatCheckbox.checked = isZoneFormatSelected(type, format.format_id);
+                    formatCheckbox.onchange = (e) => {
+                        e.stopPropagation();
+                        toggleZoneFormat(type, format.format_id);
+                    };
+                    
+                    formatLabel.appendChild(formatCheckbox);
+                    formatLabel.appendChild(document.createTextNode(format.format_name));
+                    formatsList.appendChild(formatLabel);
+                });
+
+                groupDiv.appendChild(header);
+                groupDiv.appendChild(formatsList);
+                container.appendChild(groupDiv);
+            });
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return '-';
+            return date.toLocaleDateString('vi-VN');
+        }
+
+        function renderZonePrices(prices, formats) {
+            const tbody = document.querySelector('#adzoneView tbody');
+            tbody.innerHTML = '';
+
+            let index = 1;
+            if (!prices) return;
+
+            Object.entries(prices).forEach(([zoneId, zoneData]) => {
+                const { zone_info = {}, prices = [] } = zoneData;
+                
+                // Create main row
+                const mainRow = document.createElement('tr');
+                mainRow.dataset.zoneId = zoneId;
+                mainRow.innerHTML = `
+                    <td>${index}</td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" ${zone_info?.active ? 'checked' : ''} 
+                                   onchange="toggleZoneStatus(${zoneId}, this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </td>
+                    <td>
+                        <div style="display: flex; flex-direction: column;">
+                            <span>${zone_info?.ten_vung_quang_cao || '-'}</span>
+                            <span class="zone-size">${zone_info?.size_name || '-'}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="status ${getStatusClass(prices[0]?.status)}">
+                            ${getStatusText(prices[0]?.status)}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="price-type">
+                            <span class="sell-price">Giá bán</span>
+                            <span class="buy-price">Giá mua</span>
+                        </div>
+                    </td>
+                `;
+
+                // Add price columns based on selected formats
+                Object.entries(formats).forEach(([type, formatList]) => {
+                    formatList.forEach(format => {
+                        if (isZoneFormatSelected(type, format.format_id)) {
+                            const formatPrice = prices.find(p => p.format_id === format.format_id);
+                            mainRow.innerHTML += `
+                                <td>
+                                    <div class="price-info">
+                                        <div class="sell-price">
+                                            ${formatPrice ? `${formatPrice.sell_price_type_name || '-'} ${formatPrice.sell_price?.toLocaleString('vi-VN') || '-'}` : '-'}
+                                        </div>
+                                        <div class="buy-price">
+                                            ${formatPrice ? `${formatPrice.buy_price_type_name || '-'} ${formatPrice.buy_price?.toLocaleString('vi-VN') || '-'}` : '-'}
+                                        </div>
+                                    </div>
+                                </td>
+                            `;
+                        }
+                    });
+                });
+
+                // Add end date column
+                mainRow.innerHTML += `
+                    <td>${formatDate(prices[0]?.end_date)}</td>
+                `;
+
+                tbody.appendChild(mainRow);
+
+                // Add history rows if available
+                if (prices.length > 1) {
+                    prices.slice(1).forEach(price => {
+                        const historyRow = document.createElement('tr');
+                        historyRow.className = 'sub-row';
+                        historyRow.innerHTML = `
+                            <td colspan="4">
+                                <div class="start-date">
+                                    <i class="fas fa-history"></i>
+                                    Ngày bắt đầu ${formatDate(price.start_date)}
+                                </div>
+                            </td>
+                            <td colspan="${getZoneVisibleColumnsCount() + 2}">
+                                <button class="edit-btn" onclick="editZonePriceList(${zoneId}, ${price.zone_price_setup_id})">
+                                    <i class="fas fa-pen"></i>
+                                </button>
+                            </td>
+                        `;
+                        tbody.appendChild(historyRow);
+                    });
+                }
+
+                index++;
+            });
+
+            // Update table headers
+            updateZoneTableHeaders();
+        }
+
+        function updateZoneTableHeaders() {
+            const thead = document.querySelector('#adzoneView thead tr');
+            thead.innerHTML = `
+                <th style="width: 50px;">Stt</th>
+                <th style="width: 80px;">Bật/tắt</th>
+                <th style="width: 200px;">Vùng quảng cáo</th>
+                <th style="width: 120px;">Trạng thái giá</th>
+                <th style="width: 100px;">Loại giá</th>
+            `;
+
+            // Add headers for selected format columns
+            Object.entries(zoneAllFormats).forEach(([type, formatList]) => {
+                formatList.forEach(format => {
+                    if (isZoneFormatSelected(type, format.format_id)) {
+                        thead.innerHTML += `<th>${format.format_name} (VND)</th>`;
+                    }
+                });
+            });
+
+            thead.innerHTML += `<th style="width: 120px;">Ngày kết thúc</th>`;
+        }
+
+        function toggleZoneGroup(type) {
+            const isChecked = !isZoneGroupFullySelected(type);
+            zoneSelectedColumns[type].forEach(format => {
+                format.selected = isChecked;
+            });
+            updateColumnCustomizationDropdown(zoneAllFormats);
+            renderZonePrices(currentZonePrices, zoneAllFormats);
+        }
+
+        function toggleZoneFormat(type, formatId) {
+            const format = zoneSelectedColumns[type].find(f => f.id === formatId);
+            if (format) {
+                format.selected = !format.selected;
+                updateColumnCustomizationDropdown(zoneAllFormats);
+                renderZonePrices(currentZonePrices, zoneAllFormats);
+            }
+        }
+
+        function isZoneGroupFullySelected(type) {
+            return zoneSelectedColumns[type]?.every(format => format.selected) ?? false;
+        }
+
+        function getZoneSelectedCount(type) {
+            return zoneSelectedColumns[type]?.filter(format => format.selected).length ?? 0;
+        }
+
+        function isZoneFormatSelected(type, formatId) {
+            return zoneSelectedColumns[type]?.find(f => f.id === formatId)?.selected ?? false;
+        }
+
+        function getZoneVisibleColumnsCount() {
+            let count = 0;
+            Object.entries(zoneSelectedColumns).forEach(([type, formats]) => {
+                count += formats.filter(f => f.selected).length;
+            });
+            return count;
+        }
+
+        function resetZoneColumns() {
+            initializeZoneColumnSelection(zoneAllFormats);
+            updateColumnCustomizationDropdown(zoneAllFormats);
+            renderZonePrices(currentZonePrices, zoneAllFormats);
+        }
+
+        function applyZoneColumns() {
+            document.getElementById('columnDropdown').style.display = 'none';
+            renderZonePrices(currentZonePrices, zoneAllFormats);
+        }
+
+        function getStatusClass(status) {
+            switch (status) {
+                case 'running': return 'running';
+                case 'pending': return 'pending';
+                case 'paused': return 'paused';
+                default: return 'running';
+            }
+        }
+
+        function getStatusText(status) {
+            switch (status) {
+                case 'running': return 'Đang chạy';
+                case 'pending': return 'Chưa chạy';
+                case 'paused': return 'Tạm dừng';
+                default: return 'Đang chạy';
+            }
+        }
+
+        function toggleZoneStatus(zoneId, status) {
+            // Implement zone status toggle logic here
+            console.log(`Toggle zone ${zoneId} to ${status}`);
+        }
+
+        async function loadAllFormats() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/prices/formats`);
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load formats');
+                }
+
+                // Store all formats
+                zoneAllFormats = data.data.formats_by_type;
+                
+                // Initialize column selection if not already set
+                if (Object.keys(zoneSelectedColumns).length === 0) {
+                    initializeZoneColumnSelection(zoneAllFormats);
+                }
+
+                // Update column customization dropdown
+                updateColumnCustomizationDropdown(zoneAllFormats);
+            } catch (error) {
+                console.error('Error:', error);
+                Toast.error('Không thể tải danh sách định dạng quảng cáo', 'Lỗi');
+            }
+        }
     </script>
 </body>
 

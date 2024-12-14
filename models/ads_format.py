@@ -53,6 +53,59 @@ class AdsFormat:
             rows = cursor.fetchall()
             return [dict(zip([column[0] for column in cursor.description], row)) for row in rows]
 
+    @staticmethod
+    def get_by_id(format_id):
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT * FROM ads_format WHERE format_id = %s
+            ''', (format_id,))
+            return cursor.fetchone()
+
+    @staticmethod
+    def get_by_campaign_type_id(campaign_type_id):
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT * FROM ads_format WHERE campaign_type_id = %s
+            ''', (campaign_type_id,))
+            return cursor.fetchone()
+
+    @staticmethod
+    def get_by_size_id(size_id):
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT DISTINCT
+                    af.format_id,
+                    af.format_name,
+                    ct.camp_type_id,
+                    ct.ten_loai_chien_dich,
+                    azs.ten_kich_thuoc
+                FROM ads_format af
+                LEFT JOIN campaign_type ct ON af.campaign_type_id = ct.camp_type_id
+                LEFT JOIN ad_size_format asf ON af.format_id = asf.format_id
+                LEFT JOIN ads_zone_size azs ON asf.size_id = azs.size_id
+                WHERE asf.size_id = %s 
+                    AND asf.active = true 
+                    AND af.active = true
+                    AND ct.active = true
+                    AND azs.active = true
+                ORDER BY 
+                    ct.ten_loai_chien_dich,
+                    af.format_name
+            ''', (size_id,))
+            rows = cursor.fetchall()
+            if not rows:
+                return []
+            return [dict(zip([
+                'format_id', 
+                'format_name',
+                'campaign_type_id', 
+                'ten_loai_chien_dich',
+                'ten_kich_thuoc'
+            ], row)) for row in rows]
+
     def update(self):
         with get_db_connection() as conn:
             cursor = conn.cursor()

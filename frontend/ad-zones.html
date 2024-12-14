@@ -1,279 +1,363 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh Sách Vùng Quảng Cáo</title>
-    <link rel="stylesheet" href="./styles.css">
+    <title>Danh sách vùng quảng cáo - Ads Manager</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <script src="./js/auth.js"></script>
+    <script src="./script.js"></script>
     <style>
-        .main-content {
-            margin-left: 250px;
-            padding: 24px 40px;
-            background-color: #F5F5F5;
-            min-height: 100vh;
-        }
-
-        .container {
-            margin: 20px auto;
-            max-width: 1200px;
+        .table-container {
+            overflow-x: auto;
             background: white;
             border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 16px;
         }
 
-        .header h1 {
-            margin: 0;
-            font-size: 1.5rem;
+        .ads-zone-table {
+            width: 100%;
+            min-width: 1000px;
+            border-collapse: collapse;
+        }
+
+        .ads-zone-table th,
+        .ads-zone-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #E0E0E0;
+            font-size: 14px;
+        }
+
+        .ads-zone-table th {
+            background: #F8F9FA;
+            font-weight: 500;
+            color: #4F4F4F;
+            white-space: nowrap;
+        }
+
+        .ads-zone-table td {
             color: #333;
         }
 
-        .breadcrumb {
-            font-size: 0.875rem;
-            color: #666;
-            margin-top: 5px;
+        .ads-zone-table tr:hover {
+            background-color: #F8F9FA;
         }
 
-        .toolbar {
+        .action-bar {
             display: flex;
             justify-content: space-between;
-            margin-top: 20px;
+            align-items: center;
+            margin: 24px 0;
+            flex-wrap: wrap;
+            gap: 16px;
         }
 
-        .btn {
-            padding: 10px 20px;
-            border: none;
+        .action-left {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .website-select {
+            min-width: 300px;
+            padding: 8px 12px;
+            border: 1px solid #E0E0E0;
             border-radius: 4px;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .dropdown {
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .table th,
-        .table td {
-            text-align: left;
-            padding: 10px;
-            border: 1px solid #ddd;
-        }
-
-        .table th {
-            background-color: #f4f5f7;
+            font-size: 14px;
             color: #333;
+            background-color: white;
         }
 
-        .table .empty {
-            text-align: center;
-            padding: 50px 0;
+        .btn-create {
+            background: #0061C1;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .empty-content {
-            text-align: center;
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 36px;
+            height: 20px;
         }
 
-        .empty-content img {
-            max-width: 200px;
-            margin-bottom: 20px;
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
         }
 
-        .empty-content p {
-            color: #666;
-            font-size: 1rem;
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #0061C1;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(16px);
+        }
+
+        .copy-btn {
+            color: #0061C1;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .edit-btn {
+            color: #4F4F4F;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .action-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .action-left {
+                flex-direction: column;
+            }
+
+            .website-select {
+                width: 100%;
+            }
         }
     </style>
 </head>
 
 <body>
     <!-- Toggle Menu Button -->
-    <button class="menu-toggle" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
+  <button class="menu-toggle" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+  </button>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <img src="../assets/novanet-logo.png" alt="Ads Manager" class="logo">
-            <span class="logo-text">Ads Manager</span>
-        </div>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
 
-        <nav class="sidebar-nav">
-            <a href="/frontend/campaigns.html" class="nav-item">
-                <i class="fas fa-layer-group"></i>
-                <span>Quản lý chiến dịch</span>
-            </a>
-
-            <div class="nav-group">
-                <div class="nav-item" onclick="toggleSubmenu(this)">
-                    <i class="fas fa-box"></i>
-                    <span>Quản lý sản phẩm</span>
-                    <i class="fas fa-chevron-right dropdown-arrow"></i>
-                </div>
-                <div class="submenu">
-                    <a href="/frontend/product-groups.html">• Danh sách nhóm SP</a>
-                    <a href="/frontend/products.html">• Danh sách SP</a>
-                    <a href="/frontend/data-sources.html">• Nguồn cấp dữ liệu</a>
-                </div>
-            </div>
-
-            <a href="/frontend/remarking-target.html" class="nav-item">
-                <i class="fas fa-users"></i>
-                <span>Quản lý đối tượng</span>
-            </a>
-
-            <a href="/frontend/deposit.html" class="nav-item">
-                <i class="fas fa-wallet"></i>
-                <span>Nạp tiền tài khoản</span>
-            </a>
-
-            <a href="/frontend/deposit-history.html" class="nav-item">
-                <i class="fas fa-history"></i>
-                <span>Lịch sử nạp tiền</span>
-            </a>
-
-            <div class="nav-group">
-                <div class="nav-item" onclick="toggleSubmenu(this)">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Báo cáo</span>
-                    <i class="fas fa-chevron-right dropdown-arrow"></i>
-                </div>
-                <div class="submenu">
-                    <a href="/frontend/website-report.html">• Báo cáo website</a>
-                    <a href="/frontend/zone-report.html">• Báo cáo vùng</a>
-                    <a href="/frontend/publisher-report.html" class="active">• Báo cáo publisher</a>
-                    <a href="/frontend/ad-format-report.html">• Báo cáo định dạng quảng cáo</a>
-                </div>
-            </div>
-
-            <a href="/frontend/publishers.html" class="nav-item">
-                <i class="fas fa-users-cog"></i>
-                <span>Danh sách Publisher</span>
-            </a>
-
-            <div class="nav-group">
-                <div class="nav-item" onclick="toggleSubmenu(this)">
-                    <i class="fas fa-globe"></i>
-                    <span>Quản lý website</span>
-                    <i class="fas fa-chevron-right dropdown-arrow"></i>
-                </div>
-                <div class="submenu">
-                    <a href="/frontend/price-lists.html">• Danh sách bảng giá</a>
-                    <a href="/frontend/websites.html">• Danh sách website</a>
-                    <a href="/frontend/ad-zones.html">• Danh sách vùng QC</a>
-                </div>
-            </div>
-            <a href="/frontend/accounts.html" class="nav-item">
-                <i class="fas fa-user-shield"></i>
-                <span>Quản lý phân quyền</span>
-            </a>
-        </nav>
+      <span class="logo-text">Ads Manager</span>
     </div>
+
+    <nav class="sidebar-nav">
+      <a href="/frontend/campaigns.html" class="nav-item">
+        <i class="fas fa-layer-group"></i>
+        <span>Quản lý chiến dịch</span>
+      </a>
+
+      <div class="nav-group">
+        <div class="nav-item" onclick="toggleSubmenu(this)">
+          <i class="fas fa-box"></i>
+          <span>Quản lý sản phẩm</span>
+          <i class="fas fa-chevron-right dropdown-arrow"></i>
+        </div>
+        <div class="submenu">
+          <a href="/frontend/product-groups.html">• Danh sách nhóm SP</a>
+          <a href="/frontend/products.html">• Danh sách SP</a>
+          <a href="/frontend/data-sources.html">• Nguồn cấp dữ liệu</a>
+        </div>
+      </div>
+
+      <a href="/frontend/remarking-target.html" class="nav-item">
+        <i class="fas fa-users"></i>
+        <span>Quản lý đối tượng</span>
+      </a>
+
+      <a href="/frontend/deposit.html" class="nav-item">
+        <i class="fas fa-wallet"></i>
+        <span>Nạp tiền tài khoản</span>
+      </a>
+
+      <a href="/frontend/deposit-history.html" class="nav-item">
+        <i class="fas fa-history"></i>
+        <span>Lịch sử nạp tiền</span>
+      </a>
+
+      <div class="nav-group">
+        <div class="nav-item" onclick="toggleSubmenu(this)">
+          <i class="fas fa-chart-bar"></i>
+          <span>Báo cáo</span>
+          <i class="fas fa-chevron-right dropdown-arrow"></i>
+        </div>
+        <div class="submenu">
+          <a href="/frontend/website-report.html">• Báo cáo website</a>
+          <a href="/frontend/zone-report.html">• Báo cáo vùng</a>
+          <a href="/frontend/publisher-report.html" class="active">• Báo cáo publisher</a>
+          <a href="/frontend/ad-format-report.html">• Báo cáo định dạng quảng cáo</a>
+        </div>
+      </div>
+
+      <a href="/frontend/publishers.html" class="nav-item">
+        <i class="fas fa-users-cog"></i>
+        <span>Danh sách Publisher</span>
+      </a>
+
+      <div class="nav-group">
+        <div class="nav-item" onclick="toggleSubmenu(this)">
+          <i class="fas fa-globe"></i>
+          <span>Quản lý website</span>
+          <i class="fas fa-chevron-right dropdown-arrow"></i>
+        </div>
+        <div class="submenu">
+          <a href="/frontend/price-lists.html">• Danh sách bảng giá</a>
+          <a href="/frontend/websites.html">• Danh sách website</a>
+          <a href="/frontend/ad-zones.html">• Danh sách vùng QC</a>
+        </div>
+      </div>
+
+      <a href="/frontend/accounts.html" class="nav-item">
+        <i class="fas fa-user-shield"></i>
+        <span>Quản lý phân quyền</span>
+      </a>
+    </nav>
+  </div>
+
+    <!-- Main Content -->
     <div class="main-content">
-        <!-- Header -->
-        <div class="header-content">
-            <div class="breadcrumb">
+        <div class="header-content" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <div style="display: flex; align-items: center; gap: 8px; color: #4F4F4F;">
                 <i class="fas fa-globe"></i>
-                <span>/ Quản lý website / Danh sách vùng quảng cáo</span>
+                <span style="font-size: 14px;">/ Quản lý website / Danh sách vùng quảng cáo</span>
             </div>
-            <div class="user-info">
-                <div class="user-details">
-                    <div class="user-name">BA team</div>
-                    <div class="user-email">bateam@gmail.com</div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div>
+                    <div style="font-weight: 500; color: #333; text-align: right;">Lê Bách</div>
+                    <div style="font-size: 12px; color: #828282;">Publisher</div>
                 </div>
-                <img src="../assets/avatar.jpg" alt="User Avatar" class="user-avatar">
+                <img src="../assets/avatar.jpg" alt="User Avatar" style="width: 40px; height: 40px; border-radius: 4px;">
             </div>
         </div>
 
-        <h1 class="page-title">Danh sách vùng quảng cáo</h1>
-        <div class="container">
-            <div class="toolbar">
-                <button class="btn btn-primary">Tạo vùng quảng cáo</button>
-                <select class="dropdown">
-                    <option>Chọn Website domain</option>
-                    <option value="website1">Website 1</option>
-                    <option value="website2">Website 2</option>
-                </select>
+        <div style="background: white; border-radius: 8px; padding: 24px;">
+            <h1 style="margin: 0 0 24px 0; font-size: 20px; color: #333;">Danh sách vùng quảng cáo</h1>
+
+            <div class="action-bar">
+                <div class="action-left">
+                    <button onclick="window.location.href='ad-zones-create.html'" class="btn-create">
+                        <i class="fas fa-plus"></i> Tạo vùng quảng cáo
+                    </button>
+                    <select id="websiteSelect" class="website-select">
+                        <option value="">Novanet.vn - Lebach@example.com</option>
+                    </select>
+                </div>
             </div>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Stt</th>
-                        <th>Tên vùng QC/ Kích thước (px)</th>
-                        <th>Định dạng</th>
-                        <th>Lấy mã</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="4" class="empty">
-                            <div class="empty-content">
-                                <img src="empty-image.png" alt="Empty" />
-                                <p>Bạn cần chọn 1 Website để hiển thị thông tin vùng quảng cáo</p>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+
+            <div class="table-container">
+                <table class="ads-zone-table">
+                    <thead>
+                        <tr>
+                            <th>Stt</th>
+                            <th>Tên vùng QC/ Kích thước (px)</th>
+                            <th>Loại QC</th>
+                            <th>Định dạng</th>
+                            <!-- <th>Quảng cáo dự phòng</th>
+                            <th>Lấy mã</th> -->
+                        </tr>
+                    </thead>
+                    <tbody id="adsZoneTableBody">
+                        <!-- Table content will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="margin-top: 16px; color: #4F4F4F;">
+                Số vùng quảng cáo: <span id="totalZones" style="font-weight: 500;">0</span>
+            </div>
         </div>
     </div>
-    <script src="script.js"></script>
+
     <script>
+        const baseUrl = 'http://127.0.0.1:5000/api/v1';
+
         document.addEventListener('DOMContentLoaded', function() {
             requireAuth();
-            loadAdZones();
+            loadAdsZones();
         });
 
-        async function loadAdZones() {
+        async function loadAdsZones() {
             try {
-                const response = await fetchWithAuth(`${baseUrl}/ad-zones`);
-                const data = await response.json();
+                const response = await fetchWithAuth(`${baseUrl}/ads-zones`);
+                if (!response.ok) throw new Error('Failed to fetch ads zones');
                 
-                if (data.status === 'success') {
-                    displayAdZones(data.data);
-                } else {
-                    throw new Error('Không thể tải dữ liệu vùng quảng cáo');
-                }
+                const data = await response.json();
+                const adsZones = data.ads_zones;
+                renderAdsZones(adsZones);
+                document.getElementById('totalZones').textContent = adsZones.length;
             } catch (error) {
-                console.error('Error:', error);
-                if (error.message === 'Unauthorized') {
-                    window.location.href = '/frontend/login.html';
-                } else {
-                    alert('Đã xảy ra lỗi khi tải dữ liệu');
-                }
+                console.error('Error loading ads zones:', error);
+                alert('Không thể tải danh sách vùng quảng cáo');
             }
         }
 
-        document.querySelector('.dropdown').addEventListener('change', async function() {
-            if (this.value !== "Chọn Website domain") {
-                try {
-                    const response = await fetchWithAuth(`${baseUrl}/ad-zones?website_id=${this.value}`);
-                    const data = await response.json();
-                    displayAdZones(data.data);
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Đã xảy ra lỗi khi tải dữ liệu');
-                }
-            }
-        });
+        function renderAdsZones(zones) {
+            const tbody = document.getElementById('adsZoneTableBody');
+            tbody.innerHTML = '';
+
+            zones.forEach((zone, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>
+                        <div>${zone.ten_vung_quang_cao}</div>
+                        <div style="color: #828282; font-size: 12px;">${zone.size || '375×270'}</div>
+                    </td>
+                    <td>Ecommerce</td>
+                    <td>
+                        <div>Interactive Banner - Mobile Fullpage</div>
+                        <div style="color: #828282; font-size: 12px;">CatFish Ecom</div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function copyEmbedCode(zoneId) {
+            // Implementation for copying embed code
+            alert('Đã sao chép mã nhúng');
+        }
+
+        function editZone(zoneId) {
+            // Implementation for editing zone
+            window.location.href = `ad-zones-edit.html?id=${zoneId}`;
+        }
     </script>
 </body>
 
