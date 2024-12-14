@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo Nhóm Đối Tượng - Ads Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./styles.css">
+    <script src="./js/auth.js"></script>
+    <script src="./js/toast.js"></script>
+    <script src="./js/script.js"></script>
+    <style>
+        .main-content {
+            margin-left: 250px;
+            padding: 24px 40px;
+            background-color: #F5F5F5;
+            min-height: 100vh;
+        }
+
+        .form-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px;
+            background: white;
+            border-radius: 8px;
+            width: 100%;
+        }
+
+        .form-section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group input[type="text"],
+        .input-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .url-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .url-input {
+            flex: 1;
+        }
+
+        .behavior-block {
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .behavior-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .behavior-content {
+            margin-top: 16px;
+        }
+
+        .checkbox-group {
+            margin-bottom: 16px;
+        }
+
+        .date-range {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .date-range input {
+            width: 120px;
+            padding: 6px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #0061C1;
+            color: white;
+            border: none;
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid #E0E0E0;
+            color: #333;
+        }
+
+        .btn-danger {
+            background: white;
+            border: 1px solid #EB5757;
+            color: #EB5757;
+        }
+
+        .btn-add {
+            background: white;
+            border: 1px solid #27AE60;
+            color: #27AE60;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 16px;
+            margin-top: 32px;
+        }
+
+        .behavior-group {
+            margin-bottom: 24px;
+            padding: 24px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .behavior-group.excluded {
+            background-color: #FFF5F5;
+            border-color: #EB5757;
+        }
+
+        .behavior-group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .behavior-group-header .section-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #27AE60;
+            margin: 0;
+        }
+
+        .behavior-options {
+            margin-top: 16px;
+        }
+
+        .behavior-select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
+            position: relative;
+        }
+
+        .behavior-select option {
+            padding: 8px 12px;
+            background: white;
+            color: #333;
+        }
+
+        .close-icon {
+            color: #EB5757;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 8px;
+        }
+
+        .btn-add {
+            background: white;
+            border: 1px solid #27AE60;
+            color: #27AE60;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .btn-danger {
+            background: white;
+            border: 1px solid #EB5757;
+            color: #EB5757;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-danger i {
+            font-size: 14px;
+        }
+
+        .behavior-content {
+            margin-top: 16px;
+        }
+
+        .range-inputs {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            margin-left: 24px;
+        }
+
+        .range-inputs input[type="text"],
+        .range-inputs input[type="number"] {
+            width: 120px;
+            padding: 6px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .range-inputs select {
+            padding: 6px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .range-inputs span {
+            color: #828282;
+        }
+
+        .product-selection {
+            margin-bottom: 20px;
+        }
+
+        .product-inputs {
+            margin-top: 16px;
+            padding: 16px;
+            background: #F8F8F8;
+            border-radius: 4px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .product-type-select {
+            width: 200px;
+            padding: 8px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+        }
+
+        .include-products {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .include-products input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+        }
+
+        .excluded-behaviors {
+            margin-top: 16px;
+        }
+
+        .excluded-behavior {
+            margin-top: 16px;
+            padding: 16px;
+            background: #FFF5F5;
+            border: 1px solid #EB5757;
+            border-radius: 4px;
+        }
+
+        .excluded-behavior .behavior-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            color: #EB5757;
+        }
+
+        .btn-loai-tru {
+            background: white;
+            border: 1px solid #EB5757;
+            color: #EB5757;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-loai-tru:hover {
+            background: #FFF5F5;
+        }
+
+        .btn-loai-tru i {
+            font-size: 14px;
+        }
+
+        .btn-them-doi-tuong {
+            background: white;
+            border: 1px solid #27AE60;
+            color: #27AE60;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-them-doi-tuong:hover {
+            background: #F0FFF4;
+        }
+
+        .btn-them-doi-tuong i {
+            font-size: 14px;
+        }
+
+        .additional-behavior {
+            margin-top: 16px;
+            padding: 16px;
+            background: #F0FFF4;
+            border: 1px solid #27AE60;
+            border-radius: 4px;
+        }
+
+        .additional-behavior-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            color: #27AE60;
+            font-weight: 500;
+        }
+
+        .additional-behaviors {
+            margin-top: 16px;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 1400px) {
+            .form-container {
+                max-width: 1000px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .form-container {
+                max-width: 900px;
+                padding: 24px;
+            }
+            .main-content {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .form-container {
+                max-width: 100%;
+                margin: 0 16px;
+            }
+            .range-inputs {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                margin: 0 8px;
+                padding: 16px;
+            }
+            .range-inputs {
+                margin-left: 0;
+            }
+            .range-inputs input[type="text"],
+            .range-inputs input[type="number"] {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .form-container {
+                margin: 0;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Toggle Menu Button -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <span class="logo-text">Ads Manager</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="/frontend/campaigns.html" class="nav-item">
+                <i class="fas fa-layer-group"></i>
+                <span>Quản lý chiến dịch</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-box"></i>
+                    <span>Quản lý sản phẩm</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/product-groups.html">• Danh sách nhóm SP</a>
+                    <a href="/frontend/products.html">• Danh sách SP</a>
+                    <a href="/frontend/data-sources.html">• Nguồn cấp dữ liệu</a>
+                </div>
+            </div>
+
+            <a href="/frontend/target-audience.html" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Quản lý đối tượng</span>
+            </a>
+
+
+
+
+            <a href="/frontend/publishers.html" class="nav-item">
+                <i class="fas fa-users-cog"></i>
+                <span>Danh sách Publisher</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-globe"></i>
+                    <span>Quản lý website</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/price-lists.html">• Danh sách bảng giá</a>
+                    <a href="/frontend/websites.html">• Danh sách website</a>
+                    <a href="/frontend/ad-zones.html">• Danh sách vùng QC</a>
+                </div>
+            </div>
+            <a href="/frontend/accounts.html" class="nav-item">
+                <i class="fas fa-user-shield"></i>
+                <span>Quản lý phân quyền</span>
+            </a>
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Báo cáo</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/website-report.html">• Báo cáo website</a>
+                    <a href="/frontend/zone-report.html">• Báo cáo vùng</a>
+                    <a href="/frontend/publisher-report.html" class="active">• Báo cáo publisher</a>
+                    <a href="/frontend/ad-format-report.html">• Báo cáo định dạng quảng cáo</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="header-content">
+            <div class="breadcrumb">
+                <i class="fas fa-users"></i>
+                <span>/ Quản lý đối tượng / Tạo nhóm đối tượng</span>
+            </div>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-name" id="user-name"></div>
+                    <div class="user-email" id="user-email"></div>
+                </div>
+                <i class="fas fa-user"></i>
+                <div class="user-dropdown">
+                    <div class="dropdown-item" onclick="auth.logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Đăng xuất
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <form id="targetForm">
+                <div class="form-section">
+                    <div class="section-title">Tên nhóm đối tượng</div>
+                    <div class="input-group">
+                        <input type="text" placeholder="Nhập tên nhóm đối tượng" required>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-title">Trang đã truy cập</div>
+                    <div class="url-section">
+                        <span>URL trang</span>
+                        <input type="text" class="url-input" placeholder="Nhập URL trang đã truy cập">
+                        <button type="button" class="btn btn-outline">Và</button>
+                    </div>
+                    <button type="button" class="btn btn-outline">Hoặc</button>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-title">Hành vi khách hàng</div>
+                    <div class="product-selection">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="allProducts" checked onchange="toggleProductSelection()">
+                            <label for="allProducts">Với tất cả sản phẩm</label>
+                        </div>
+                        <div class="product-inputs" style="display: none;">
+                            <div class="input-row">
+                                <select class="product-type-select">
+                                    <option value="product">Sản phẩm</option>
+                                    <option value="product-group">Nhóm sản phẩm</option>
+                                </select>
+                                <div class="include-products">
+                                    <span>Bao gồm</span>
+                                    <input type="text" placeholder="Nhập tên">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="behavior-container">
+                        <div class="behavior-group">
+                            <select class="behavior-select">
+                                <option value="">Tất cả</option>
+                                ${behaviors.map(b => `<option value="${b.behav_id}">${b.ten_hanh_vi}</option>`).join('')}
+                            </select>
+                            <div class="behavior-content"></div>
+                        </div>
+
+                        <div id="additionalBehaviors"></div>
+                        <div id="excludedBehaviors"></div>
+
+                        <div class="behavior-actions">
+                            <button type="button" class="btn-them-doi-tuong" onclick="addAdditionalBehavior()">
+                                <i class="fas fa-plus"></i> Thêm đối tượng
+                            </button>
+                            <button type="button" class="btn-loai-tru" onclick="addExcludedBehavior()">
+                                <i class="fas fa-minus-circle"></i> Loại trừ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline"
+                        onclick="window.location.href='target-audience.html'">Huỷ</button>
+                    <button type="submit" class="btn btn-primary">Tạo nhóm đối tượng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const baseUrl = 'http://127.0.0.1:5000/api/v1';
+        let behaviors = [];
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            requireAuth();
+            await loadBehaviors();
+            await loadExistingTargets();
+            setupBehaviorSelect();
+        });
+
+        async function loadBehaviors() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/behaviours`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch behaviors');
+                }
+                const data = await response.json();
+                behaviors = data.behaviours;
+                populateBehaviorSelect();
+            } catch (error) {
+                console.error('Error loading behaviors:', error);
+                Toast.error('Không thể tải danh sách hành vi');
+            }
+        }
+
+        async function loadExistingTargets() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/target-audiences`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch existing targets');
+                }
+                const data = await response.json();
+                const select = document.getElementById('existingTargets');
+                data.forEach(target => {
+                    const option = document.createElement('option');
+                    option.value = target.ta_id;
+                    option.textContent = target.ten_nhom_doi_tuong;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading existing targets:', error);
+            }
+        }
+
+        function populateBehaviorSelect() {
+            const selects = document.querySelectorAll('.behavior-select');
+            selects.forEach(select => {
+                select.innerHTML = '<option value="">Tất cả</option>';
+                behaviors.forEach(behavior => {
+                    const option = document.createElement('option');
+                    option.value = behavior.behav_id;
+                    option.textContent = behavior.ten_hanh_vi;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        function showBehaviorOptions(behavior, targetContent) {
+            const content = targetContent || document.getElementById('behaviorContent');
+            if (!behavior || behavior.ten_hanh_vi === 'Tất cả') {
+                content.innerHTML = '';
+                return;
+            }
+
+            switch (behavior.ten_hanh_vi) {
+                case 'Thêm vào giỏ hàng':
+                    content.innerHTML = `
+                        <div class="checkbox-group">
+                            <div class="range-inputs">
+                                <input type="checkbox" id="addToCartNotPurchase">
+                                <label for="addToCartNotPurchase">Đã thêm vào giỏ hàng nhưng chưa mua trong vòng</label>
+                                <input type="text" placeholder="0" value="0">
+                                <span>đến</span>
+                                <input type="text" placeholder="60" value="60">
+                                <span>Ngày</span>
+                            </div>
+                            <div class="range-inputs">
+                                <input type="checkbox" id="removeFromCart">
+                                <label for="removeFromCart">Đã bỏ sản phẩm ra khỏi giỏ hàng dưới</label>
+                                <input type="text" placeholder="0" value="0">
+                                <span>đến</span>
+                                <input type="text" placeholder="60" value="60">
+                                <span>Ngày</span>
+                            </div>
+                        </div>
+                    `;
+                    break;
+
+                case 'Đã mua hàng':
+                    content.innerHTML = `
+                        <div class="checkbox-group">
+                            <div class="range-inputs">
+                                <input type="checkbox" id="purchaseValue">
+                                <label for="purchaseValue">Giá trị đơn mua hàng trong khoảng</label>
+                                <input type="number" placeholder="0"> VND
+                                <span>đến</span>
+                                <input type="number" placeholder="1.000.000"> VND
+                            </div>
+                            <div class="range-inputs">
+                                <input type="checkbox" id="purchaseFrequency">
+                                <label for="purchaseFrequency">Tần suất mua hàng</label>
+                                <input type="number" placeholder="0"> Lần
+                                <span>đến</span>
+                                <input type="number" placeholder="10"> Lần
+                                <span>trên</span>
+                                <select>
+                                    <option>Ngày</option>
+                                    <option>Tuần</option>
+                                    <option>Tháng</option>
+                                </select>
+                            </div>
+                        </div>
+                    `;
+                    break;
+
+                case 'Xem sản phẩm':
+                    content.innerHTML = `
+                        <div class="checkbox-group">
+                            <div class="range-inputs">
+                                <input type="checkbox" id="viewNotPurchase">
+                                <label for="viewNotPurchase">Đã xem sản phẩm nhưng chưa mua trong vòng</label>
+                                <input type="text" placeholder="0">
+                                <span>đến</span>
+                                <input type="text" placeholder="60">
+                                <span>Ngày</span>
+                            </div>
+                            <div class="range-inputs">
+                                <input type="checkbox" id="viewNotCart">
+                                <label for="viewNotCart">Đã xem sản phẩm nhưng chưa cho vào giỏ hàng</label>
+                                <input type="text" placeholder="0">
+                                <span>đến</span>
+                                <input type="text" placeholder="60">
+                                <span>Ngày</span>
+                            </div>
+                        </div>
+                    `;
+                    break;
+
+                case 'Nhấn nút mua hàng':
+                    content.innerHTML = `
+                        <div class="checkbox-group">
+                            <div class="range-inputs">
+                                <input type="checkbox" id="clickBuyButton1">
+                                <label for="clickBuyButton1">Đã chọn mua hàng trong vòng</label>
+                                <input type="text" placeholder="0">
+                                <span>đến</span>
+                                <input type="text" placeholder="60">
+                                <span>Ngày</span>
+                            </div>
+                            <div class="range-inputs">
+                                <input type="checkbox" id="clickBuyButton2">
+                                <label for="clickBuyButton2">Đã chọn mua hàng nhưng chưa hoàn tất đặt hàng</label>
+                                <input type="text" placeholder="0">
+                                <span>đến</span>
+                                <input type="text" placeholder="60">
+                                <span>Ngày</span>
+                            </div>
+                        </div>
+                    `;
+                    break;
+
+                default:
+                    content.innerHTML = '';
+                    break;
+            }
+        }
+
+        function setupBehaviorSelect() {
+            const selects = document.querySelectorAll('.behavior-select');
+            selects.forEach(select => {
+                select.addEventListener('change', function() {
+                    const behaviorId = this.value;
+                    const behavior = behaviorId ? behaviors.find(b => b.behav_id === parseInt(behaviorId)) : { ten_hanh_vi: 'Tất cả' };
+                    const content = this.closest('.behavior-group').querySelector('.behavior-content');
+                    showBehaviorOptions(behavior, content);
+                });
+            });
+        }
+
+        function toggleProductSelection() {
+            const allProducts = document.getElementById('allProducts');
+            const productInputs = document.querySelector('.product-inputs');
+            productInputs.style.display = allProducts.checked ? 'none' : 'block';
+        }
+
+        function addExcludedBehavior() {
+            const excludedBehaviors = document.getElementById('excludedBehaviors');
+            const newExclusion = document.createElement('div');
+            newExclusion.className = 'excluded-behavior';
+            newExclusion.innerHTML = `
+                <div class="excluded-behavior-header">
+                    <span>Loại trừ đối tượng sau</span>
+                    <i class="fas fa-times close-icon" onclick="removeExcludedBehavior(this)"></i>
+                </div>
+                <div class="behavior-group">
+                    <select class="behavior-select">
+                        <option value="">Tất cả</option>
+                        ${behaviors.map(b => `<option value="${b.behav_id}">${b.ten_hanh_vi}</option>`).join('')}
+                    </select>
+                    <div class="behavior-content"></div>
+                </div>
+            `;
+
+            const select = newExclusion.querySelector('.behavior-select');
+            select.addEventListener('change', function() {
+                const behaviorId = this.value;
+                const behavior = behaviorId ? behaviors.find(b => b.behav_id === parseInt(behaviorId)) : { ten_hanh_vi: 'Tất cả' };
+                const content = this.closest('.behavior-group').querySelector('.behavior-content');
+                showBehaviorOptions(behavior, content);
+            });
+
+            excludedBehaviors.appendChild(newExclusion);
+        }
+
+        function removeExcludedBehavior(element) {
+            element.closest('.excluded-behavior').remove();
+        }
+
+        function addAdditionalBehavior() {
+            const additionalBehaviors = document.getElementById('additionalBehaviors');
+            const newBehavior = document.createElement('div');
+            newBehavior.className = 'additional-behavior';
+            newBehavior.innerHTML = `
+                <div class="additional-behavior-header">
+                    <span>Thêm đối tượng sau</span>
+                    <i class="fas fa-times close-icon" onclick="removeAdditionalBehavior(this)"></i>
+                </div>
+                <div class="behavior-group">
+                    <select class="behavior-select">
+                        <option value="">Tất cả</option>
+                        ${behaviors.map(b => `<option value="${b.behav_id}">${b.ten_hanh_vi}</option>`).join('')}
+                    </select>
+                    <div class="behavior-content"></div>
+                </div>
+            `;
+
+            const select = newBehavior.querySelector('.behavior-select');
+            select.addEventListener('change', function() {
+                const behaviorId = this.value;
+                const behavior = behaviorId ? behaviors.find(b => b.behav_id === parseInt(behaviorId)) : { ten_hanh_vi: 'Tất cả' };
+                const content = this.closest('.behavior-group').querySelector('.behavior-content');
+                showBehaviorOptions(behavior, content);
+            });
+
+            additionalBehaviors.appendChild(newBehavior);
+        }
+
+        function removeAdditionalBehavior(element) {
+            element.closest('.additional-behavior').remove();
+        }
+
+        document.getElementById('targetForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const formData = {
+                    ten_nhom_doi_tuong: document.querySelector('input[placeholder="Nhập tên nhóm đối tượng"]').value,
+                    trang_da_truy_cap: document.querySelector('.url-input').value,
+                    apply_all_product: document.getElementById('allProducts').checked,
+                    product_info: null,
+                    behaviors: []
+                };
+
+                if (!formData.apply_all_product) {
+                    formData.product_info = {
+                        type: document.querySelector('.product-type-select').value,
+                        include: document.querySelector('.include-products input').value
+                    };
+                }
+
+                // Get main behavior
+                const mainBehaviorSelect = document.querySelector('.behavior-group > .behavior-select');
+                if (mainBehaviorSelect.value) {
+                    formData.behaviors.push({
+                        behavior_id: parseInt(mainBehaviorSelect.value),
+                        is_excluded: false
+                    });
+                }
+
+                // Get additional behaviors
+                const additionalBehaviors = document.querySelectorAll('.additional-behavior .behavior-select');
+                additionalBehaviors.forEach(select => {
+                    if (select.value) {
+                        formData.behaviors.push({
+                            behavior_id: parseInt(select.value),
+                            is_excluded: false
+                        });
+                    }
+                });
+
+                // Get excluded behaviors
+                const excludedBehaviors = document.querySelectorAll('.excluded-behavior .behavior-select');
+                excludedBehaviors.forEach(select => {
+                    if (select.value) {
+                        formData.behaviors.push({
+                            behavior_id: parseInt(select.value),
+                            is_excluded: true
+                        });
+                    }
+                });
+
+                const response = await fetchWithAuth(`${baseUrl}/target-audiences`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to create target audience');
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    Toast.success('Tạo nhóm đối tượng thành công');
+                    window.location.href = 'target-audience.html';
+                } else {
+                    Toast.error(data.message || 'Có lỗi xảy ra');
+                }
+            } catch (error) {
+                console.error('Error creating target audience:', error);
+                Toast.error('Không thể tạo nhóm đối tượng');
+            }
+        });
+    </script>
+</body>
+
+</html>

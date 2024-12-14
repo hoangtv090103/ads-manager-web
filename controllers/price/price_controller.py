@@ -54,18 +54,19 @@ class PriceController(BaseController):
                     'data': price
                 })
             else:
-                if website_id:
-                    prices = GlobalPrice.get_by_website_id(website_id)
-                else:
-                    prices = GlobalPrice.get_all()
-
-                # Get all formats and campaign types for column headers
-                formats_data = self.get_formats_for_pricing()
+                # Get prices
+                prices = GlobalPrice.get_all(website_id)
+                
+                # Get formats data
+                formats_response = self.get_formats_for_pricing()
+                formats_data = formats_response.json['data']['formats_by_type']
 
                 return jsonify({
                     'success': True,
-                    'prices': prices,
-                    'formats': formats_data.json['data']['formats_by_type']
+                    'data': {
+                        'prices': prices['website_prices'],
+                        'formats': formats_data
+                    }
                 })
         except Exception as e:
             raise e

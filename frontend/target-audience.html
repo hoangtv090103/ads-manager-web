@@ -255,7 +255,7 @@
                 </div>
             </div>
 
-            <a href="/frontend/remarking-target.html" class="nav-item active">
+            <a href="/frontend/target-audience.html" class="nav-item active">
                 <i class="fas fa-users"></i>
                 <span>Quản lý đối tượng</span>
             </a>
@@ -332,7 +332,7 @@
 
             <div class="action-bar">
                 <div class="action-left">
-                    <button class="btn-primary" onclick="window.location.href='remarketing-target-create.html'">
+                    <button class="btn-primary" onclick="window.location.href='target-audience-create.html'">
                         <i class="fas fa-plus"></i>
                         Tạo nhóm đối tượng
                     </button>
@@ -366,7 +366,116 @@
         </div>
     </div>
 
-    <script src="./js/script.js"></script>
+    <script>
+        const baseUrl = 'http://127.0.0.1:5000/api/v1';
+        let targetAudiences = [];
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            requireAuth();
+            await loadTargetAudiences();
+            setupSearch();
+        });
+
+        async function loadTargetAudiences() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/target-audiences`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch target audiences');
+                }
+                const data = await response.json();
+                if (data.success) {
+                    targetAudiences = data.target_audiences;
+                    displayTargetAudiences(targetAudiences);
+                    updateTotalCount(targetAudiences.length);
+                } else {
+                    Toast.error(data.message || 'Có lỗi xảy ra khi tải dữ liệu');
+                }
+            } catch (error) {
+                console.error('Error loading target audiences:', error);
+                Toast.error('Không thể tải danh sách nhóm đối tượng');
+            }
+        }
+
+        function displayTargetAudiences(audiences) {
+            const tbody = document.getElementById('targetAudienceTableBody');
+            tbody.innerHTML = '';
+
+            audiences.forEach((audience, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${audience.ten_nhom_doi_tuong}</td>
+                    <td>
+                        <span class="status ${audience.active ? 'connected' : 'not-connected'}">
+                            ${audience.active ? 'Hoạt động' : 'Không hoạt động'}
+                        </span>
+                    </td>
+                    <td>${formatDate(audience.updated_at)}</td>
+                    <td>Đang tính toán...</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateTotalCount(count) {
+            document.getElementById('total-audiences').textContent = count;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('vi-VN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function setupSearch() {
+            const searchInput = document.querySelector('.search-box input');
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredAudiences = targetAudiences.filter(audience => 
+                    audience.ten_nhom_doi_tuong.toLowerCase().includes(searchTerm)
+                );
+                displayTargetAudiences(filteredAudiences);
+                updateTotalCount(filteredAudiences.length);
+            });
+        }
+
+        async function deleteTargetAudience(taId) {
+            if (!confirm('Bạn có chắc chắn muốn xóa nhóm đối tượng này?')) {
+                return;
+            }
+
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/target-audiences/${taId}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to delete target audience');
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    Toast.success('Xóa nhóm đối tượng thành công');
+                    await loadTargetAudiences();
+                } else {
+                    Toast.error(data.message || 'Có lỗi xảy ra khi xóa');
+                }
+            } catch (error) {
+                console.error('Error deleting target audience:', error);
+                Toast.error('Không thể xóa nhóm đối tượng');
+            }
+        }
+
+        function editTargetAudience(taId) {
+            window.location.href = `target-audience-edit.html?id=${taId}`;
+        }
+    </script>
 </body>
 
 </html>
