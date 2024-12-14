@@ -52,7 +52,7 @@ class PublisherController(BaseController):
 
     def delete(self, publisher_id):
         try:
-            Publisher.delete_by_id(publisher_id)
+            Publisher.delete(publisher_id)
             return jsonify({"message": "Publisher deleted successfully"})
         except Exception as e:
             return jsonify({"error": str(e)}), 500

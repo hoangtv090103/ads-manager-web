@@ -72,11 +72,11 @@ class Publisher:
             conn.commit()
 
     @staticmethod
-    def delete_by_id(publisher_id):
+    def delete(publisher_id):
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(
-                'UPDATE publisher SET active = 0 WHERE publisher_id = %s', (publisher_id,))
+                'UPDATE publisher SET active = false WHERE publisher_id = %s', (publisher_id,))
             conn.commit()
 
     @staticmethod

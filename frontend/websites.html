@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="./styles.css">
     <link rel="stylesheet" href="./css/toast.css">
     <script src="./js/auth.js"></script>
-<script src="./js/toast.js"></script>
+    <script src="./js/toast.js"></script>
     <script src="./js/script.js"></script>
     <style>
         .table-container {
@@ -231,12 +231,12 @@
                         <div class="user-email" id="user-email"></div>
                     </div>
                     <i class="fas fa-user"></i>
-                <div class="user-dropdown">
-                    <div class="dropdown-item" onclick="auth.logout()">
-                        <i class="fas fa-sign-out-alt"></i>
-                        Đăng xuất
+                    <div class="user-dropdown">
+                        <div class="dropdown-item" onclick="auth.logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Đăng xuất
+                        </div>
                     </div>
-                </div>
                 </div>
             </div>
 
@@ -248,6 +248,10 @@
                         <button onclick="window.location.href='website-create.html'" class="btn-primary"
                             style="display: flex; align-items: center; gap: 8px;">
                             <i class="fas fa-plus"></i> Thêm website
+                        </button>
+                        <button onclick="reloadWebsites()" class="btn-secondary"
+                            style="display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-sync-alt"></i>
                         </button>
                         <div class="search-box">
                             <i class="fas fa-search"></i>
@@ -282,6 +286,7 @@
 
     <script>
         const baseUrl = 'http://127.0.0.1:5000/api/v1';
+        let allWebsites = [];
 
         async function fetchWebsites() {
             try {
@@ -292,8 +297,8 @@
                     throw new Error(data.error || 'Không thể tải dữ liệu website');
                 }
 
-                renderWebsites(data.websites || []);
-                document.getElementById('totalWebsites').textContent = (data.websites || []).length;
+                allWebsites = data.websites || [];
+                filterAndRenderWebsites();
             } catch (error) {
                 console.error('Error fetching websites:', error);
                 if (error.message === 'Unauthorized') {
@@ -301,6 +306,47 @@
                 }
             }
         }
+
+        function filterAndRenderWebsites() {
+            let filteredWebsites = [...allWebsites];
+
+            // Filter by selected publishers if any
+            const selectedPublisherIds = JSON.parse(sessionStorage.getItem('selectedPublisherIds') || '[]');
+            if (selectedPublisherIds.length > 0) {
+                filteredWebsites = filteredWebsites.filter(website =>
+                    selectedPublisherIds.includes(website.publisher_id)
+                );
+            }
+
+            // Apply search filter if exists
+            const searchTerm = document.querySelector('.search-box input').value.toLowerCase().trim();
+            if (searchTerm.length >= 2) {
+                filteredWebsites = filteredWebsites.filter(website =>
+                    website.domain_website.toLowerCase().includes(searchTerm) ||
+                    website.ten_publisher.toLowerCase().includes(searchTerm) ||
+                    website.email.toLowerCase().includes(searchTerm) ||
+                    (website.link_url && website.link_url.toLowerCase().includes(searchTerm))
+                );
+            }
+
+            renderWebsites(filteredWebsites);
+            document.getElementById('totalWebsites').textContent = filteredWebsites.length;
+        }
+
+        // Add search event listener
+        document.querySelector('.search-box input').addEventListener('input', function (e) {
+            filterAndRenderWebsites();
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            requireAuth();
+            fetchWebsites();
+        });
+
+        // Clear filters when leaving the page
+        window.addEventListener('beforeunload', function () {
+            localStorage.removeItem('selectedPublisherIds');
+        });
 
         function renderWebsites(websites) {
             const tbody = document.getElementById('websiteTableBody');
@@ -353,11 +399,18 @@
                 Toast.error('Không thể cập nhật trạng thái website');
             }
         }
+        function reloadWebsites() {
+            try {
+                // Xoá bộ lọc 
+                sessionStorage.clear('selectedPublisherIds')
 
-        document.addEventListener('DOMContentLoaded', function () {
-            requireAuth();
-            fetchWebsites();
-        });
+                // Gọi lại hàm fetchWebsites để tải lại toàn bộ dữ liệu
+                fetchWebsites()
+            } catch (error) {
+                console.error('Error reloading websites:', error);
+                Toast.error('Không thể tải lại dữ liệu!');
+            }
+        }
     </script>
 </body>
 

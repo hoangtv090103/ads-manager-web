@@ -10,9 +10,9 @@
     <link rel="stylesheet" href="./styles.css">
     <link rel="stylesheet" href="./css/toast.css">
     <script src="./js/auth.js"></script>
-<script src="./js/toast.js"></script>
+    <script src="./js/toast.js"></script>
+    <script src="./js/script.js"></script>
     <style>
-
         .domain-list {
             display: flex;
             flex-direction: column;
@@ -40,6 +40,108 @@
             font-size: 14px;
             cursor: pointer;
         }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            gap: 16px;
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        .action-left {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .btn-primary {
+            background: #0061C1;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 8px 12px 8px 36px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #828282;
+        }
+
+        .btn-view-website {
+            background: white;
+            border: 1px solid #0061C1;
+            color: #0061C1;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #E0E0E0;
+            font-size: 14px;
+        }
+
+        th {
+            background: #F8F9FA;
+            color: #4F4F4F;
+            font-weight: 500;
+        }
+
+        .edit-icon,
+        .delete-icon {
+            color: #4F4F4F;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+
+        .total-count {
+            margin-top: 16px;
+            color: #4F4F4F;
+            font-size: 14px;
+            padding: 16px;
+            border-top: 1px solid #E0E0E0;
+        }
     </style>
 </head>
 
@@ -52,7 +154,7 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            
+
             <span class="logo-text">Ads Manager</span>
         </div>
 
@@ -144,13 +246,15 @@
         <h1 class="page-title">Danh sách Publisher</h1>
 
         <div class="action-bar">
-            <button class="btn-primary" onclick="window.location.href='/frontend/publisher-create.html'">
-                <i class="fas fa-plus"></i>
-                Tạo publisher
-            </button>
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Tìm kiếm theo publisher, website">
+            <div class="action-left">
+                <!-- <button class="btn-primary" onclick="window.location.href='/frontend/publisher-create.html'">
+                    <i class="fas fa-plus"></i>
+                    Tạo publisher
+                </button> -->
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Tìm kiếm theo publisher, website">
+                </div>
             </div>
             <button class="btn-view-website">Xem website</button>
         </div>
@@ -159,92 +263,185 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 40px">STT</th>
-                        <th style="width: 60px">Mã/khóa</th>
-                        <th>Họ tên</th>
+                        <th>
+                            <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
+                        </th>
+                        <th>STT</th>
+                        <th>Tên Publisher</th>
                         <th>Email</th>
                         <th>Số điện thoại</th>
-                        <th>Trạng thái</th>
-                        <th>Domain Website</th>
                         <th>Ngày tạo</th>
+                        <th>Thao tác</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <!-- Row data will be inserted here -->
+                <tbody id="targetAudienceTableBody">
+                    <!-- Data will be populated by JavaScript -->
                 </tbody>
             </table>
         </div>
+
+        <div class="total-count">
+            Tổng số Publisher: <span id="total-publishers">0</span>
+        </div>
     </div>
 
-    <script src="./js/script.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        const baseUrl = 'http://127.0.0.1:5000/api/v1';
+        let publishers = [];
+        let selectedPublishers = [];
+
+        document.addEventListener('DOMContentLoaded', function () {
             requireAuth();
-            fetchPublishers();
+            loadPublishers();
         });
 
-        async function fetchPublishers() {
+        async function loadPublishers() {
             try {
                 const response = await fetchWithAuth(`${baseUrl}/publishers`);
-                
                 if (!response.ok) {
-                    throw new Error('Không thể tải dữ liệu publishers');
+                    throw new Error('Failed to fetch publishers');
                 }
-                
                 const data = await response.json();
-                renderPublishers(data);
-            } catch (error) {
-                console.error('Error:', error);
-                if (error.message === 'Unauthorized') {
-                    window.location.href = '/frontend/login.html';
-                } else {
-                    Toast.error('Đã xảy ra lỗi khi tải dữ liệu');
+                if (data.publishers) {
+                    publishers = data.publishers;
+                    renderPublishers(publishers);
                 }
+            } catch (error) {
+                console.error('Error loading publishers:', error);
+                Toast.error('Không thể tải danh sách publisher');
             }
         }
 
-        async function togglePublisherStatus(publisherId, active) {
-            try {
-                const response = await fetchWithAuth(`${baseUrl}/publishers/${publisherId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ active })
-                });
+        function renderPublishers(publisherList) {
+            const tbody = document.getElementById('targetAudienceTableBody');
+            tbody.innerHTML = '';
 
-                if (!response.ok) {
-                    throw new Error('Không thể cập nhật trạng thái publisher');
+            publisherList.forEach((publisher, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <input type="checkbox" class="publisher-checkbox" 
+                               data-publisher-id="${publisher.publisher_id}"
+                               onchange="handlePublisherSelection(this, ${publisher.publisher_id})">
+                    </td>
+                    <td>${index + 1}</td>
+                    <td>${publisher.ten_publisher}</td>
+                    <td>${publisher.email}</td>
+                    <td>${publisher.so_dien_thoai || 'Chưa cập nhật'}</td>
+                    <td>${formatDate(publisher.created_at)}</td>
+                    <td>
+                        <i class="fas fa-trash delete-icon" onclick="deletePublisher(${publisher.publisher_id})" title="Xóa"></i>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            updateTotalCount(publisherList.length);
+        }
+
+        function handlePublisherSelection(checkbox, publisherId) {
+            if (checkbox.checked) {
+                const publisher = publishers.find(p => p.publisher_id === publisherId);
+                if (publisher && !selectedPublishers.some(p => p.publisher_id === publisherId)) {
+                    selectedPublishers.push(publisher);
                 }
+            } else {
+                selectedPublishers = selectedPublishers.filter(p => p.publisher_id !== publisherId);
+            }
+            updateViewWebsiteButton();
+        }
 
-                fetchPublishers(); // Refresh data
-            } catch (error) {
-                console.error('Error:', error);
-                Toast.error(error.message);
+        function updateViewWebsiteButton() {
+            const viewWebsiteBtn = document.querySelector('.btn-view-website');
+            if (selectedPublishers.length > 0) {
+                viewWebsiteBtn.removeAttribute('disabled');
+            } else {
+                viewWebsiteBtn.setAttribute('disabled', 'true');
             }
         }
 
         // Search functionality
-        document.querySelector('.search-box input').addEventListener('input', async function(e) {
-            const searchTerm = e.target.value.trim();
+        document.querySelector('.search-box input').addEventListener('input', function (e) {
+            const searchTerm = e.target.value.toLowerCase().trim();
             if (searchTerm.length >= 2) {
-                try {
-                    const response = await fetchWithAuth(`${baseUrl}/publishers?search=${searchTerm}`);
-                    
-                    if (!response.ok) {
-                        throw new Error('Không thể tìm kiếm publishers');
-                    }
-                    
-                    const data = await response.json();
-                    renderPublishers(data);
-                } catch (error) {
-                    console.error('Error:', error);
-                    Toast.error('Đã xảy ra lỗi khi tìm kiếm');
-                }
+                const filteredPublishers = publishers.filter(publisher =>
+                    publisher.ten_publisher.toLowerCase().includes(searchTerm) ||
+                    publisher.email.toLowerCase().includes(searchTerm) ||
+                    (publisher.so_dien_thoai && publisher.so_dien_thoai.toLowerCase().includes(searchTerm))
+                );
+                renderPublishers(filteredPublishers);
             } else if (searchTerm.length === 0) {
-                fetchPublishers();
+                renderPublishers(publishers);
             }
         });
+
+        function viewSelectedWebsites() {
+            if (selectedPublishers.length > 0) {
+                const publisherIds = selectedPublishers.map(p => p.publisher_id);
+                sessionStorage.setItem('selectedPublisherIds', JSON.stringify(publisherIds));
+                window.location.href = '/frontend/websites.html';
+            }
+        }
+
+        // Update the button click handler
+        document.querySelector('.btn-view-website').onclick = viewSelectedWebsites;
+
+        function updateTotalCount(count) {
+            document.getElementById('total-publishers').textContent = count;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('vi-VN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+        }
+
+        async function editPublisher(publisherId) {
+            window.location.href = `publisher-edit.html?id=${publisherId}`;
+        }
+
+        async function deletePublisher(publisherId) {
+            if (confirm('Bạn có chắc chắn muốn xóa publisher này?')) {
+                try {
+                    const response = await fetchWithAuth(`${baseUrl}/publishers/${publisherId}`, {
+                        method: 'DELETE'
+                    });
+                    if (response.ok) {
+                        Toast.success('Xóa publisher thành công');
+                        await loadPublishers();
+                    }
+                } catch (error) {
+                    Toast.error('Không thể xóa publisher');
+                }
+            }
+        }
+
+        function toggleSelectAll(checkbox) {
+            const checkboxes = document.querySelectorAll('.publisher-checkbox');
+            const isChecked = checkbox.checked;
+
+            // Bật hoặc tắt tất cả checkbox
+            checkboxes.forEach(cb => {
+                cb.checked = isChecked;
+
+                // Đồng bộ selectedPublishers
+                const publisherId = parseInt(cb.getAttribute('data-publisher-id'));
+                const publisher = publishers.find(p => p.publisher_id === publisherId);
+
+                if (isChecked && publisher && !selectedPublishers.some(p => p.publisher_id === publisherId)) {
+                    selectedPublishers.push(publisher);
+                } else if (!isChecked) {
+                    selectedPublishers = [];
+                }
+            });
+
+            // Cập nhật trạng thái nút "Xem website"
+            updateViewWebsiteButton();
+        }
     </script>
 </body>
 
