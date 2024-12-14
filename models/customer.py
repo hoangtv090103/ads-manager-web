@@ -44,7 +44,7 @@ class Customer:
                 website_doanh_nghiep VARCHAR(255),
                 so_dien_thoai VARCHAR(20),
                 email_doanh_nghiep VARCHAR(100),
-                ma_remarketing VARCHAR(100),
+                ma_remarketing TEXT,
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE,

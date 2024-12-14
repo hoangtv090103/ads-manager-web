@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./css/toast.css">
     <script src="./js/auth.js"></script>
     <script src="./js/toast.js"></script>
     <script src="./js/script.js"></script>
@@ -110,6 +111,62 @@
             color: #333;
             cursor: pointer;
             font-size: 14px;
+            position: relative;
+        }
+
+        .remarketing-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .remarketing-box {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: #0A2540;
+            color: white;
+            padding: 16px;
+            border-radius: 8px;
+            width: 400px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .remarketing-box pre {
+            background: #1E3A5F;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 8px 0;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: #E0E0E0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .remarketing-box .box-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .remarketing-box .box-description {
+            font-size: 12px;
+            color: #E0E0E0;
+            margin-bottom: 12px;
+        }
+
+        .remarketing-container:hover .remarketing-box {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .table-container {
@@ -341,7 +398,14 @@
                         <input type="text" placeholder="Tìm kiếm">
                     </div>
                 </div>
-                <button class="btn-remarketing">Mã Remarketing</button>
+                <div class="remarketing-container">
+                    <button class="btn-remarketing" onclick="copyRemarketingCode()">Mã Remarketing</button>
+                    <div class="remarketing-box">
+                        <div class="box-title">Mã Remarketing của bạn</div>
+                        <div class="box-description">Thêm mã này vào trang web của bạn để bắt đầu thu thập dữ liệu</div>
+                        <pre id="remarketing-code"></pre>
+                    </div>
+                </div>
             </div>
 
             <table>
@@ -351,7 +415,6 @@
                         <th>Tên nhóm đối tượng</th>
                         <th>Trạng thái</th>
                         <th>Cập nhật</th>
-                        <th>Quy mô đối tượng ước tính</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -369,10 +432,14 @@
     <script>
         const baseUrl = 'http://127.0.0.1:5000/api/v1';
         let targetAudiences = [];
+        let remarketingCode = '';
 
-        document.addEventListener('DOMContentLoaded', async function() {
+        document.addEventListener('DOMContentLoaded', async function () {
             requireAuth();
-            await loadTargetAudiences();
+            await Promise.all([
+                loadTargetAudiences(),
+                loadRemarketingCode()
+            ]);
             setupSearch();
         });
 
@@ -407,11 +474,10 @@
                     <td>${audience.ten_nhom_doi_tuong}</td>
                     <td>
                         <span class="status ${audience.active ? 'connected' : 'not-connected'}">
-                            ${audience.active ? 'Hoạt động' : 'Không hoạt động'}
+                            ${audience.active ? 'Đã kết nối' : 'Chưa kết nối'}
                         </span>
                     </td>
                     <td>${formatDate(audience.updated_at)}</td>
-                    <td>Đang tính toán...</td>
                 `;
                 tbody.appendChild(row);
             });
@@ -437,7 +503,7 @@
             const searchInput = document.querySelector('.search-box input');
             searchInput.addEventListener('input', (e) => {
                 const searchTerm = e.target.value.toLowerCase();
-                const filteredAudiences = targetAudiences.filter(audience => 
+                const filteredAudiences = targetAudiences.filter(audience =>
                     audience.ten_nhom_doi_tuong.toLowerCase().includes(searchTerm)
                 );
                 displayTargetAudiences(filteredAudiences);
@@ -474,6 +540,72 @@
 
         function editTargetAudience(taId) {
             window.location.href = `target-audience-edit.html?id=${taId}`;
+        }
+
+        async function copyRemarketingCode() {
+            if (!remarketingCode) {
+                Toast.error('Không có mã remarketing để sao chép');
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(remarketingCode);
+                Toast.success('Đã sao chép mã remarketing vào clipboard');
+            } catch (err) {
+                // Fallback cho trường hợp clipboard API không được hỗ trợ
+                try {
+                    const tempTextArea = document.createElement('textarea');
+                    tempTextArea.value = remarketingCode;
+                    
+                    // Ẩn element tạm thời
+                    tempTextArea.style.position = 'fixed';
+                    tempTextArea.style.opacity = 0;
+                    
+                    document.body.appendChild(tempTextArea);
+                    tempTextArea.focus();
+                    tempTextArea.select();
+                    
+                    const successful = document.execCommand('copy');
+                    document.body.removeChild(tempTextArea);
+                    
+                    if (successful) {
+                        Toast.success('Đã sao chép mã remarketing vào clipboard');
+                    } else {
+                        throw new Error('Không thể sao chép');
+                    }
+                } catch (fallbackErr) {
+                    console.error('Failed to copy:', fallbackErr);
+                    Toast.error('Không thể sao chép mã. Vui lòng thử lại');
+                }
+            }
+        }
+
+        async function loadRemarketingCode() {
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (!user || !user.id) {
+                    throw new Error('User not found');
+                }
+
+                const response = await fetchWithAuth(`${baseUrl}/customers`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch customer data');
+                }
+
+                const data = await response.json();
+                if (data.customers && data.customers.length > 0) {
+                    // Tìm customer tương ứng với user hiện tại
+                    const customer = data.customers.find(c => c.user_id === user.id);
+                    if (customer && customer.ma_remarketing) {
+                        remarketingCode = customer.ma_remarketing;
+                        const remarketingCodeElement = document.getElementById('remarketing-code');
+                        remarketingCodeElement.textContent = remarketingCode;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading remarketing code:', error);
+                Toast.error('Không thể tải mã remarketing');
+            }
         }
     </script>
 </body>

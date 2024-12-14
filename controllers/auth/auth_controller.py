@@ -52,7 +52,9 @@ class LoginController(BaseController):
                             'ho_va_ten': ho_va_ten,
                             'email': user['email'],
                             'role': Role.get_by_id(user['role_id'])
-                        }
+                        },
+                        'customer': customer,
+                        'publisher': publisher
                     }
                 })
                 return response

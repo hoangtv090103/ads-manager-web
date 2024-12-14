@@ -214,6 +214,8 @@
                     }
                     const user = data.data.user;
                     localStorage.setItem('user', JSON.stringify(user));
+                    localStorage.setItem('customer', JSON.stringify(data.data.customer));
+                    localStorage.setItem('publisher', JSON.stringify(data.data.publisher));
                     // Redirect to main page
                     window.location.href = '/frontend/campaigns.html';
                 } else {
