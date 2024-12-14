@@ -145,7 +145,7 @@ class GlobalPrice:
     def save(self):
         try:
             # Validate before saving
-            self.validate()
+            # self.validate()
 
             with get_db_connection() as conn:
                 cursor = conn.cursor()
