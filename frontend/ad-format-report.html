@@ -14,7 +14,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script src="./js/auth.js"></script>
-        <script src="./js/toast.js"></script>
+    <script src="./js/toast.js"></script>
     <script src="./js/script.js"></script>
     <script src="./js/script.js"></script>
 </head>
@@ -81,7 +81,7 @@
                 <i class="fas fa-user-shield"></i>
                 <span>Quản lý phân quyền</span>
             </a>
-<div class="nav-group">
+            <div class="nav-group">
                 <div class="nav-item" onclick="toggleSubmenu(this)">
                     <i class="fas fa-chart-bar"></i>
                     <span>Báo cáo</span>
@@ -118,13 +118,18 @@
                 <i class="fas fa-chart-bar"></i>
                 <span style="font-size: 14px;">/ Báo cáo / Báo cáo định dạng quảng cáo</span>
             </div>
-            <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="user-info">
                 <div>
-                    <div style="font-weight: 500; color: #333; text-align: right;">Lê Bách</div>
-                    <div style="font-size: 12px; color: #828282;">Admin</div>
+                    <div class="user-name" id="user-name"></div>
+                    <div class="user-email" id="user-email"></div>
                 </div>
-                <img src="../assets/avatar.jpg" alt="User Avatar"
-                    style="width: 40px; height: 40px; border-radius: 4px;">
+                <i class="fas fa-user"></i>
+                <div class="user-dropdown">
+                    <div class="dropdown-item" onclick="auth.logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Đăng xuất
+                    </div>
+                </div>
             </div>
         </div>
 
