@@ -12,6 +12,10 @@ from models.role import Role
 from models.user import User
 from flask_cors import cross_origin
 from controllers.base_controller import BaseController
+import secrets
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 
 class LoginController(BaseController):
@@ -78,3 +82,77 @@ class RegisterController(BaseController):
             return {'message': 'User registered successfully'}
         except Exception as e:
             return {'message': str(e)}
+
+
+class ForgotPasswordController(BaseController):
+    def post(self):
+        try:
+            data = request.get_json()
+            email = data.get('email')
+
+            if not email:
+                return {'status': 'error', 'message': 'Email không được để trống'}, 400
+
+            user = User.get_by_email(email)
+            if not user:
+                return {'status': 'error', 'message': 'Email không tồn tại trong hệ thống'}, 404
+
+            # Generate reset token
+            reset_token = secrets.token_urlsafe(32)
+            expiry = datetime.utcnow() + timedelta(hours=24)
+
+            # Save reset token to database
+            Auth.save_reset_token(user['user_id'], reset_token, expiry)
+
+            # Return token directly instead of sending email
+            return {
+                'status': 'success',
+                'message': 'Xác thực email thành công',
+                'data': {
+                    'token': reset_token,
+                    'email': email
+                }
+            }
+
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}, 500
+
+
+class ResetPasswordController(BaseController):
+    def post(self):
+        try:
+            data = request.get_json()
+            token = data.get('token')
+            new_password = data.get('password')
+
+            if not token or not new_password:
+                return {
+                    'status': 'error',
+                    'message': 'Token và mật khẩu mới không được để trống'
+                }, 400
+
+            # Verify token and get user_id
+            user_id = Auth.verify_reset_token(token)
+            if not user_id:
+                return {
+                    'status': 'error',
+                    'message': 'Token không hợp lệ hoặc đã hết hạn'
+                }, 400
+
+            # Reset password
+            if Auth.reset_password(user_id, new_password):
+                return {
+                    'status': 'success',
+                    'message': 'Mật khẩu đã được đặt lại thành công'
+                }
+            else:
+                return {
+                    'status': 'error',
+                    'message': 'Không thể đặt lại mật khẩu'
+                }, 500
+
+        except Exception as e:
+            return {
+                'status': 'error',
+                'message': str(e)
+            }, 500

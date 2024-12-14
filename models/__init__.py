@@ -1,5 +1,7 @@
+# Import database connection
+from configs.db import get_db_connection
+
 # Auth
-from models.ads_zone_format import AdsZoneFormat
 from .auth import Auth
 from .role import Role
 from .user import User
@@ -13,14 +15,12 @@ from .source_status import SourceStatus
 
 # Cơ sở
 from .behaviour import Behaviour
-from .campaign_type import CampaignType
 from .price_type import PriceType
 from .country import Country
 from .city import City
 from .district import District
 from .ads_zone_size import AdsZoneSize
 from .campaign_type import CampaignType
-from .campaign_status import CampStatus
 
 # Thực thể chính
 from .data_source import DataSource
@@ -33,6 +33,7 @@ from .product import Product
 from .product_group import ProductGroup
 from .publisher import Publisher
 from .target_audience import TargetAudience
+from .customer import Customer
 
 # Bản đồ & Quan hệ
 from .ads_display import AdsDisplay
@@ -50,15 +51,14 @@ from .ads_group_target_audience import AdsGroupTargetAudience
 from .ads_group_website import AdsGroupWebsite
 from .remarketing_setting import RemarketingSetting
 from .remarketing_excluded_website import RemarketingExcludedWebsite
-from .publisher import Publisher
-from .customer import Customer
+from .ads_zone_format import AdsZoneFormat
 
 
 def create_all_tables():
     # 1. Bảng Auth
     Role.create_table()
     User.create_table()
-
+    Auth.create_table()
     # 2. Bảng Trạng thái
     Behaviour.create_table()
     CampStatus.create_table()
@@ -102,9 +102,27 @@ def create_all_tables():
     GlobalPrice.create_table()
     ProductGroupMapping.create_table()
     AdsGroupProductGroup.create_table()
-    # AdsGroupProductSelection.create_table()
     AdsGroupTargetAudience.create_table()
     AdsGroupWebsite.create_table()
     RemarketingSetting.create_table()
     RemarketingExcludedWebsite.create_table()
     AdsZoneFormat.create_table()
+
+    # 6. Create password reset tokens table
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        try:
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS password_reset_tokens (
+                    id SERIAL PRIMARY KEY,
+                    user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+                    token VARCHAR(255) NOT NULL UNIQUE,
+                    expiry TIMESTAMP NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    used BOOLEAN DEFAULT FALSE
+                );
+            """)
+            conn.commit()
+        except Exception as e:
+            print(f"Error creating password_reset_tokens table: {str(e)}")
+            conn.rollback()
