@@ -96,6 +96,16 @@ class Customer:
                 (email,))
             row = cursor.fetchone()
             return dict(zip([column[0] for column in cursor.description], row)) if row else None
+        
+    @staticmethod
+    def get_by_user_id(user_id):
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                'SELECT * FROM customer WHERE user_id = %s AND active = true',
+                (user_id,))
+            row = cursor.fetchone()
+            return dict(zip([column[0] for column in cursor.description], row)) if row else None
 
     def update(self):
         with get_db_connection() as conn:

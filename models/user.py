@@ -3,10 +3,11 @@ from models.auth import Auth
 
 
 class User:
-    def __init__(self, user_id=None, username="", email="", password="",
+    def __init__(self, user_id=None, username="", ho_va_ten="", email="", password="",
                  role_id=None):
         self.user_id = user_id
         self.username = username
+        self.ho_va_ten = ho_va_ten
         self.email = email
         self.password = password
         self.role_id = role_id
@@ -19,6 +20,7 @@ class User:
             CREATE TABLE IF NOT EXISTS users (
                 user_id SERIAL PRIMARY KEY,
                 username TEXT NOT NULL,
+                ho_va_ten TEXT NOT NULL,
                 email TEXT NOT NULL,
                 password TEXT NOT NULL,
                 role_id INTEGER NOT NULL,
@@ -80,7 +82,7 @@ class User:
             return dict(zip([column[0] for column in cursor.description], row))
 
     @staticmethod
-    def create(username, email, password, role_id):
+    def create(username, ho_va_ten, email, password, role_id):
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("""
@@ -91,9 +93,9 @@ class User:
             else:
                 hashed_password = Auth.hash_password(password)
                 cursor.execute("""
-                    INSERT INTO users (username, email, password, role_id)
-                    VALUES (%s, %s, %s, %s) RETURNING user_id
-                """, (username, email, hashed_password, role_id))
+                    INSERT INTO users (username, ho_va_ten, email, password, role_id)
+                    VALUES (%s, %s, %s, %s, %s) RETURNING user_id
+                """, (username, ho_va_ten, email, hashed_password, role_id))
                 user_id = cursor.fetchone()[0]
                 conn.commit()
                 return user_id

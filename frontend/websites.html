@@ -74,11 +74,11 @@
             border-radius: 50%;
         }
 
-        input:checked + .slider {
+        input:checked+.slider {
             background-color: #0061C1;
         }
 
-        input:checked + .slider:before {
+        input:checked+.slider:before {
             transform: translateX(16px);
         }
 
@@ -217,17 +217,18 @@
     <div class="container">
         <div class="main-content">
             <!-- Header -->
-            <div class="header-content" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <div class="header-content"
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                 <div style="display: flex; align-items: center; gap: 8px; color: #4F4F4F;">
-                    <i class="fas fa-globe"></i>
-                    <span style="font-size: 14px;">/ Danh sách Domain Website</span>
+                    <i class="fas fa-layer-group"></i>
+                    <span style="font-size: 14px;">/ Quản lý chiến dịch</span>
                 </div>
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <div>
-                        <div style="font-weight: 500; color: #333; text-align: right;">BA team</div>
-                        <div style="font-size: 12px; color: #828282;">bateam@gmail.com</div>
+                <div class="user-info">
+                    <div class="user-details">
+                        <div class="user-name" id="user-name"></div>
+                        <div class="user-email" id="user-email"></div>
                     </div>
-                    <img src="../assets/avatar.jpg" alt="User Avatar" style="width: 40px; height: 40px; border-radius: 4px;">
+                    <i class="fas fa-user"></i>
                 </div>
             </div>
 
@@ -236,7 +237,8 @@
 
                 <div class="action-bar">
                     <div class="action-left">
-                        <button onclick="window.location.href='website-create.html'" class="btn-primary" style="display: flex; align-items: center; gap: 8px;">
+                        <button onclick="window.location.href='website-create.html'" class="btn-primary"
+                            style="display: flex; align-items: center; gap: 8px;">
                             <i class="fas fa-plus"></i> Thêm website
                         </button>
                         <div class="search-box">
@@ -344,7 +346,7 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             requireAuth();
             fetchWebsites();
         });

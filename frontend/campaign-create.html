@@ -392,9 +392,20 @@
     </div>
 
     <div class="main-content">
-        <div class="breadcrumb">
-            <i class="fas fa-layer-group"></i>
-            <span>/ Quản lý chiến dịch / Tạo chiến dịch</span>
+
+        <div class="header-content"
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <div style="display: flex; align-items: center; gap: 8px; color: #4F4F4F;">
+                <i class="fas fa-layer-group"></i>
+                <span style="font-size: 14px;">/ Quản lý chiến dịch / Tạo chiến dịch</span>
+            </div>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-name" id="user-name"></div>
+                    <div class="user-email" id="user-email"></div>
+                </div>
+                <i class="fas fa-user"></i>
+            </div>
         </div>
 
         <div class="form-container">
@@ -428,8 +439,8 @@
                             class="campaign-type-radio" hidden>
                         <label for="display_ads" class="campaign-type-btn" data-type="display_ads">Display ads</label>
 
-                        <input type="radio" id="native_ads" name="campaign_type" value="Native ads" class="campaign-type-radio"
-                            hidden>
+                        <input type="radio" id="native_ads" name="campaign_type" value="Native ads"
+                            class="campaign-type-radio" hidden>
                         <label for="native_ads" class="campaign-type-btn" data-type="native_ads">Native ads</label>
                     </div>
                 </div>
@@ -523,7 +534,7 @@
             document.querySelectorAll('input[name="campaign_type"]').forEach(radio => {
                 radio.addEventListener('change', function () {
                     selectedAdType = this.value; // Cập nhật selectedAdType khi thay đổi
-                    
+
                     if (this.value === 'Display ads' || this.value === 'Native ads') {
                         dataSourceGroup.style.display = 'none';
                     } else {
@@ -541,7 +552,7 @@
         e.preventDefault();
 
         // Tạo chiến dịch
-        const sẻt = document.querySelector('input[name="campaign_name"]').value || '';
+        const ten_chien_dich = document.querySelector('input[name="campaign_name"]').value || '';
         const source_id = document.querySelector('select[name="data_source"]').value || '';
         const tong_chi_phi = document.querySelector('input[name="total_budget"]').value || '';
         const ngan_sach_ngay = document.querySelector('input[name="daily_budget"]').value || '';

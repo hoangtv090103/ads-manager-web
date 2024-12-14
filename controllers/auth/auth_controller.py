@@ -6,6 +6,8 @@ import jwt
 from datetime import datetime, timedelta
 import os
 from models.auth import Auth
+from models.customer import Customer
+from models.publisher import Publisher
 from models.role import Role
 from models.user import User
 from flask_cors import cross_origin
@@ -20,7 +22,7 @@ class LoginController(BaseController):
             user = User.get_by_username(data['username'])
             if not user:
                 user = User.get_by_email(data['username'])
-                
+
             if not user:
                 return {'status': 'error', 'message': 'Invalid credentials'}, 401
 
@@ -31,6 +33,14 @@ class LoginController(BaseController):
                     'exp': datetime.utcnow() + timedelta(days=1)
                 }, os.getenv('JWT_SECRET_KEY') or 'your-secret-key')
 
+                ho_va_ten = ''
+                publisher = Publisher.get_by_user_id(user['user_id'])
+                customer = Customer.get_by_user_id(user['user_id'])
+                if publisher:
+                    ho_va_ten = publisher['ten_publisher']
+                if customer:
+                    ho_va_ten = customer['ho_va_ten']
+
                 response = make_response({
                     'status': 'success',
                     'message': 'Login successful',
@@ -38,6 +48,9 @@ class LoginController(BaseController):
                         'token': token,
                         'user': {
                             'id': user['user_id'],
+                            'username': user['username'],
+                            'ho_va_ten': ho_va_ten,
+                            'email': user['email'],
                             'role': Role.get_by_id(user['role_id'])
                         }
                     }

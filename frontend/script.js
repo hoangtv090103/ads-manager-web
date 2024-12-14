@@ -31,4 +31,12 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     });
+
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (document.getElementById('user-name')) {
+        document.getElementById('user-name').textContent = user.ho_va_ten;
+    }
+    if (document.getElementById('user-email')) {
+        document.getElementById('user-email').textContent = user.email;
+    }
 });

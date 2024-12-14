@@ -49,6 +49,16 @@ class Publisher:
                 'SELECT publisher_id, ten_publisher, email, so_dien_thoai, created_at, updated_at FROM publisher WHERE active = true')
             rows = cursor.fetchall()
             return [dict(zip([column[0] for column in cursor.description], row)) for row in rows]
+        
+    @staticmethod
+    def get_by_user_id(user_id):
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                'SELECT * FROM publisher WHERE user_id = %s AND active = true',
+                (user_id,))
+            row = cursor.fetchone()
+            return dict(zip([column[0] for column in cursor.description], row)) if row else None
 
     def update(self):
         with get_db_connection() as conn:
