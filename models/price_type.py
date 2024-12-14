@@ -49,6 +49,14 @@ class PriceType:
             ''', (price_type_name,))
             row = cursor.fetchone()
             return dict(zip([column[0] for column in cursor.description], row)) if row else None    
+        
+    @staticmethod
+    def get_by_id(price_type_id):
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM price_type WHERE price_type_id = %s', (price_type_id,))
+            row = cursor.fetchone()
+            return dict(zip([column[0] for column in cursor.description], row)) if row else None
 
     def update(self):
         with get_db_connection() as conn:
