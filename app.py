@@ -1,3 +1,5 @@
+from flask import jsonify
+from controllers.behaviour.behaviour_controller import BehaviourController
 from flask import Blueprint, Flask, request, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required
@@ -20,12 +22,13 @@ from controllers.report.publisher_report_controller import PublisherReportContro
 from controllers.report.zone_report_controller import ZoneReportController
 from controllers.report.ad_format_report_controller import AdFormatReportController
 from controllers.customer.customer_controller import CustomerController
-from controllers.remarketing.remarketing_controller import RemarketingController
+from controllers.remarketing.remarketing_setting_controller import RemarketingController
 from controllers.website.website_controller import WebsiteController
 from controllers.ads_group.ads_group_controller import AdsGroupController
 from controllers.ads_zone_size.ads_zone_size_controller import AdsZoneSizeController
 from models.ads_format import AdsFormat
 from controllers.price.price_controller import PriceController
+from controllers.behaviour.behaviour_controller import BehaviourController
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Enable CORS for all routes
@@ -220,14 +223,20 @@ api.add_resource(PriceController,
                  resource_class_kwargs={'decorators': [token_required]}
                  )
 
-from flask import jsonify
+# Add behaviour routes
+api.add_resource(BehaviourController,
+                 '/behaviours',
+                 '/behaviours/<int:behav_id>',
+                 resource_class_kwargs={'decorators': [token_required]})
+
 
 @app.route('/api/v1/ad-size-formats/<int:size_id>', methods=['GET'])
 def get_ad_formats_by_size(size_id):
     try:
         formats = AdsFormat.get_by_size_id(size_id)
         if not formats:
-            return jsonify({'success': True, 'formats': []})  # Trả về mảng rỗng thay vì null
+            # Trả về mảng rỗng thay vì null
+            return jsonify({'success': True, 'formats': []})
         return jsonify({'success': True, 'formats': formats})
     except Exception as e:
         print(f"Error getting formats: {str(e)}")  # Log lỗi để debug
@@ -236,9 +245,11 @@ def get_ad_formats_by_size(size_id):
             'message': str(e)
         }), 500
 
+
 @app.route('/api/v1/prices/formats', methods=['GET'])
 def get_formats_for_pricing():
     return PriceController().get_formats_for_pricing()
+
 
 create_all_tables()
 if __name__ == '__main__':

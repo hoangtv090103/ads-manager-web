@@ -1,5 +1,6 @@
 from configs.db import get_db_connection
 
+
 class Behaviour:
     def __init__(self, behav_id=None, ten_hanh_vi=""):
         self.behav_id = behav_id
@@ -12,11 +13,16 @@ class Behaviour:
             cursor.execute('''
             CREATE TABLE IF NOT EXISTS behaviour (
                 behav_id SERIAL PRIMARY KEY,
-                ten_hanh_vi TEXT NOT NULL,
+                ten_hanh_vi TEXT NOT NULL UNIQUE,
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE
             )
+            ''')
+
+            cursor.execute('''
+                INSERT INTO behaviour (ten_hanh_vi) VALUES ('Tất cả'), ('Đã mua hàng'), ('Xem sản phẩm'), ('Thêm vào giỏ hàng'), ('Nhấn nút mua hàng')
+                ON CONFLICT DO NOTHING
             ''')
             conn.commit()
 
@@ -59,17 +65,27 @@ class Behaviour:
             return dict(zip([column[0] for column in cursor.description], row))
 
     @staticmethod
+    def get_by_name(ten_hanh_vi):
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT behav_id FROM behaviour WHERE ten_hanh_vi = %s AND active = TRUE
+            ''', (ten_hanh_vi,))
+            row = cursor.fetchone()
+            return row[0] if row else None
+
+    @staticmethod
     def update(behav_id, data={}):
         with get_db_connection() as conn:
             cursor = conn.cursor()
-            
+
             update_fields = []
             params = []
-            
+
             for field, value in data.items():
                 update_fields.append(f"{field} = %s")
                 params.append(value)
-                    
+
             if update_fields:
                 query = f'''
                 UPDATE behaviour 
@@ -77,7 +93,7 @@ class Behaviour:
                 WHERE behav_id = %s AND active = TRUE
                 '''
                 params.append(behav_id)
-                
+
                 cursor.execute(query, params)
                 conn.commit()
 
@@ -89,4 +105,4 @@ class Behaviour:
             UPDATE behaviour SET active = FALSE 
             WHERE behav_id = %s
             ''', (behav_id,))
-            conn.commit() 
+            conn.commit()
