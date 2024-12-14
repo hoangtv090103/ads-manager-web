@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="./styles.css">
     <link rel="stylesheet" href="./css/toast.css">
     <script src="./js/auth.js"></script>
-<script src="./js/toast.js"></script>
+    <script src="./js/toast.js"></script>
     <style>
         .search-section {
             background: white;
@@ -52,7 +52,7 @@
     <!-- Sidebar HTML từ deposit.html -->
     <div class="sidebar">
         <div class="sidebar-header">
-            
+
             <span class="logo-text">Ads Manager</span>
         </div>
 
@@ -137,6 +137,7 @@
                         Đăng xuất
                     </div>
                 </div>
+
             </div>
         </div>
 
@@ -225,11 +226,11 @@
             try {
                 const response = await fetchWithAuth(`${baseUrl}/transactions`);
                 const data = await response.json();
-                
+
                 if (!response.ok) {
                     throw new Error('Không thể tải dữ liệu giao dịch');
                 }
-                
+
                 renderTransactions(data.transactions);
             } catch (error) {
                 console.error('Error:', error);
@@ -242,7 +243,7 @@
         }
 
         // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             requireAuth();
             fetchTransactions();
         });
