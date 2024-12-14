@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <script src="./js/auth.js"></script>
+<script src="./js/toast.js"></script>
     <style>
         body {
             margin: 0;
@@ -341,7 +342,7 @@
                 if (error.message === 'Unauthorized') {
                     window.location.href = '/frontend/login.html';
                 } else {
-                    alert('Đã xảy ra lỗi khi tải dữ liệu');
+                    Toast.error('Đã xảy ra lỗi khi tải dữ liệu');
                 }
             }
         }
@@ -404,11 +405,11 @@
                         throw new Error('Không thể xóa nhóm đối tượng');
                     }
 
-                    alert('Xóa nhóm đối tượng thành công!');
+                    Toast.error('Xóa nhóm đối tượng thành công!');
                     loadTargetAudiences();
                 } catch (error) {
                     console.error('Error:', error);
-                    alert(error.message);
+                    Toast.error(error.message);
                 }
             }
         }

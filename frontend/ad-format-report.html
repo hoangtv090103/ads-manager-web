@@ -13,6 +13,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script src="./js/auth.js"></script>
+<script src="./js/toast.js"></script>
     <script src="./script.js"></script>
 </head>
 
@@ -240,7 +241,7 @@
                 });
             } catch (error) {
                 console.error('Error loading ad formats:', error);
-                alert('Có lỗi khi tải định dạng quảng cáo');
+                Toast.error('Có lỗi khi tải định dạng quảng cáo');
             }
         }
 
@@ -355,7 +356,7 @@
                 window.URL.revokeObjectURL(url);
             } catch (error) {
                 console.error('Error exporting report:', error);
-                alert('Có lỗi khi xuất báo cáo');
+                Toast.error('Có lỗi khi xuất báo cáo');
             }
         }
 

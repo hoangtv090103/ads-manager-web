@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="./styles.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
     <script src="./js/auth.js"></script>
+<script src="./js/toast.js"></script>
     <script src="./script.js"></script>
 </head>
 
@@ -228,7 +229,7 @@
                 `;
             } catch (error) {
                 console.error('Error loading report data:', error);
-                alert('Có lỗi khi tải dữ liệu báo cáo');
+                Toast.error('Có lỗi khi tải dữ liệu báo cáo');
             }
         }
 
@@ -267,7 +268,7 @@
                 window.URL.revokeObjectURL(url);
             } catch (error) {
                 console.error('Error exporting report:', error);
-                alert('Có lỗi khi xuất báo cáo');
+                Toast.error('Có lỗi khi xuất báo cáo');
             }
         }
 

@@ -20,6 +20,12 @@ const auth = {
         localStorage.removeItem(AUTH_TOKEN_KEY);
     },
 
+    // Thêm phương thức logout
+    logout() {
+        this.removeToken();
+        window.location.href = '/frontend/login.html';
+    },
+
     // Kiểm tra đã login chưa
     isAuthenticated() {
         return !!this.getToken();

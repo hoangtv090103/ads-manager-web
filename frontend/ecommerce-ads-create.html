@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <script src="./js/auth.js"></script>
+    <script src="./js/toast.js"></script>
     <style>
         .ad-format-list {
             display: flex;
@@ -523,11 +524,10 @@
                     throw new Error('Không thể tạo tin quảng cáo');
                 }
 
-                alert('Đã tạo tin quảng cáo thành công!');
+                Toast.success('Đã tạo tin quảng cáo thành công!');
                 window.location.href = '/frontend/ads.html';
             } catch (error) {
-                console.error('Error:', error);
-                alert(error.message);
+                Toast.error(error.message);
             }
         });
 

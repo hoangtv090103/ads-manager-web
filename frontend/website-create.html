@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <script src="./js/auth.js"></script>
+<script src="./js/toast.js"></script>
     <script src="./script.js"></script>
     <style>
         .form-container {
@@ -252,7 +253,7 @@
                 });
             } catch (error) {
                 console.error('Error loading publishers:', error);
-                alert('Không thể tải danh sách publisher');
+                Toast.error('Không thể tải danh sách publisher');
             }
     }
 
@@ -294,7 +295,7 @@
                 }
             } catch (error) {
                 console.error('Error saving website:', error);
-                alert('Không thể lưu website. Vui lòng thử lại sau.');
+                Toast.error('Không thể lưu website. Vui lòng thử lại sau.');
             }
         }
 

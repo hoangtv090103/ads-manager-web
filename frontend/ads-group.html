@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <script src="./js/auth.js"></script>
+<script src="./js/toast.js"></script>
     <style>
         .ad-groups-table {
             width: 100%;
@@ -517,7 +518,7 @@
                 if (error.message === 'Unauthorized') {
                     window.location.href = '/frontend/login.html';
                 } else {
-                    alert('Đã xảy ra lỗi khi tải dữ liệu');
+                    Toast.error('Đã xảy ra lỗi khi tải dữ liệu');
                 }
             }
         }
@@ -783,7 +784,7 @@
                 renderAvailableWebsites(availableWebsites);
             } catch (error) {
                 console.error('Error:', error);
-                alert('Đã xảy ra lỗi khi tải danh sách website');
+                Toast.error('Đã xảy ra lỗi khi tải danh sách website');
             }
         }
 
@@ -832,11 +833,10 @@
                     throw new Error('Không thể tạo nhóm quảng cáo');
                 }
 
-                alert('Tạo nhóm quảng cáo thành công!');
+                Toast.success('Tạo nhóm quảng cáo thành công!');
                 window.location.href = '/frontend/ad-groups.html';
             } catch (error) {
-                console.error('Error:', error);
-                alert(error.message);
+                Toast.error(error.message);
             }
         }
 

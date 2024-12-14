@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <script src="./js/auth.js"></script>
+<script src="./js/toast.js"></script>
     <style>
         /* Custom styles for accounts page */
         .account-table {
@@ -251,9 +252,6 @@
                         <option value="true">Đang chạy</option>
                         <option value="false">Tạm khóa</option>
                     </select>
-                    <select class="filter-select" name="campaign">
-                        <option value="">Chiến dịch</option>
-                    </select>
                     <select class="filter-select" name="role">
                         <option value="">Role user</option>
                         <option value="Admin">Admin</option>
@@ -342,14 +340,14 @@
                     displayAccounts(filteredData);
                     updateTotalAccounts(filteredData.length);
                 } else {
-                    alert('Lỗi khi tải danh sách tài khoản');
+                    Toast.error('Lỗi khi tải danh sách tài khoản');
                 }
             } catch (error) {
                 console.error('Error:', error);
                 if (error.message === 'Unauthorized') {
                     window.location.href = '/frontend/login.html';
                 } else {
-                    alert('Đã xảy ra lỗi khi tải dữ liệu');
+                    Toast.error('Đã xảy ra lỗi khi tải dữ liệu');
                 }
             }
         }
@@ -378,7 +376,7 @@
                             ${account.active ? 'Đang chạy' : 'Tạm khóa'}
                         </span>
                     </td>
-                    <td>20</td>
+                    <td>${account.user_type === 'User' ? account.campaigns.length : '-'}</td>
                     <td>${account.user_type}</td>
                     <td>${account.created_at}</td>
                     <td>
@@ -423,7 +421,7 @@
                 console.error('Error:', error);
                 // Reset lại trạng thái toggle nếu có lỗi
                 document.getElementById(`status_${userId}`).checked = !newStatus;
-                alert(error.message);
+                Toast.error(error.message);
             }
         }
 
@@ -462,7 +460,7 @@
                 closeWarningPopup();
             } catch (error) {
                 console.error('Error:', error);
-                alert('Đã xảy ra lỗi khi cập nhật trạng thái');
+                Toast.error('Đã xảy ra lỗi khi cập nhật trạng thái');
                 // Reset the toggle
                 document.getElementById(`status_${userId}`).checked = true;
             }

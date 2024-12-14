@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <script src="./js/auth.js"></script>
+<script src="./js/toast.js"></script>
     <script src="./script.js"></script>
     <style>
         .table-container {
@@ -323,7 +324,7 @@
                 document.getElementById('totalZones').textContent = adsZones.length;
             } catch (error) {
                 console.error('Error loading ads zones:', error);
-                alert('Không thể tải danh sách vùng quảng cáo');
+                Toast.error('Không thể tải danh sách vùng quảng cáo');
             }
         }
 
@@ -351,7 +352,7 @@
 
         function copyEmbedCode(zoneId) {
             // Implementation for copying embed code
-            alert('Đã sao chép mã nhúng');
+            Toast.error('Đã sao chép mã nhúng');
         }
 
         function editZone(zoneId) {

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <script src="./js/auth.js"></script>
+    <script src="./js/toast.js"></script>
     <style>
         .main-content {
             margin-left: 250px;
@@ -136,7 +137,7 @@
             justify-content: flex-end;
             margin-top: 32px;
         }
-    </style>
+    </script>
 </head>
 
 <body>
@@ -316,11 +317,11 @@
                 }
 
                 const result = await response.json();
-                alert('Tạo nhóm đối tượng thành công!');
+                Toast.success('Tạo nhóm đối tượng thành công!');
                 window.location.href = '/frontend/remarking-target.html';
             } catch (error) {
                 console.error('Error:', error);
-                alert(error.message);
+                Toast.error(error.message);
             }
         });
 

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh sách bảng giá vùng quảng cáo</title>
     <script src="./js/auth.js"></script>
+<script src="./js/toast.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -264,7 +265,7 @@
                 if (error.message === 'Unauthorized') {
                     window.location.href = '/frontend/login.html';
                 } else {
-                    alert('Đã xảy ra lỗi khi tải dữ liệu');
+                    Toast.error('Đã xảy ra lỗi khi tải dữ liệu');
                 }
             }
         }
@@ -281,7 +282,7 @@
         }
 
         function createPricing() {
-            alert("Chức năng tạo bảng giá đang phát triển.");
+            Toast.error("Chức năng tạo bảng giá đang phát triển.");
         }
     </script>
 </body>
