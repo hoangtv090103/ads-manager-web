@@ -163,6 +163,35 @@
                 width: 100%;
             }
         }
+
+        .copy-code-tooltip {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .tooltip-content {
+            display: none;
+            position: absolute;
+            background: #1a2b4a;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            width: 300px;
+            z-index: 1000;
+        }
+
+        .tooltip-header {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .embed-code {
+            background: #0d1829;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
     </style>
 </head>
 
@@ -198,20 +227,10 @@
                 </div>
             </div>
 
-            <a href="/frontend/target-audience.html" class="nav-item">
-                <i class="fas fa-users"></i>
-                <span>Quản lý đối tượng</span>
-            </a>
-
-            <a href="/frontend/deposit.html" class="nav-item">
-                <i class="fas fa-wallet"></i>
-                <span>Nạp tiền tài khoản</span>
-            </a>
-
-            <a href="/frontend/deposit-history.html" class="nav-item">
-                <i class="fas fa-history"></i>
-                <span>Lịch sử nạp tiền</span>
-            </a>
+      <a href="/frontend/target-audience.html" class="nav-item">
+        <i class="fas fa-users"></i>
+        <span>Quản lý đối tượng</span>
+      </a>
 
 
             <a href="/frontend/publishers.html" class="nav-item">
@@ -297,8 +316,7 @@
                             <th>Tên vùng QC/ Kích thước (px)</th>
                             <th>Loại QC</th>
                             <th>Định dạng</th>
-                            <!-- <th>Quảng cáo dự phòng</th>
-                            <th>Lấy mã</th> -->
+                            <th>Lấy mã</th>
                         </tr>
                     </thead>
                     <tbody id="adsZoneTableBody">
@@ -353,6 +371,15 @@
                         <div>Interactive Banner - Mobile Fullpage</div>
                         <div style="color: #828282; font-size: 12px;">CatFish Ecom</div>
                     </td>
+                    <td>
+                        <div class="copy-code-tooltip" data-zone-id="${zone.zone_id}">
+                            <i class="fas fa-copy"></i>
+                            <div class="tooltip-content">
+                                <div class="tooltip-header">Click button để copy mã vùng quảng cáo sau</div>
+                                <pre class="embed-code"></pre>
+                            </div>
+                        </div>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -367,6 +394,30 @@
             // Implementation for editing zone
             window.location.href = `ad-zones-edit.html?id=${zoneId}`;
         }
+
+        document.querySelectorAll('.copy-code-tooltip').forEach(tooltip => {
+            const zoneId = tooltip.dataset.zoneId;
+            
+            // Hiển thị tooltip khi hover
+            tooltip.addEventListener('mouseenter', async () => {
+                const response = await fetch(`/api/v1/ads-zones/${zoneId}/embed-code`);
+                const data = await response.json();
+                tooltip.querySelector('.embed-code').textContent = data.code;
+                tooltip.querySelector('.tooltip-content').style.display = 'block';
+            });
+
+            // Ẩn tooltip khi mouse leave
+            tooltip.addEventListener('mouseleave', () => {
+                tooltip.querySelector('.tooltip-content').style.display = 'none';
+            });
+
+            // Copy mã khi click
+            tooltip.addEventListener('click', async () => {
+                const code = tooltip.querySelector('.embed-code').textContent;
+                await navigator.clipboard.writeText(code);
+                Toast.success('Đã copy mã nhúng vào clipboard');
+            });
+        });
     </script>
 </body>
 
