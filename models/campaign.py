@@ -167,14 +167,14 @@ class Campaign:
     def update(camp_id, data):
         with get_db_connection() as conn:
             cursor = conn.cursor()
-            
+
             # Build update query dynamically
             update_fields = []
             params = []
             for field, value in data.items():
                 update_fields.append(f"{field} = %s")
                 params.append(value)
-            
+
             if update_fields:
                 params.append(camp_id)
                 query = f'''
@@ -183,13 +183,13 @@ class Campaign:
                 WHERE camp_id = %s
                 RETURNING camp_id
                 '''
-                
+
                 cursor.execute(query, params)
                 updated_row = cursor.fetchone()
                 conn.commit()
-                
+
                 return updated_row is not None
-                
+
             return False
 
     @staticmethod

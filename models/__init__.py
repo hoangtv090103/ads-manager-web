@@ -19,6 +19,8 @@ from .country import Country
 from .city import City
 from .district import District
 from .ads_zone_size import AdsZoneSize
+from .campaign_type import CampaignType
+from .campaign_status import CampStatus
 
 # Thực thể chính
 from .data_source import DataSource
@@ -68,12 +70,13 @@ def create_all_tables():
 
     # 3. Bảng Cơ sở
     User.create_table()
-    CampaignType.create_table()
     PriceType.create_table()
     Country.create_table()
     City.create_table()
     District.create_table()
     AdsZoneSize.create_table()
+    CampaignType.create_table()
+    CampStatus.create_table()
 
     # 4. Bảng Thực thể chính
     DataSource.create_table()
@@ -88,6 +91,7 @@ def create_all_tables():
     ProductGroup.create_table()
     Customer.create_table()
     TransactionSystem.create_table()
+    
     # 5. Bảng Mappings & Quan hệ
     AdsDisplay.create_table()
     AdsEcom.create_table()

@@ -13,21 +13,35 @@ class CampaignType:
             cursor.execute('''
             CREATE TABLE IF NOT EXISTS campaign_type (
                 camp_type_id SERIAL PRIMARY KEY,
-                ten_loai_chien_dich VARCHAR(100) NOT NULL,
+                ten_loai_chien_dich VARCHAR(100) NOT NULL UNIQUE,
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE
             )
             ''')
-            if len(CampaignType.get_all()) == 0:
-                # Tạo dữ liệu mặc định
-                cursor.execute('''
-                    INSERT INTO campaign_type (ten_loai_chien_dich)
-                    VALUES ('Display Ads'), ('Native Ads'), ('Ecommerce')
-                    ON CONFLICT DO NOTHING
-                ''')
-
             conn.commit()
+
+            # Check if table exists before querying
+            cursor.execute("""
+                SELECT EXISTS (
+                    SELECT FROM information_schema.tables 
+                    WHERE table_name = 'campaign_type'
+                )
+            """)
+            table_exists = cursor.fetchone()[0]
+
+            if table_exists:
+                cursor.execute('SELECT COUNT(*) FROM campaign_type')
+                count = cursor.fetchone()[0]
+                
+                if count == 0:
+                    # Tạo dữ liệu mặc định
+                    cursor.execute('''
+                        INSERT INTO campaign_type (ten_loai_chien_dich)
+                        VALUES ('Display Ads'), ('Native Ads'), ('Ecommerce')
+                        ON CONFLICT DO NOTHING
+                    ''')
+                    conn.commit()
 
     def create(self):
         with get_db_connection() as conn:
