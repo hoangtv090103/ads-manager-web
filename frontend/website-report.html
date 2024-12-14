@@ -21,7 +21,7 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            
+
             <span class="logo-text">Ads Manager</span>
         </div>
 
@@ -93,18 +93,18 @@
     <!-- Main Content -->
     <div class="main-content">
         <!-- Header -->
-        <div class="header-content">
+        <div class="header-content"
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
             <div style="display: flex; align-items: center; gap: 8px; color: #4F4F4F;">
                 <i class="fas fa-chart-bar"></i>
                 <span style="font-size: 14px;">/ Báo cáo / Báo cáo website</span>
             </div>
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div>
-                    <div style="font-weight: 500; color: #333; text-align: right;">Phanh</div>
-                    <div style="font-size: 12px; color: #828282;">Admin</div>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-name" id="user-name"></div>
+                    <div class="user-email" id="user-email"></div>
                 </div>
-                <img src="../assets/avatar.jpg" alt="User Avatar"
-                    style="width: 40px; height: 40px; border-radius: 4px;">
+                <i class="fas fa-user"></i>
             </div>
         </div>
 
@@ -175,14 +175,14 @@
             try {
                 const response = await fetchWithAuth(`${baseUrl}/publishers`);
                 const data = await response.json();
-                
+
                 if (!response.ok) {
                     throw new Error('Failed to load publishers');
                 }
 
                 const publisherSelect = document.getElementById('publisherFilter');
                 publisherSelect.innerHTML = '<option value="">Publisher</option>';
-                
+
                 data.publishers.forEach(publisher => {
                     const option = document.createElement('option');
                     option.value = publisher.email;
@@ -200,17 +200,17 @@
         // Filter report data based on selected publisher
         function filterReportData() {
             const selectedPublisher = document.getElementById('publisherFilter').value;
-            const filteredData = selectedPublisher 
+            const filteredData = selectedPublisher
                 ? sampleData.filter(item => item.publisher === selectedPublisher)
                 : sampleData;
-            
+
             renderReportData(filteredData);
-            
+
             // Update totals
             const totalViews = filteredData.reduce((sum, item) => sum + item.views, 0);
             const totalClicks = filteredData.reduce((sum, item) => sum + item.clicks, 0);
             const totalCost = filteredData.reduce((sum, item) => sum + item.total_cost, 0);
-            
+
             document.getElementById('totalWebsites').textContent = filteredData.length;
             document.querySelector('tfoot tr').innerHTML = `
                 <td colspan="3" style="text-align: left;">Số Website: <span id="totalWebsites">${filteredData.length}</span></td>
@@ -261,36 +261,36 @@
                 const startDate = document.getElementById('startDate').value;
                 const endDate = document.getElementById('endDate').value;
                 const selectedPublisher = document.getElementById('publisherFilter').value;
-                
+
                 const queryParams = new URLSearchParams({
                     start_date: startDate,
                     end_date: endDate,
                     publisher_email: selectedPublisher,
                     export: false
                 });
-                
+
                 const response = await fetchWithAuth(`${baseUrl}/websites/report?${queryParams}`);
                 const data = await response.json();
-                
+
                 if (!data.success) {
                     throw new Error(data.error || 'Failed to load report data');
                 }
-                
+
                 renderReportData(data.data);
                 updateTotals(data.data);
             } catch (error) {
                 console.error('Error loading report data:', error);
             }
         }
-        
+
         function updateTotals(data) {
             const totalViews = data.reduce((sum, item) => sum + item.total_views, 0);
             const totalClicks = data.reduce((sum, item) => sum + item.total_clicks, 0);
             const totalCost = data.reduce((sum, item) => sum + item.total_cost, 0);
-            const avgCTR = data.length > 0 
-                ? (totalClicks / totalViews * 100).toFixed(2) 
+            const avgCTR = data.length > 0
+                ? (totalClicks / totalViews * 100).toFixed(2)
                 : 0;
-                
+
             document.querySelector('tfoot tr').innerHTML = `
                 <td colspan="3" style="text-align: left;">Số Website: <span id="totalWebsites">${data.length}</span></td>
                 <td style="text-align: right;">${formatNumber(totalViews)}</td>
@@ -299,17 +299,17 @@
                 <td style="text-align: right;">${formatCurrency(totalCost)}</td>
             `;
         }
-        
+
         // Thêm event listeners cho date inputs và publisher filter
         document.getElementById('startDate').addEventListener('change', loadReportData);
         document.getElementById('endDate').addEventListener('change', loadReportData);
         document.getElementById('publisherFilter').addEventListener('change', loadReportData);
-        
+
         // Cập nhật hàm renderReportData
         function renderReportData(data) {
             const tbody = document.getElementById('reportTableBody');
             tbody.innerHTML = '';
-            
+
             data.forEach((item, index) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -324,7 +324,7 @@
                 tbody.appendChild(tr);
             });
         }
-        
+
         // Cập nhật hàm exportReport
         async function exportReport() {
             const startDate = document.getElementById('startDate').value;
@@ -337,7 +337,7 @@
                     publisher_email: selectedPublisher,
                     export: true
                 });
-                
+
                 const response = await fetchWithAuth(`${baseUrl}/websites/report?${queryParams}`, {
                     method: 'GET',
                     headers: {
@@ -346,11 +346,11 @@
                     },
                     responseType: 'blob'
                 });
-                
+
                 if (!response.ok) {
                     throw new Error('Failed to export report');
                 }
-                
+
                 const blob = await response.blob();
                 if (!blob) {
                     throw new Error('Failed to export report');
@@ -359,12 +359,12 @@
                 const excelBlob = new Blob([blob], {
                     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                 });
-                
+
                 const url = window.URL.createObjectURL(excelBlob);
                 const a = document.createElement('a');
                 a.href = url;
                 a.download = `website_report_${startDate}_${endDate}.xlsx`;
-                
+
                 // Force download as Excel file
                 document.body.appendChild(a);
                 a.click();

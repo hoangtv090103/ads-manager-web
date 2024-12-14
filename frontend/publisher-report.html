@@ -21,7 +21,7 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            
+
             <span class="logo-text">Ads Manager</span>
         </div>
 
@@ -93,15 +93,16 @@
     <!-- Main Content -->
     <div class="main-content">
         <!-- Header -->
-        <div class="header-content">
+        <div class="header-content"
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
             <div style="display: flex; align-items: center; gap: 8px; color: #4F4F4F;">
                 <i class="fas fa-chart-bar"></i>
-                <span style="font-size: 14px;">/ Báo cáo / Báo cáo Publisher</span>
+                <span style="font-size: 14px;">/ Báo cáo / Báo cáo publisher</span>
             </div>
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div>
-                    <div style="font-weight: 500; color: #333; text-align: right;">Phanh</div>
-                    <div style="font-size: 12px; color: #828282;">Admin</div>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-name" id="user-name"></div>
+                    <div class="user-email" id="user-email"></div>
                 </div>
                 <i class="fas fa-user"></i>
             </div>
@@ -115,8 +116,8 @@
             <div class="action-bar">
                 <div class="action-left">
                     <div class="filter-group">
-                        <input type="text" id="searchPublisher" class="form-input" 
-                               placeholder="Tìm kiếm Publisher, email..." style="width: 300px;">
+                        <input type="text" id="searchPublisher" class="form-input"
+                            placeholder="Tìm kiếm Publisher, email..." style="width: 300px;">
                     </div>
                 </div>
 
@@ -152,7 +153,8 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="3" style="text-align: left;">Số Publisher: <span id="totalPublishers">0</span></td>
+                            <td colspan="3" style="text-align: left;">Số Publisher: <span id="totalPublishers">0</span>
+                            </td>
                             <td style="text-align: right;">0</td>
                             <td style="text-align: right;">0</td>
                             <td style="text-align: right;">-</td>
@@ -315,4 +317,5 @@
         });
     </script>
 </body>
+
 </html>
