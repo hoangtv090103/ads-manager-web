@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -152,6 +153,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="left-section">
         <div class="marketing-content">
@@ -160,7 +162,7 @@
     </div>
 
     <div class="right-section">
-        
+
         <h1 class="login-title">Chào mừng đến với Ads Manager</h1>
         <p class="login-subtitle">Bạn vui lòng đăng nhập tài khoản để bắt đầu sử dụng sản phẩm</p>
 
@@ -180,10 +182,10 @@
                 <div class="error-message">Không để trống mật khẩu</div>
             </div>
 
-            <div style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
-                <a href="/frontend/forgot-password.html" style="color: #0061C1; text-decoration: none; font-size: 14px;">Quên mật khẩu?</a>
+            <div style="text-align: right; margin: 12px;">
+                <a href="/frontend/forgot-password.html"
+                    style="color: #0061C1; text-decoration: none; font-size: 14px;">Quên mật khẩu?</a>
             </div>
-
             <button type="submit" class="btn-login">Đăng nhập</button>
         </form>
     </div>
@@ -192,7 +194,7 @@
         async function handleLogin(event) {
             const baseUrl = 'http://127.0.0.1:5000/api/v1';
             event.preventDefault();
-            
+
             const form = event.target;
             const email = form.email.value;
             const password = form.password.value;
@@ -254,4 +256,5 @@
         }
     </script>
 </body>
+
 </html>

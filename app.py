@@ -4,12 +4,6 @@ from flask import Blueprint, Flask, request, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required
 from flask_restful import Api
-from dotenv import load_dotenv
-import os
-
-# Load environment variables
-load_dotenv()
-
 from controllers.auth.auth_controller import LoginController, RegisterController, ForgotPasswordController, ResetPasswordController
 from controllers.campaign.campaign_controller import CampaignController
 from controllers.campaign.ads_group_controller import AdsGroupController
@@ -35,7 +29,6 @@ from controllers.ads_zone_size.ads_zone_size_controller import AdsZoneSizeContro
 from models.ads_format import AdsFormat
 from controllers.price.price_controller import PriceController
 from controllers.behaviour.behaviour_controller import BehaviourController
-from controllers.auth.auth_controller import ForgotPasswordController
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Enable CORS for all routes
@@ -125,12 +118,12 @@ api.add_resource(LoginController,
                  '/auth/login', endpoint='login'
                  )
 
-# Forgot Password routes
+# Forgot password routes
 api.add_resource(ForgotPasswordController,
                  '/auth/forgot-password', endpoint='forgot_password'
                  )
 
-# Reset Password routes
+# Reset password routes
 api.add_resource(ResetPasswordController,
                  '/auth/reset-password', endpoint='reset_password'
                  )

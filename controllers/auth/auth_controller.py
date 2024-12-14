@@ -18,6 +18,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 
+
 class LoginController(BaseController):
     @cross_origin(supports_credentials=True)
     def post(self):
@@ -85,74 +86,103 @@ class RegisterController(BaseController):
 
 
 class ForgotPasswordController(BaseController):
+    @cross_origin(supports_credentials=True)
     def post(self):
         try:
             data = request.get_json()
             email = data.get('email')
 
             if not email:
-                return {'status': 'error', 'message': 'Email không được để trống'}, 400
+                return {'status': 'error', 'message': 'Email is required'}, 400
 
             user = User.get_by_email(email)
             if not user:
                 return {'status': 'error', 'message': 'Email không tồn tại trong hệ thống'}, 404
 
             # Generate reset token
-            reset_token = secrets.token_urlsafe(32)
+            token = jwt.encode({
+                'user_id': user['user_id'],
+                'exp': datetime.utcnow() + timedelta(hours=24)
+            }, os.getenv('JWT_SECRET_KEY') or 'your-secret-key')
             expiry = datetime.utcnow() + timedelta(hours=24)
 
-            # Save reset token to database
-            Auth.save_reset_token(user['user_id'], reset_token, expiry)
+            # Save token to database
+            Auth.save_reset_token(user['user_id'], token, expiry)
 
-            # Return token directly instead of sending email
-            return {
-                'status': 'success',
-                'message': 'Xác thực email thành công',
-                'data': {
-                    'token': reset_token,
-                    'email': email
-                }
-            }
+            # Send reset email
+            reset_link = f"http://localhost:5500/frontend/reset-password.html?token={token}&email={email}"
+            print(reset_link)
+            self.send_reset_email(email, reset_link)
+
+            return {'status': 'success', 'message': 'Email đặt lại mật khẩu đã được gửi'}, 200
 
         except Exception as e:
             return {'status': 'error', 'message': str(e)}, 500
 
+    def send_reset_email(self, email, reset_link):
+        try:
+            sender_email = os.getenv('EMAIL_USER')
+            sender_password = os.getenv('EMAIL_PASSWORD')
+
+            msg = MIMEMultipart()
+            msg['From'] = sender_email
+            msg['To'] = email
+            msg['Subject'] = "Đặt lại mật khẩu - Ads Manager"
+
+            body = f"""
+            <html>
+              <body>
+                <h2>Đặt lại mật khẩu</h2>
+                <p>Bạn đã yêu cầu đặt lại mật khẩu cho tài khoản của mình.</p>
+                <p>Vui lòng click vào link bên dưới để đặt lại mật khẩu:</p>
+                <p><a href="{reset_link}">Đặt lại mật khẩu</a></p>
+                <p>Link này sẽ hết hạn sau 24 giờ.</p>
+                <p>Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p>
+              </body>
+            </html>
+            """
+
+            msg.attach(MIMEText(body, 'html'))
+
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login(sender_email, sender_password)
+            server.send_message(msg)
+            server.quit()
+
+        except Exception as e:
+            print(f"Error sending email: {str(e)}")
+            raise Exception("Failed to send reset email")
+
 
 class ResetPasswordController(BaseController):
+    @cross_origin(supports_credentials=True)
     def post(self):
         try:
             data = request.get_json()
             token = data.get('token')
-            new_password = data.get('password')
+            email = data.get('email')
+            new_password = data.get('new_password')
 
-            if not token or not new_password:
-                return {
-                    'status': 'error',
-                    'message': 'Token và mật khẩu mới không được để trống'
-                }, 400
+            if not all([token, email, new_password]):
+                return {'status': 'error', 'message': 'Missing required fields'}, 400
 
-            # Verify token and get user_id
-            user_id = Auth.verify_reset_token(token)
-            if not user_id:
-                return {
-                    'status': 'error',
-                    'message': 'Token không hợp lệ hoặc đã hết hạn'
-                }, 400
+            user = User.get_by_email(email)
+            if not user:
+                return {'status': 'error', 'message': 'Invalid email'}, 404
 
-            # Reset password
-            if Auth.reset_password(user_id, new_password):
-                return {
-                    'status': 'success',
-                    'message': 'Mật khẩu đã được đặt lại thành công'
-                }
-            else:
-                return {
-                    'status': 'error',
-                    'message': 'Không thể đặt lại mật khẩu'
-                }, 500
+            # Verify token
+            if not Auth.verify_reset_token(user['user_id'], token):
+                return {'status': 'error', 'message': 'Invalid or expired token'}, 400
+
+            # Update password
+            hashed_password = Auth.hash_password(new_password)
+            User.update_password(user['user_id'], hashed_password)
+
+            # Mark token as used
+            Auth.mark_token_as_used(token)
+
+            return {'status': 'success', 'message': 'Password reset successfully'}, 200
 
         except Exception as e:
-            return {
-                'status': 'error',
-                'message': str(e)
-            }, 500
+            return {'status': 'error', 'message': str(e)}, 500

@@ -100,3 +100,11 @@ class User:
                 conn.commit()
                 return user_id
 
+    @staticmethod
+    def update_password(user_id, new_password):
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                UPDATE users SET password = %s WHERE user_id = %s
+            """, (new_password, user_id))
+            conn.commit()
