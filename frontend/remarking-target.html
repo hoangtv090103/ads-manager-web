@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <script src="./js/auth.js"></script>
-<script src="./js/toast.js"></script>
+    <script src="./js/toast.js"></script>
+    <script src="./js/script.js"></script>
     <style>
         body {
             margin: 0;
@@ -28,29 +29,42 @@
             transition: margin-left 0.3s ease;
         }
 
-        @media (max-width: 768px) {
-            .main-content {
-                margin-left: 0;
-                padding: 24px 20px;
-                padding-top: 64px;
-            }
-        }
-
-        .header {
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 24px;
         }
 
-        .header h1 {
-            font-size: 24px;
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #4F4F4F;
+            font-size: 14px;
+        }
+
+        .page-title {
+            font-size: 20px;
             font-weight: 600;
             color: #333;
-            margin: 0;
+            margin: 0 0 24px 0;
         }
 
         .action-bar {
             display: flex;
-            gap: 16px;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 24px;
+            gap: 16px;
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        .action-left {
+            display: flex;
+            gap: 16px;
             align-items: center;
         }
 
@@ -68,16 +82,24 @@
         }
 
         .search-box {
-            flex: 1;
-            max-width: 400px;
+            position: relative;
+            width: 300px;
         }
 
         .search-box input {
             width: 100%;
-            padding: 8px 12px;
+            padding: 8px 12px 8px 36px;
             border: 1px solid #E0E0E0;
             border-radius: 4px;
             font-size: 14px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #828282;
         }
 
         .btn-remarketing {
@@ -90,12 +112,16 @@
             font-size: 14px;
         }
 
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
-            border-radius: 4px;
-            margin-top: 16px;
         }
 
         th,
@@ -103,24 +129,20 @@
             padding: 12px 16px;
             text-align: left;
             border-bottom: 1px solid #E0E0E0;
+            font-size: 14px;
         }
 
         th {
             background: #F8F9FA;
             color: #4F4F4F;
             font-weight: 500;
-            font-size: 14px;
-        }
-
-        td {
-            color: #4F4F4F;
-            font-size: 14px;
         }
 
         .status {
             padding: 4px 8px;
             border-radius: 4px;
             font-size: 12px;
+            display: inline-block;
         }
 
         .status.connected {
@@ -137,52 +159,67 @@
             margin-top: 16px;
             color: #4F4F4F;
             font-size: 14px;
+            padding: 16px;
+            border-top: 1px solid #E0E0E0;
         }
 
-        .edit-icon {
+        .edit-icon,
+        .delete-icon {
             color: #4F4F4F;
             cursor: pointer;
+            margin-left: 8px;
         }
 
-        .url-group {
-            margin-bottom: 16px;
-        }
-
-        .url-input-group {
+        .user-info {
             display: flex;
+            align-items: center;
             gap: 12px;
-            margin-bottom: 12px;
+            cursor: pointer;
+            position: relative;
         }
 
-        .condition-select {
-            width: 100px;
+        .user-details {
+            text-align: right;
         }
 
-        .behavior-options {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+        .user-name {
+            font-weight: 500;
+            color: #333;
         }
 
-        .behavior-item {
-            border: 1px solid #E0E0E0;
-            border-radius: 4px;
-            padding: 16px;
-        }
-
-        .sub-options {
-            margin-left: 24px;
-            margin-top: 8px;
+        .user-email {
+            font-size: 12px;
             color: #828282;
         }
 
-        .sub-options.disabled {
-            opacity: 0.6;
-            pointer-events: none;
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            min-width: 150px;
         }
 
-        .option-item {
-            margin: 8px 0;
+        .user-info:hover .user-dropdown {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            color: #4F4F4F;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .dropdown-item:hover {
+            background: #F8F9FA;
         }
     </style>
 </head>
@@ -196,7 +233,6 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            
             <span class="logo-text">Ads Manager</span>
         </div>
 
@@ -219,12 +255,10 @@
                 </div>
             </div>
 
-            <a href="/frontend/remarking-target.html" class="nav-item">
+            <a href="/frontend/remarking-target.html" class="nav-item active">
                 <i class="fas fa-users"></i>
                 <span>Quản lý đối tượng</span>
             </a>
-
-
 
             <div class="nav-group">
                 <div class="nav-item" onclick="toggleSubmenu(this)">
@@ -257,12 +291,14 @@
                     <a href="/frontend/ad-zones.html">• Danh sách vùng QC</a>
                 </div>
             </div>
+
             <a href="/frontend/accounts.html" class="nav-item">
                 <i class="fas fa-user-shield"></i>
                 <span>Quản lý phân quyền</span>
             </a>
         </nav>
     </div>
+
     <div class="main-content">
         <!-- Header -->
         <div class="header-content">
@@ -276,193 +312,61 @@
                     <div class="user-email" id="user-email"></div>
                 </div>
                 <i class="fas fa-user"></i>
+                <div class="user-dropdown">
+                    <div class="dropdown-item" onclick="auth.logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Đăng xuất
+                    </div>
+                </div>
+                <div class="user-dropdown">
+                    <div class="dropdown-item" onclick="auth.logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Đăng xuất
+                    </div>
+                </div>
             </div>
         </div>
 
-        <h1 class="page-title">Danh sách nhóm đối tượng</h1>
+        <div style="background: white; border-radius: 8px; padding: 24px;">
+            <h1 class="page-title">Danh sách nhóm đối tượng</h1>
 
-        <div class="action-bar">
-            <button class="btn-primary">
-                <i class="fas fa-plus"></i>
-                Tạo nhóm đối tượng
-            </button>
-            <div class="search-box">
-                <input type="text" placeholder="Tìm kiếm">
+            <div class="action-bar">
+                <div class="action-left">
+                    <button class="btn-primary" onclick="window.location.href='remarketing-target-create.html'">
+                        <i class="fas fa-plus"></i>
+                        Tạo nhóm đối tượng
+                    </button>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Tìm kiếm">
+                    </div>
+                </div>
+                <button class="btn-remarketing">Mã Remarketing</button>
             </div>
-            <button class="btn-remarketing">Mã Remarketing</button>
-        </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Stt</th>
-                    <th>Tên nhóm đối tượng</th>
-                    <th>Trạng thái</th>
-                    <th>Cập nhật</th>
-                    <th>Quy mô đối tượng ước tính</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Data will be populated by JavaScript -->
-            </tbody>
-        </table>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Stt</th>
+                        <th>Tên nhóm đối tượng</th>
+                        <th>Trạng thái</th>
+                        <th>Cập nhật</th>
+                        <th>Quy mô đối tượng ước tính</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="targetAudienceTableBody">
+                    <!-- Data will be populated by JavaScript -->
+                </tbody>
+            </table>
 
-        <div class="total-count">
-            Số nhóm đối tượng: <span>9</span>
+            <div class="total-count">
+                Số nhóm đối tượng: <span id="total-audiences">9</span>
+            </div>
         </div>
     </div>
 
-    <script src="./script.js"></script>
-
-    <script>
-        const baseUrl = 'http://127.0.0.1:5000/api/v1';
-
-        document.addEventListener('DOMContentLoaded', function() {
-            requireAuth();
-            loadTargetAudiences();
-        });
-
-        async function loadTargetAudiences() {
-            try {
-                const response = await fetchWithAuth(`${baseUrl}/target-audiences`);
-
-                if (!response.ok) {
-                    throw new Error('Không thể tải dữ liệu đối tượng');
-                }
-
-                const result = await response.json();
-
-                if (result.status === "success") {
-                    populateTable(result.data);
-                    updateTotalCount(result.data.length);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                if (error.message === 'Unauthorized') {
-                    window.location.href = '/frontend/login.html';
-                } else {
-                    Toast.error('Đã xảy ra lỗi khi tải dữ liệu');
-                }
-            }
-        }
-
-        function populateTable(data) {
-            const tbody = document.querySelector('tbody');
-            tbody.innerHTML = data.map((item, index) => `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>${item.ten_nhom_doi_tuong}</td>
-                    <td>
-                        <span class="status ${getStatusClass(item.ta_status_id)}">
-                            ${getStatusText(item.ta_status_id)}
-                        </span>
-                    </td>
-                    <td>${formatDate(item.updated_at)}</td>
-                    <td>1.000-1.200</td>
-                    <td>
-                        <i class="fas fa-pencil-alt edit-icon" onclick="editTargetAudience(${item.ta_id})"></i>
-                        <i class="fas fa-trash delete-icon" onclick="deleteTargetAudience(${item.ta_id})"></i>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function getStatusClass(statusId) {
-            return statusId === 1 ? 'connected' : 'not-connected';
-        }
-
-        function getStatusText(statusId) {
-            return statusId === 1 ? 'Đã kết nối' : 'Chưa kết nối';
-        }
-
-        function formatDate(dateString) {
-            return new Date(dateString).toLocaleString('vi-VN', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-
-        function updateTotalCount(count) {
-            document.querySelector('.total-count span').textContent = count;
-        }
-
-        function editTargetAudience(ta_id) {
-            window.location.href = `/frontend/remarketing-target-create.html?id=${ta_id}`;
-        }
-
-        async function deleteTargetAudience(ta_id) {
-            if (confirm('Bạn có chắc chắn muốn xóa nhóm đối tượng này?')) {
-                try {
-                    const response = await fetchWithAuth(`${baseUrl}/target-audiences/${ta_id}`, {
-                        method: 'DELETE'
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Không thể xóa nhóm đối tượng');
-                    }
-
-                    Toast.error('Xóa nhóm đối tượng thành công!');
-                    loadTargetAudiences();
-                } catch (error) {
-                    console.error('Error:', error);
-                    Toast.error(error.message);
-                }
-            }
-        }
-
-        // Search functionality
-        const searchInput = document.querySelector('.search-box input');
-        searchInput.addEventListener('input', async (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            try {
-                const response = await fetch(`${baseUrl}/target-audiences`);
-                const result = await response.json();
-
-                if (result.status === "success") {
-                    const filteredData = result.data.filter(item =>
-                        item.ten_nhom_doi_tuong.toLowerCase().includes(searchTerm)
-                    );
-                    populateTable(filteredData);
-                    updateTotalCount(filteredData.length);
-                }
-            } catch (error) {
-                console.error('Error searching target audiences:', error);
-            }
-        });
-
-        // Create new target audience button
-        document.querySelector('.btn-primary').addEventListener('click', () => {
-            window.location.href = '/frontend/remarketing-target-create.html';
-        });
-
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', loadTargetAudiences);
-
-        function addUrlInput() {
-            const urlGroup = document.querySelector('.url-group');
-            const newInput = document.createElement('div');
-            newInput.className = 'url-input-group';
-            newInput.innerHTML = `
-                <select class="condition-select">
-                    <option value="and">Và</option>
-                    <option value="or">Hoặc</option>
-                </select>
-                <input type="text" class="form-input" placeholder="Nhập URL trang web">
-                <button class="btn-remove" onclick="removeUrlInput(this)">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-            urlGroup.appendChild(newInput);
-        }
-
-        function removeUrlInput(button) {
-            button.closest('.url-input-group').remove();
-        }
-    </script>
+    <script src="./js/script.js"></script>
 </body>
 
 </html>
