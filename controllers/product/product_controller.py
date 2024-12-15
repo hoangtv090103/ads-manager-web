@@ -13,12 +13,12 @@ class ProductController(BaseController):
                     return jsonify({
                         'message': 'Product not found',
                         'data': None
-                    }), 404
+                    })
                 
                 return jsonify({
                     'message': 'Product retrieved successfully',
                     'data': product
-                }), 200
+                })
             else:
                 products = Product.get_all()
                 return jsonify({
@@ -27,9 +27,8 @@ class ProductController(BaseController):
                 })
         except Exception as e:
             return jsonify({
-                'message': str(e),
-                'data': None
-            }), 400
+                'message': str(e)
+            })
 
     def put(self, product_id):
         try:
@@ -39,7 +38,7 @@ class ProductController(BaseController):
                 return jsonify({
                     'message': 'Product not found',
                     'data': None
-                }), 404
+                })
 
             # Update product status
             Product.update_status(product_id, data.get('active', True))
@@ -47,25 +46,24 @@ class ProductController(BaseController):
             return jsonify({
                 'message': 'Product updated successfully',
                 'data': None
-            }), 200
+            })
         except Exception as e:
             return jsonify({
-                'message': str(e),
-                'data': None
-            }), 400
+                'message': str(e)
+            })
 
     def post(self):
         try:
             data = request.get_json()
             product = Product(**data)
             product.save()
-            return {'message': 'Product created successfully'}, 201
+            return {'message': 'Product created successfully'}
         except Exception as e:
-            return {'message': str(e)}, 400
+            return {'message': str(e)}
 
     def delete(self, product_id):
         try:
             Product.delete_by_id(product_id)
-            return {'message': 'Product deleted successfully'}, 200
+            return {'message': 'Product deleted successfully'}
         except Exception as e:
-            return {'message': str(e)}, 400
+            return {'message': str(e)}
