@@ -217,6 +217,28 @@
         input:checked + .slider:before {
             transform: translateX(20px);
         }
+
+        .report-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background-color: #0061C1;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        
+        .report-button:hover {
+            background-color: #219653;
+        }
+        
+        .report-button i {
+            font-size: 16px;
+        }
     </style>
 </head>
 
@@ -346,6 +368,14 @@
                         <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #828282;"></i>
                         <input type="text" placeholder="Tìm kiếm" style="padding: 8px 12px 8px 36px; border: 1px solid #E0E0E0; border-radius: 4px; width: 240px;">
                     </div>
+                    <div class="date-range" style="display: flex; gap: 8px; align-items: center;">
+                        <input type="date" id="startDate" style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px;">
+                        <span>-</span>
+                        <input type="date" id="endDate" style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px;">
+                    </div>
+                    <button id="createReportBtn" class="report-button" style="display: none;">
+                        <i class="fas fa-file-excel"></i> Tạo báo cáo
+                    </button>
                 </div>
 
                 <div class="action-right">
@@ -381,7 +411,7 @@
                     <thead>
                         <tr style="background: #F8F9FA;">
                             <th class="frozen-column" style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
-                                <input type="checkbox">
+                                <input type="checkbox" id="selectAll" title="Chọn tất cả">
                             </th>
                             <th class="frozen-column" style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
                                 STT
@@ -447,11 +477,13 @@
 
             <!-- Footer -->
             <div class="table-footer">
-                <div style="color: #4F4F4F; font-size: 14px;">
-                    Số tin quảng cáo: <span id="total-ads" style="font-weight: 500;"></span>
-                </div>
-                <div style="display: flex; gap: 24px; color: #4F4F4F;">
-                    <div>Tổng chi phí: <span id="total-cost" style="font-weight: 500;"></span></div>
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <div style="color: #4F4F4F; font-size: 14px;">
+                        Số tin quảng cáo: <span id="total-ads" style="font-weight: 500;"></span>
+                    </div>
+                    <div style="color: #4F4F4F;">
+                        Tổng chi phí: <span id="total-cost" style="font-weight: 500;"></span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -460,6 +492,7 @@
     <script>
         const baseUrl = 'http://127.0.0.1:5000/api/v1';
         let originalAds = [];
+        let selectedAds = new Set();
 
         document.addEventListener('DOMContentLoaded', async function() {
             requireAuth();
@@ -476,22 +509,56 @@
                     throw new Error('Không thể tải dữ liệu quảng cáo');
                 }
 
-                originalAds = data;
-                renderAds(data);
+                if (!data.success) {
+                    throw new Error(data.error || 'Không thể tải dữ liệu quảng cáo');
+                }
+
+                originalAds = data.ads;
+                renderAds(data.ads);
             } catch (error) {
                 console.error('Error:', error);
                 handleFetchError(error);
             }
         }
 
+        async function toggleAdsStatus(adsId, active) {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/ads/${adsId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ active: active })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Không thể cập nhật trạng thái');
+                }
+
+                if (!data.success) {
+                    throw new Error(data.error || 'Không thể cập nhật trạng thái');
+                }
+
+                Toast.success('Cập nhật trạng thái thành công');
+                await loadAds(); // Reload data
+            } catch (error) {
+                console.error('Error:', error);
+                Toast.error(error.message);
+            }
+        }
+
         function renderAds(ads) {
             const adsTable = document.getElementById('adsTable');
             adsTable.innerHTML = '';
+            selectedAds.clear();
+            updateReportButtonVisibility();
 
             if (!ads || ads.length === 0) {
                 adsTable.innerHTML = `
                     <tr>
-                        <td colspan="17" style="text-align: center; padding: 20px;">
+                        <td colspan="19" style="text-align: center; padding: 20px;">
                             Không có dữ liệu
                         </td>
                     </tr>
@@ -502,7 +569,7 @@
             }
 
             const totalAds = ads.length;
-            const totalCost = ads.reduce((sum, ad) => sum + (parseFloat(ad.chi_phi) || 0), 0);
+            const totalCost = ads.reduce((sum, ad) => sum + (parseFloat(ad.tong_chi_phi) || 0), 0);
 
             document.getElementById('total-ads').textContent = totalAds;
             document.getElementById('total-cost').textContent = formatCurrency(totalCost);
@@ -510,11 +577,15 @@
             ads.forEach((ad, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td><input type="checkbox"></td>
+                    <td>
+                        <input type="checkbox" class="ad-checkbox" value="${ad.ads_id}" 
+                               ${selectedAds.has(ad.ads_id.toString()) ? 'checked' : ''}>
+                    </td>
                     <td>${index + 1}</td>
                     <td>
                         <label class="switch">
-                            <input type="checkbox" ${ad.active ? 'checked' : ''}>
+                            <input type="checkbox" ${ad.dang_hien_thi ? 'checked' : ''} 
+                                   onchange="toggleAdsStatus(${ad.ads_id}, this.checked)">
                             <span class="slider round"></span>
                         </label>
                     </td>
@@ -525,17 +596,17 @@
                     <td>${ad.dinh_dang || '-'}</td>
                     <td class="url-cell">${ad.url_dich || '-'}</td>
                     <td>
-                        <span class="status-badge ${ad.active ? 'status-active' : 'status-inactive'}">
+                        <span class="status-badge ${ad.dang_hien_thi ? 'status-active' : 'status-inactive'}">
                             ${ad.trang_thai || '-'}
                         </span>
                     </td>
-                    <td style="text-align: right;">${formatCurrency(ad.chi_phi)}</td>
+                    <td style="text-align: right;">${formatCurrency(ad.tong_chi_phi)}</td>
                     <td style="text-align: right;">${formatNumber(ad.luot_xem)}</td>
                     <td style="text-align: right;">${formatNumber(ad.luot_nhan)}</td>
                     <td style="text-align: right;">${formatPercent(ad.ctr)}%</td>
                     <td style="text-align: right;">${formatCurrency(ad.cpc)}</td>
                     <td style="text-align: right;">${formatCurrency(ad.cpm)}</td>
-                    <td style="text-align: right;">${formatNumber(ad.sl_mua_hang)}</td>
+                    <td style="text-align: right;">${formatNumber(ad.so_luong_mua_hang)}</td>
                     <td style="text-align: right;">${formatPercent(ad.ti_le_chuyen_doi)}%</td>
                     <td style="text-align: right;">${formatCurrency(ad.cps)}</td>
                     <td style="text-align: right;">${formatNumber(ad.video_view_3s)}</td>
@@ -551,6 +622,27 @@
         }
 
         function setupEventListeners() {
+            // Select all checkbox functionality
+            const selectAllCheckbox = document.getElementById('selectAll');
+            selectAllCheckbox.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.ad-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = selectAllCheckbox.checked;
+                    handleCheckboxChange(checkbox);
+                });
+            });
+
+            // Add individual checkbox change event listeners
+            document.getElementById('adsTable').addEventListener('change', function(e) {
+                if (e.target.classList.contains('ad-checkbox')) {
+                    handleCheckboxChange(e.target);
+                }
+            });
+
+            // Create report button click handler
+            const createReportBtn = document.getElementById('createReportBtn');
+            createReportBtn.addEventListener('click', generateReport);
+
             // Search functionality
             const searchInput = document.querySelector('input[placeholder="Tìm kiếm"]');
             searchInput.addEventListener('input', function(e) {
@@ -600,17 +692,89 @@
 
             // Filter by display status
             const displayStatusSelect = document.getElementById('displayStatusFilter');
-            displayStatusSelect.addEventListener('change', function(e) {
-                const selectedStatus = e.target.value;
-                const filteredAds = selectedStatus === 'all' ?
-                    originalAds :
-                    originalAds.filter(ad => {
-                        if (selectedStatus === 'displaying') return ad.dang_hien_thi;
-                        if (selectedStatus === 'not_displaying') return !ad.dang_hien_thi;
-                        return true;
-                    });
-                renderAds(filteredAds);
-            });
+            if (displayStatusSelect) {
+                displayStatusSelect.addEventListener('change', function(e) {
+                    const selectedStatus = e.target.value;
+                    const filteredAds = selectedStatus === 'all' ?
+                        originalAds :
+                        originalAds.filter(ad => {
+                            if (selectedStatus === 'displaying') return ad.dang_hien_thi;
+                            if (selectedStatus === 'not_displaying') return !ad.dang_hien_thi;
+                            return true;
+                        });
+                    renderAds(filteredAds);
+                });
+            }
+        }
+
+        async function generateReport() {
+            try {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                
+                if (!startDate || !endDate) {
+                    Toast.error('Vui lòng chọn khoảng thời gian báo cáo');
+                    return;
+                }
+
+                const selectedAdsArray = Array.from(selectedAds).map(id => parseInt(id));
+                if (selectedAdsArray.length === 0) {
+                    Toast.error('Vui lòng chọn ít nhất một tin quảng cáo');
+                    return;
+                }
+
+                const response = await fetchWithAuth(`${baseUrl}/ads/report`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        ad_ids: selectedAdsArray,
+                        start_date: startDate,
+                        end_date: endDate
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Không thể tạo báo cáo');
+                }
+
+                // Download the Excel file
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `bao-cao-tin-quang-cao-${startDate}-${endDate}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                Toast.success('Đã tải xuống báo cáo thành công');
+            } catch (error) {
+                console.error('Error generating report:', error);
+                Toast.error('Không thể tạo báo cáo: ' + error.message);
+            }
+        }
+
+        function handleCheckboxChange(checkbox) {
+            if (checkbox.checked) {
+                selectedAds.add(checkbox.value);
+            } else {
+                selectedAds.delete(checkbox.value);
+            }
+            updateReportButtonVisibility();
+        }
+
+        function updateReportButtonVisibility() {
+            const createReportBtn = document.getElementById('createReportBtn');
+            createReportBtn.style.display = selectedAds.size > 0 ? 'inline-flex' : 'none';
+            
+            // Update select all checkbox state
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const allCheckboxes = document.querySelectorAll('.ad-checkbox');
+            selectAllCheckbox.checked = allCheckboxes.length > 0 && 
+                                      Array.from(allCheckboxes).every(cb => cb.checked);
         }
 
         async function showAdsGroupDropdown(button) {

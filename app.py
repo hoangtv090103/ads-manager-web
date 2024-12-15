@@ -30,6 +30,9 @@ from models.ads_format import AdsFormat
 from controllers.price.price_controller import PriceController
 from controllers.behaviour.behaviour_controller import BehaviourController
 from controllers.campaign.ads_ecom_controller import AdsEcomController
+from controllers.report.campaign_report_controller import CampaignReportController
+from controllers.report.ads_report_controller import AdsReportController
+from controllers.campaign.ads_controller import AdsController
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Enable CORS for all routes
@@ -241,6 +244,18 @@ api.add_resource(BehaviourController,
 api.add_resource(AdsEcomController,
                  '/ads-ecom',
                  '/ads-ecom/<int:ads_id>',
+                 resource_class_kwargs={'decorators': [token_required]}
+                 )
+
+# Add Campaign Report routes
+api.add_resource(CampaignReportController,
+                 '/campaigns/report',
+                 resource_class_kwargs={'decorators': [token_required]}
+                 )
+
+# Add Ads Report routes  
+api.add_resource(AdsReportController,
+                 '/ads/report',
                  resource_class_kwargs={'decorators': [token_required]}
                  )
 

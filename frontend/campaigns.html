@@ -163,14 +163,6 @@
       border-radius: 4px;
       cursor: pointer;
     }
-
-    .form-container {
-      background: white;
-      border-radius: 8px;
-      padding: 24px;
-      margin-top: 24px;
-      max-width: 100%;
-    }
   </style>
 </head>
 
@@ -294,8 +286,7 @@
       <div class="action-bar">
         <div class="action-left">
           <div class="filter-group">
-            <select id="customerFilter" class="form-select"
-              style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px; width: 200px;">
+            <select id="customerFilter" class="form-select" style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px; width: 200px;">
               <option value="">Chọn khách hàng</option>
             </select>
           </div>
@@ -313,12 +304,10 @@
 
         <div class="action-right">
           <div style="display: flex; gap: 16px;">
-            <select id="adTypeFilter"
-              style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px; width: 160px;">
+            <select id="adTypeFilter" style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px; width: 160px;">
               <option value="">Loại QC</option>
             </select>
-            <select id="statusFilter"
-              style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px; width: 160px;">
+            <select id="statusFilter" style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px; width: 160px;">
               <option value="">Trạng thái</option>
               <option value="Tất cả">Tất cả</option>
               <option value="Chưa chạy">Chưa chạy</option>
@@ -584,68 +573,68 @@
 
     // Thêm biến để lưu trữ bộ lọc
     let filters = {
-      search: '',
-      adType: '',
-      status: '',
-      customer: ''
+        search: '',
+        adType: '',
+        status: '',
+        customer: ''
     };
 
     // Cập nhật hàm filterCampaigns
     function filterCampaigns(campaigns) {
-      return campaigns.filter(campaign => {
-        // Lọc theo từ khóa tìm kiếm (tên chiến dịch)
-        const searchMatch = !filters.search ||
-          (campaign.ten_chien_dich && campaign.ten_chien_dich.toLowerCase().includes(filters.search.toLowerCase()));
+        return campaigns.filter(campaign => {
+            // Lọc theo từ khóa tìm kiếm (tên chiến dịch)
+            const searchMatch = !filters.search || 
+                (campaign.ten_chien_dich && campaign.ten_chien_dich.toLowerCase().includes(filters.search.toLowerCase()));
 
-        // Lọc theo loại quảng cáo
-        const typeMatch = !filters.adType ||
-          campaign.ten_loai_quang_cao === filters.adType;
+            // Lọc theo loại quảng cáo
+            const typeMatch = !filters.adType || 
+                campaign.ten_loai_quang_cao === filters.adType;
 
-        // Lọc theo trạng thái
-        const statusMatch = !filters.status || filters.status === 'Tất cả' ||
-          campaign.ten_trang_thai === filters.status;
+            // Lọc theo trạng thái
+            const statusMatch = !filters.status || filters.status === 'Tất cả' || 
+                campaign.ten_trang_thai === filters.status;
 
-        // Lọc theo khách hàng
-        const customerMatch = !filters.customer ||
-          (campaign.ho_va_ten && campaign.ho_va_ten === filters.customer);
+            // Lọc theo khách hàng
+            const customerMatch = !filters.customer || 
+                (campaign.ho_va_ten && campaign.ho_va_ten === filters.customer);
 
-        return searchMatch && typeMatch && statusMatch && customerMatch;
-      });
+            return searchMatch && typeMatch && statusMatch && customerMatch;
+        });
     }
 
     // Cập nhật hàm renderCampaigns để hiển thị dữ liệu chính xác
     function renderCampaigns(campaigns) {
-      const tbody = document.getElementById('campaignTableBody');
-      tbody.innerHTML = '';
+        const tbody = document.getElementById('campaignTableBody');
+        tbody.innerHTML = '';
 
-      if (!campaigns || campaigns.length === 0) {
-        tbody.innerHTML = `
+        if (!campaigns || campaigns.length === 0) {
+            tbody.innerHTML = `
                 <tr>
                     <td colspan="18" style="text-align: center; padding: 20px;">
                         Không tìm thấy chiến dịch nào
                     </td>
                 </tr>
             `;
-        // Reset các số liệu tổng khi không có dữ liệu
-        document.getElementById('total-campaigns').textContent = '0';
-        document.getElementById('total-budget').textContent = formatCurrency(0);
-        document.getElementById('total-cost').textContent = formatCurrency(0);
-        return;
-      }
+            // Reset các số liệu tổng khi không có dữ liệu
+            document.getElementById('total-campaigns').textContent = '0';
+            document.getElementById('total-budget').textContent = formatCurrency(0);
+            document.getElementById('total-cost').textContent = formatCurrency(0);
+            return;
+        }
 
-      // Tính toán tổng cho các chiến dịch đã được lọc
-      const totalBudget = campaigns.reduce((sum, camp) => sum + (parseFloat(camp.ngan_sach_ngay) || 0), 0);
-      const totalCost = campaigns.reduce((sum, camp) => sum + (parseFloat(camp.tong_chi_phi) || 0), 0);
+        // Tính toán tổng cho các chiến dịch đã được lọc
+        const totalBudget = campaigns.reduce((sum, camp) => sum + (parseFloat(camp.ngan_sach_ngay) || 0), 0);
+        const totalCost = campaigns.reduce((sum, camp) => sum + (parseFloat(camp.tong_chi_phi) || 0), 0);
 
-      // Cập nhật UI với số liệu tổng mới
-      document.getElementById('total-campaigns').textContent = campaigns.length;
-      document.getElementById('total-budget').textContent = formatCurrency(totalBudget);
-      document.getElementById('total-cost').textContent = formatCurrency(totalCost);
+        // Cập nhật UI với số liệu tổng mới
+        document.getElementById('total-campaigns').textContent = campaigns.length;
+        document.getElementById('total-budget').textContent = formatCurrency(totalBudget);
+        document.getElementById('total-cost').textContent = formatCurrency(totalCost);
 
-      // Render các chiến dịch
-      campaigns.forEach((campaign, index) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
+        // Render các chiến dịch
+        campaigns.forEach((campaign, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
                 <td style="padding: 12px 16px; text-align: left; border-bottom: 1px solid #E0E0E0;">
                     <input type="checkbox">
                 </td>
@@ -716,114 +705,114 @@
                 </td>
 
             `;
-        tbody.appendChild(tr);
-      });
+            tbody.appendChild(tr);
+        });
     }
 
     // Cập nhật hàm setupEventListeners để xử lý các sự kiện lọc
     function setupEventListeners() {
-      // Lọc theo khách hàng
-      const customerSelect = document.getElementById('customerFilter');
-      if (customerSelect) {
-        customerSelect.addEventListener('change', function (e) {
-          filters.customer = this.value;
-          applyFilters();
-        });
-      }
+        // Lọc theo khách hàng
+        const customerSelect = document.getElementById('customerFilter');
+        if (customerSelect) {
+            customerSelect.addEventListener('change', function(e) {
+                filters.customer = this.value;
+                applyFilters();
+            });
+        }
 
-      // Lọc theo từ khóa
-      const searchInput = document.querySelector('input[type="text"][placeholder="Tìm kiếm"]');
-      if (searchInput) {
-        searchInput.addEventListener('input', function (e) {
-          filters.search = e.target.value;
-          applyFilters();
-        });
-      }
+        // Lọc theo từ khóa
+        const searchInput = document.querySelector('input[type="text"][placeholder="Tìm kiếm"]');
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                filters.search = e.target.value;
+                applyFilters();
+            });
+        }
 
-      // Lọc theo loại quảng cáo
-      const adTypeSelect = document.getElementById('adTypeFilter');
-      if (adTypeSelect) {
-        adTypeSelect.addEventListener('change', function (e) {
-          filters.adType = this.value;
-          applyFilters();
-        });
-      }
+        // Lọc theo loại quảng cáo
+        const adTypeSelect = document.getElementById('adTypeFilter');
+        if (adTypeSelect) {
+            adTypeSelect.addEventListener('change', function(e) {
+                filters.adType = this.value;
+                applyFilters();
+            });
+        }
 
-      // Lọc theo trạng thái
-      const statusSelect = document.querySelector('select[id="statusFilter"]');
-      if (statusSelect) {
-        statusSelect.addEventListener('change', function (e) {
-          filters.status = this.value;
-          applyFilters();
-        });
-      }
+        // Lọc theo trạng thái
+        const statusSelect = document.querySelector('select[id="statusFilter"]');
+        if (statusSelect) {
+            statusSelect.addEventListener('change', function(e) {
+                filters.status = this.value;
+                applyFilters();
+            });
+        }
     }
 
     // Cập nhật hàm fetchCampaigns để log dữ liệu nhận được
     async function fetchCampaigns() {
-      try {
-        console.log('Fetching campaigns...');
-        const token = localStorage.getItem('token');
-        if (!token) {
-          console.error('No authentication token found');
-          window.location.href = '/frontend/login.html';
-          return;
+        try {
+            console.log('Fetching campaigns...');
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error('No authentication token found');
+                window.location.href = '/frontend/login.html';
+                return;
+            }
+
+            const response = await fetch(`${baseUrl}/campaigns`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            console.log('Response status:', response.status);
+            const data = await response.json();
+            console.log('Response data:', data);
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Không thể tải dữ liệu chiến dịch');
+            }
+
+            if (!data.campaigns || !Array.isArray(data.campaigns)) {
+                throw new Error('Dữ liệu không đúng định dạng');
+            }
+
+            // Lưu dữ liệu gốc và log để debug
+            originalCampaigns = data.campaigns;
+            console.log('Loaded campaigns:', originalCampaigns);
+            
+            // Render với bộ lọc hiện tại
+            applyFilters();
+
+        } catch (error) {
+            console.error('Error fetching campaigns:', error);
+            handleFetchError(error);
         }
-
-        const response = await fetch(`${baseUrl}/campaigns`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-
-        console.log('Response status:', response.status);
-        const data = await response.json();
-        console.log('Response data:', data);
-
-        if (!response.ok) {
-          throw new Error(data.error || 'Không thể tải dữ liệu chiến dịch');
-        }
-
-        if (!data.campaigns || !Array.isArray(data.campaigns)) {
-          throw new Error('Dữ liệu không đúng định dạng');
-        }
-
-        // Lưu dữ liệu gốc và log để debug
-        originalCampaigns = data.campaigns;
-        console.log('Loaded campaigns:', originalCampaigns);
-
-        // Render với bộ lọc hiện tại
-        applyFilters();
-
-      } catch (error) {
-        console.error('Error fetching campaigns:', error);
-        handleFetchError(error);
-      }
     }
 
     // Hàm áp dụng bộ lọc
     function applyFilters() {
-      const filteredCampaigns = filterCampaigns(originalCampaigns);
-      renderCampaigns(filteredCampaigns);
+        const filteredCampaigns = filterCampaigns(originalCampaigns);
+        renderCampaigns(filteredCampaigns);
     }
 
     // Hàm xử lý lỗi
     function handleFetchError(error) {
-      if (error.message === 'Unauthorized') {
-        window.location.href = '/frontend/login.html';
-      } else if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
-        Toast.error('Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng.');
-      } else {
-        Toast.error(`Đã xảy ra lỗi: ${error.message}`);
-      }
+        if (error.message === 'Unauthorized') {
+            window.location.href = '/frontend/login.html';
+        } else if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+            Toast.error('Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng.');
+        } else {
+            Toast.error(`Đã xảy ra lỗi: ${error.message}`);
+        }
 
-      // Set giá trị mặc định cho UI khi có lỗi
-      document.getElementById('total-budget').textContent = formatCurrency(0);
-      document.getElementById('total-cost').textContent = formatCurrency(0);
-      document.getElementById('total-campaigns').textContent = '0';
-      document.getElementById('campaignTableBody').innerHTML = `
+        // Set giá trị mặc định cho UI khi có lỗi
+        document.getElementById('total-budget').textContent = formatCurrency(0);
+        document.getElementById('total-cost').textContent = formatCurrency(0);
+        document.getElementById('total-campaigns').textContent = '0';
+        document.getElementById('campaignTableBody').innerHTML = `
             <tr>
                 <td colspan="18" style="text-align: center; padding: 20px;">
                     Không thể tải dữ liệu. Vui lòng thử lại sau.
@@ -834,176 +823,176 @@
 
     // Thêm hàm để lấy danh sách loại chiến dịch
     async function fetchCampaignTypes() {
-      try {
-        const response = await fetchWithAuth(`${baseUrl}/campaign-types`);
-        const data = await response.json();
-
-        if (data && data.campaign_types) {
-          const adTypeSelect = document.querySelector('select[id="adTypeFilter"]');
-          // Xóa options cũ trừ option đầu tiên
-          adTypeSelect.innerHTML = '<option value="">Loại QC</option>';
-
-          // Thêm các options mới
-          data.campaign_types.forEach(type => {
-            const option = document.createElement('option');
-            option.value = type.ten_loai_chien_dich;
-            option.textContent = type.ten_loai_chien_dich;
-            adTypeSelect.appendChild(option);
-          });
+        try {
+            const response = await fetchWithAuth(`${baseUrl}/campaign-types`);
+            const data = await response.json();
+            
+            if (data && data.campaign_types) {
+                const adTypeSelect = document.querySelector('select[id="adTypeFilter"]');
+                // Xóa options cũ trừ option đầu tiên
+                adTypeSelect.innerHTML = '<option value="">Loại QC</option>';
+                
+                // Thêm các options mới
+                data.campaign_types.forEach(type => {
+                    const option = document.createElement('option');
+                    option.value = type.ten_loai_chien_dich;
+                    option.textContent = type.ten_loai_chien_dich;
+                    adTypeSelect.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching campaign types:', error);
+            Toast.error('Không thể tải danh sách loại chiến dịch');
         }
-      } catch (error) {
-        console.error('Error fetching campaign types:', error);
-        Toast.error('Không thể tải danh sách loại chiến dịch');
-      }
     }
 
     // Thêm hàm để lấy danh sách khách hàng
     async function fetchCustomers() {
-      try {
-        console.log('Fetching customers...');
-        const token = localStorage.getItem('token');
-        const response = await fetch(`${baseUrl}/customers`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
+        try {
+            console.log('Fetching customers...');
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${baseUrl}/customers`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
 
-        const data = await response.json();
-        console.log('Customers data:', data);
+            const data = await response.json();
+            console.log('Customers data:', data);
 
-        if (data && data.customers) {
-          const customerSelect = document.getElementById('customerFilter');
-          // Reset select
-          customerSelect.innerHTML = '<option value="">Tất cả khách hàng</option>';
-
-          // Thêm options mới
-          data.customers.forEach(customer => {
-            const option = document.createElement('option');
-            option.value = customer.ho_va_ten;
-            option.textContent = customer.ho_va_ten;
-            customerSelect.appendChild(option);
-          });
+            if (data && data.customers) {
+                const customerSelect = document.getElementById('customerFilter');
+                // Reset select
+                customerSelect.innerHTML = '<option value="">Tất cả khách hàng</option>';
+                
+                // Thêm options mới
+                data.customers.forEach(customer => {
+                    const option = document.createElement('option');
+                    option.value = customer.ho_va_ten;
+                    option.textContent = customer.ho_va_ten;
+                    customerSelect.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching customers:', error);
+            Toast.error('Không thể tải danh sách khách hàng');
         }
-      } catch (error) {
-        console.error('Error fetching customers:', error);
-        Toast.error('Không thể tải danh sách khách hàng');
-      }
     }
 
     // Thêm hàm để kiểm tra token
     function checkAuthentication() {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        console.log('No token found, redirecting to login');
-        window.location.href = '/frontend/login.html';
-        return false;
-      }
-      return true;
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.log('No token found, redirecting to login');
+            window.location.href = '/frontend/login.html';
+            return false;
+        }
+        return true;
     }
 
     // Thêm các hàm xử lý tùy chỉnh cột
     function setupColumnCustomization() {
-      const customizeBtn = document.querySelector('.customize-column-btn');
-      const customizeMenu = document.querySelector('.customize-column-menu');
-      const applyBtn = document.getElementById('applyColumns');
-      const resetBtn = document.getElementById('resetColumns');
+        const customizeBtn = document.querySelector('.customize-column-btn');
+        const customizeMenu = document.querySelector('.customize-column-menu');
+        const applyBtn = document.getElementById('applyColumns');
+        const resetBtn = document.getElementById('resetColumns');
 
-      // Toggle menu khi click vào nút tùy chỉnh
-      customizeBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        customizeMenu.classList.toggle('show');
-      });
+        // Toggle menu khi click vào nút tùy chỉnh
+        customizeBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            customizeMenu.classList.toggle('show');
+        });
 
-      // Đóng menu khi click ra ngoài
-      document.addEventListener('click', function (e) {
-        if (!customizeMenu.contains(e.target) && !customizeBtn.contains(e.target)) {
-          customizeMenu.classList.remove('show');
+        // Đóng menu khi click ra ngoài
+        document.addEventListener('click', function(e) {
+            if (!customizeMenu.contains(e.target) && !customizeBtn.contains(e.target)) {
+                customizeMenu.classList.remove('show');
+            }
+        });
+
+        // Xử lý khi click nút Apply
+        applyBtn.addEventListener('click', function() {
+            const columns = {
+                'total-cost': document.getElementById('col-total-cost').checked,
+                'views': document.getElementById('col-views').checked,
+                'clicks': document.getElementById('col-clicks').checked,
+                'ctr': document.getElementById('col-ctr').checked,
+                'cpc': document.getElementById('col-cpc').checked,
+                'cpm': document.getElementById('col-cpm').checked,
+                'video-view-3s': document.getElementById('col-video-view-3s').checked,
+                'video-25': document.getElementById('col-video-25').checked,
+                'video-50': document.getElementById('col-video-50').checked,
+                'video-75': document.getElementById('col-video-75').checked,
+                'video-100': document.getElementById('col-video-100').checked,
+                'purchases': document.getElementById('col-purchases').checked,
+                'conversion': document.getElementById('col-conversion').checked,
+                'cps': document.getElementById('col-cps').checked
+            };
+
+            // Lưu trạng thái cột vào localStorage
+            localStorage.setItem('columnSettings', JSON.stringify(columns));
+
+            // Áp dụng trạng thái hiển thị cho các cột
+            Object.entries(columns).forEach(([columnName, isVisible]) => {
+                const cells = document.querySelectorAll(`.${columnName}-cell`);
+                cells.forEach(cell => {
+                    cell.style.display = isVisible ? '' : 'none';
+                });
+            });
+
+            customizeMenu.classList.remove('show');
+            Toast.success('Đã cập nhật cài đặt hiển thị');
+        });
+
+        // Xử lý khi click nút Reset
+        resetBtn.addEventListener('click', function() {
+            // Reset tất cả checkbox về trạng thái mặc định
+            document.querySelectorAll('.column-option input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = true;
+            });
+
+            // Hiển thị lại tất cả các cột
+            document.querySelectorAll('[class$="-cell"]').forEach(cell => {
+                cell.style.display = '';
+            });
+
+            // Xóa cài đặt đã lưu
+            localStorage.removeItem('columnSettings');
+            
+            Toast.success('Đã khôi phục cài đặt mặc định');
+        });
+
+        // Load trạng thái cột đã lưu
+        const savedColumns = localStorage.getItem('columnSettings');
+        if (savedColumns) {
+            const columns = JSON.parse(savedColumns);
+            Object.entries(columns).forEach(([columnName, isVisible]) => {
+                // Set checkbox state
+                const checkbox = document.getElementById(`col-${columnName}`);
+                if (checkbox) {
+                    checkbox.checked = isVisible;
+                }
+                // Set column visibility
+                const cells = document.querySelectorAll(`.${columnName}-cell`);
+                cells.forEach(cell => {
+                    cell.style.display = isVisible ? '' : 'none';
+                });
+            });
         }
-      });
-
-      // Xử lý khi click nút Apply
-      applyBtn.addEventListener('click', function () {
-        const columns = {
-          'total-cost': document.getElementById('col-total-cost').checked,
-          'views': document.getElementById('col-views').checked,
-          'clicks': document.getElementById('col-clicks').checked,
-          'ctr': document.getElementById('col-ctr').checked,
-          'cpc': document.getElementById('col-cpc').checked,
-          'cpm': document.getElementById('col-cpm').checked,
-          'video-view-3s': document.getElementById('col-video-view-3s').checked,
-          'video-25': document.getElementById('col-video-25').checked,
-          'video-50': document.getElementById('col-video-50').checked,
-          'video-75': document.getElementById('col-video-75').checked,
-          'video-100': document.getElementById('col-video-100').checked,
-          'purchases': document.getElementById('col-purchases').checked,
-          'conversion': document.getElementById('col-conversion').checked,
-          'cps': document.getElementById('col-cps').checked
-        };
-
-        // Lưu trạng thái cột vào localStorage
-        localStorage.setItem('columnSettings', JSON.stringify(columns));
-
-        // Áp dụng trạng thái hiển thị cho các cột
-        Object.entries(columns).forEach(([columnName, isVisible]) => {
-          const cells = document.querySelectorAll(`.${columnName}-cell`);
-          cells.forEach(cell => {
-            cell.style.display = isVisible ? '' : 'none';
-          });
-        });
-
-        customizeMenu.classList.remove('show');
-        Toast.success('Đã cập nhật cài đặt hiển thị');
-      });
-
-      // Xử lý khi click nút Reset
-      resetBtn.addEventListener('click', function () {
-        // Reset tất cả checkbox về trạng thái mặc định
-        document.querySelectorAll('.column-option input[type="checkbox"]').forEach(checkbox => {
-          checkbox.checked = true;
-        });
-
-        // Hiển thị lại tất cả các cột
-        document.querySelectorAll('[class$="-cell"]').forEach(cell => {
-          cell.style.display = '';
-        });
-
-        // Xóa cài đặt đã lưu
-        localStorage.removeItem('columnSettings');
-
-        Toast.success('Đã khôi phục cài đặt mặc định');
-      });
-
-      // Load trạng thái cột đã lưu
-      const savedColumns = localStorage.getItem('columnSettings');
-      if (savedColumns) {
-        const columns = JSON.parse(savedColumns);
-        Object.entries(columns).forEach(([columnName, isVisible]) => {
-          // Set checkbox state
-          const checkbox = document.getElementById(`col-${columnName}`);
-          if (checkbox) {
-            checkbox.checked = isVisible;
-          }
-          // Set column visibility
-          const cells = document.querySelectorAll(`.${columnName}-cell`);
-          cells.forEach(cell => {
-            cell.style.display = isVisible ? '' : 'none';
-          });
-        });
-      }
     }
 
     // Cập nhật event listener khi trang load
-    document.addEventListener('DOMContentLoaded', function () {
-      console.log('Page loaded, checking authentication...');
-      if (checkAuthentication()) {
-        console.log('Authentication successful, fetching data...');
-        fetchCampaigns();
-        fetchCustomers();
-        setupEventListeners();
-        setupColumnCustomization(); // Thêm setup cho tùy chỉnh cột
-      }
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Page loaded, checking authentication...');
+        if (checkAuthentication()) {
+            console.log('Authentication successful, fetching data...');
+            fetchCampaigns();
+            fetchCustomers();
+            setupEventListeners();
+            setupColumnCustomization(); // Thêm setup cho tùy chỉnh cột
+        }
     });
   </script>
 </body>

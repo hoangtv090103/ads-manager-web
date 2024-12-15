@@ -37,7 +37,7 @@ class Ads:
             CREATE TABLE IF NOT EXISTS ads (
                 ads_id SERIAL PRIMARY KEY,
                 ads_group_id INTEGER NOT NULL,
-                ads_status_id INTEGER NOT NULL,
+                ads_status_id INTEGER,
                 ten_tin_quang_cao VARCHAR(100),
                 URL_dich TEXT,
                 tong_chi_phi DECIMAL(15,2),
@@ -79,7 +79,39 @@ class Ads:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-                SELECT ads_id, ads_group_id, ads_status_id, ten_tin_quang_cao, URL_dich, tong_chi_phi, luot_xem, luot_nhan, CTR, CPC, CPM, so_luong_mua_hang, conversion_rate, CPS, video_watches_at_25, video_watches_at_50, video_watches_at_75, video_watches_at_100, video_watches_at_3s FROM ads
+                SELECT 
+                    ads.ads_id, 
+                    ads.ads_group_id, 
+                    ads.ads_status_id, 
+                    ads.ten_tin_quang_cao, 
+                    ads.URL_dich, 
+                    ads.tong_chi_phi, 
+                    ads.luot_xem, 
+                    ads.luot_nhan, 
+                    ads.CTR, 
+                    ads.CPC, 
+                    ads.CPM, 
+                    ads.so_luong_mua_hang, 
+                    ads.conversion_rate, 
+                    ads.CPS, 
+                    ads.video_watches_at_25, 
+                    ads.video_watches_at_50, 
+                    ads.video_watches_at_75, 
+                    ads.video_watches_at_100, 
+                    ads.video_watches_at_3s, 
+                    ag.ten_nhom AS ten_nhom, 
+                    c.ten_chien_dich AS ten_chien_dich, 
+                    af.format_name AS dinh_dang, 
+                    w.domain_website AS ten_website, 
+                    az.ten_vung_quang_cao AS ten_vung_quang_cao
+                FROM ads
+                LEFT JOIN ads_group ag ON ag.ads_group_id = ads.ads_group_id
+                LEFT JOIN campaign c ON c.camp_id = ag.camp_id
+                LEFT JOIN ads_group_website agw ON agw.ads_group_id = ag.ads_group_id
+                LEFT JOIN website w ON w.website_id = agw.website_id
+                LEFT JOIN ads_zone az ON az.website_id = w.website_id
+                LEFT JOIN ads_link_format alf ON alf.ads_id = ads.ads_id
+                LEFT JOIN ads_format af ON af.format_id = alf.format_id;
             ''')
 
             rows = cursor.fetchall()
@@ -101,3 +133,80 @@ class Ads:
             cursor = conn.cursor()
             cursor.execute('DELETE FROM ads WHERE ads_id = %s', (ads_id,))
             conn.commit()
+
+    @staticmethod
+    def get_ads_list():
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            query = '''
+                SELECT 
+                    a.ads_id,
+                    a.ten_tin_quang_cao,
+                    ag.ten_nhom,
+                    c.ten_chien_dich,
+                    af.format_name as dinh_dang,
+                    a.url_dich,
+                    sa.ten_trang_thai as trang_thai,
+                    a.tong_chi_phi,
+                    a.luot_xem,
+                    a.luot_nhan,
+                    CASE 
+                        WHEN a.luot_xem > 0 
+                        THEN CAST(((a.luot_nhan::float / a.luot_xem) * 100) AS DECIMAL(10,2))
+                        ELSE 0 
+                    END as ctr,
+                    CASE 
+                        WHEN a.luot_nhan > 0 
+                        THEN CAST((a.tong_chi_phi::float / a.luot_nhan) AS DECIMAL(10,2))
+                        ELSE 0 
+                    END as cpc,
+                    CASE 
+                        WHEN a.luot_xem > 0 
+                        THEN CAST((a.tong_chi_phi::float / a.luot_xem) * 1000 AS DECIMAL(10,2))
+                        ELSE 0 
+                    END as cpm,
+                    a.so_luong_mua_hang,
+                    CASE 
+                        WHEN a.luot_nhan > 0 
+                        THEN CAST((a.so_luong_mua_hang::float / a.luot_nhan) * 100 AS DECIMAL(10,2))
+                        ELSE 0 
+                    END as ti_le_chuyen_doi,
+                    CASE 
+                        WHEN a.so_luong_mua_hang > 0 
+                        THEN CAST((a.tong_chi_phi::float / a.so_luong_mua_hang) AS DECIMAL(10,2))
+                        ELSE 0 
+                    END as cps,
+                    a.video_watches_at_3s as video_view_3s,
+                    a.active as dang_hien_thi,
+                    az.ten_vung_quang_cao
+                FROM ads a
+                LEFT JOIN ads_group ag ON ag.ads_group_id = a.ads_group_id
+                LEFT JOIN campaign c ON c.camp_id = ag.camp_id
+                LEFT JOIN ads_group_website agw ON agw.ads_group_id = ag.ads_group_id
+                LEFT JOIN website w ON w.website_id = agw.website_id
+                LEFT JOIN ads_zone az ON az.website_id = w.website_id
+                LEFT JOIN ads_link_format alf ON alf.ads_id = a.ads_id
+                LEFT JOIN ads_format af ON af.format_id = alf.format_id
+                LEFT JOIN status_ads sa ON sa.status_id = a.ads_status_id
+                WHERE a.active = true
+                AND ag.active = true
+                AND agw.active = true
+                ORDER BY a.created_at DESC
+            '''
+            cursor.execute(query)
+            return [dict(zip([column[0] for column in cursor.description], row)) for row in cursor.fetchall()]
+
+    @staticmethod
+    def update_ads_status(ads_id, active):
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            query = '''
+                UPDATE ads
+                SET active = %s,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE ads_id = %s
+                RETURNING ads_id
+            '''
+            cursor.execute(query, (active, ads_id))
+            conn.commit()
+            return cursor.fetchone() is not None
