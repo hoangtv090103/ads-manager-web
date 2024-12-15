@@ -144,7 +144,7 @@
         <nav class="sidebar-nav">
             <a href="/frontend/campaigns.html" class="nav-item">
                 <i class="fas fa-layer-group"></i>
-                <span>Quản lý chiến dịch</span>
+                <span>Quản lý chi���n dịch</span>
             </a>
 
             <div class="nav-group">
@@ -231,41 +231,41 @@
             </div>
         </div>
 
-        <h1 class="page-title">Nhóm sản phẩm</h1>
+        <div class="content-section">
+            <h1 class="page-title">Nhóm sản phẩm</h1>
 
-        <div class="action-bar">
-            <div class="action-left">
-                <button class="btn-primary" onclick="createProductGroup()">
-                    <i class="fas fa-plus"></i>
-                    Tạo nhóm sản phẩm
-                </button>
-                <div class="search-box">
-                    <i class="fas fa-search"
-                        style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: #4F4F4F;"></i>
-                    <input type="text" placeholder="Tìm kiếm" style="padding-left: 32px;">
+            <div class="action-bar">
+                <div class="action-left">
+                    <button class="btn-primary" onclick="createProductGroup()">
+                        <i class="fas fa-plus"></i>
+                        Tạo nhóm sản phẩm
+                    </button>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Tìm kiếm...">
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="table-container">
-            <table class="product-groups-table">
-                <thead>
-                    <tr>
-                        <th>STT</th>
-                        <th>Nhóm sản phẩm</th>
-                        <th>Số lượng</th>
-                        <th>Cập nhật</th>
-                        <th>Nguồn dữ liệu</th>
-                        <th>Nhóm QC đang chạy</th>
-                    </tr>
-                </thead>
-                <tbody id="productGroupsTable"></tbody>
-            </table>
-        </div>
+            <div class="table-container">
+                <table class="product-groups-table">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Nhóm sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Cập nhật</th>
+                            <th>Nguồn dữ liệu</th>
+                            <th>Nhóm QC đang chạy</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productGroupsTableBody"></tbody>
+                </table>
+            </div>
 
-        <!-- Footer -->
-        <div class="table-footer">
-            <div>Số nhóm sản phẩm: <span id="total-groups" style="font-weight: 500;">0</span></div>
+            <div class="table-footer">
+                <div>Số nhóm sản phẩm: <span id="total-groups">0</span></div>
+            </div>
         </div>
     </div>
 
@@ -297,7 +297,7 @@
         }
 
         function renderProductGroups(groups) {
-            const tbody = document.getElementById('productGroupsTable');
+            const tbody = document.getElementById('productGroupsTableBody');
             tbody.innerHTML = '';
 
             groups.forEach((group, index) => {

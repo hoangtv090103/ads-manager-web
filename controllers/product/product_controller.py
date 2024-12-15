@@ -4,24 +4,8 @@ from flask_restful import Resource, fields, marshal_with
 from models.product import Product
 from controllers.base_controller import BaseController
 
-product_fields = {
-    'product_id': fields.Integer,
-    'ten_san_pham': fields.String,
-    'mo_ta_san_pham': fields.String,
-    'lien_ket_san_pham': fields.String,
-    'hinh_anh_san_pham': fields.Raw,
-    'product_status_id': fields.Integer,
-    'tinh_trang_san_pham': fields.String,
-    'gia': fields.Float,
-    'gia_khuyen_mai': fields.Float,
-    'loai_san_pham': fields.String,
-    'customer_id': fields.Integer,
-    'created_at': fields.DateTime,
-    'updated_at': fields.DateTime
-}
 
 class ProductController(BaseController):
-    @marshal_with(product_fields)
     def get(self, product_id=None):
         try:
             if product_id:
@@ -54,4 +38,4 @@ class ProductController(BaseController):
             Product.delete_by_id(product_id)
             return {'message': 'Product deleted successfully'}, 200
         except Exception as e:
-            return {'message': str(e)}, 400 
+            return {'message': str(e)}, 400

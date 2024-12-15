@@ -39,6 +39,15 @@ class ProductStatus:
             ''')
             rows = cursor.fetchall()
             return [dict(zip([column[0] for column in cursor.description], row)) for row in rows]
+        
+    @staticmethod
+    def get_by_name(ten_trang_thai):
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+            SELECT productstatus_id FROM product_status WHERE ten_trang_thai = %s
+            ''', (ten_trang_thai,))
+            return cursor.fetchone()[0]
 
     def update(self):
         with get_db_connection() as conn:

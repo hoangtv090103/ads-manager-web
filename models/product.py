@@ -5,22 +5,23 @@ import io
 
 class Product:
     def __init__(self, product_id=None, ten_san_pham="", mo_ta_san_pham="",
-                 luot_xem_san_pham=None, luot_nhan=None, ctr=None,
+                 luot_xem=None, luot_nhan=None, ctr=None,
                  so_luong_mua_hang=None, phan_tram_chuyen_doi_mua_hang=None,
                  lien_ket_san_pham="", hinh_anh_san_pham=None,
-                 source_id=None, productstatus_id=None,
+                 lien_ket_hinh_anh="", source_id=None, productstatus_id=None,
                  gia_san_pham=None, gia_khuyen_mai=None,
                  created_at=None, updated_at=None, active=True):
         self.product_id = product_id
         self.ten_san_pham = ten_san_pham
         self.mo_ta_san_pham = mo_ta_san_pham
-        self.luot_xem_san_pham = luot_xem_san_pham
+        self.luot_xem = luot_xem
         self.luot_nhan = luot_nhan
         self.ctr = ctr
         self.so_luong_mua_hang = so_luong_mua_hang
         self.phan_tram_chuyen_doi_mua_hang = phan_tram_chuyen_doi_mua_hang
         self.lien_ket_san_pham = lien_ket_san_pham
         self.hinh_anh_san_pham = hinh_anh_san_pham
+        self.lien_ket_hinh_anh = lien_ket_hinh_anh
         self.source_id = source_id
         self.productstatus_id = productstatus_id
         self.gia_san_pham = gia_san_pham
@@ -38,13 +39,14 @@ class Product:
                     product_id SERIAL PRIMARY KEY,
                     ten_san_pham VARCHAR(255),
                     mo_ta_san_pham TEXT,
-                    luot_xem_san_pham INTEGER,
+                    luot_xem INTEGER,
                     luot_nhan INTEGER,
                     ctr DECIMAL(15,2),
                     so_luong_mua_hang INTEGER,
                     phan_tram_chuyen_doi_mua_hang DECIMAL(15,2),
-                    lien_ket_san_pham VARCHAR(255),
+                    lien_ket_san_pham TEXT,
                     hinh_anh_san_pham BYTEA,
+                    lien_ket_hinh_anh TEXT,
                     source_id INTEGER,
                     productstatus_id INTEGER,
                     gia_san_pham DECIMAL(15,2),
@@ -65,18 +67,23 @@ class Product:
             cursor = conn.cursor()
             cursor.execute('''
             INSERT INTO product (
-                ten_san_pham, mo_ta_san_pham, luot_xem_san_pham, luot_nhan, ctr,
+                ten_san_pham, mo_ta_san_pham, luot_xem, luot_nhan, ctr,
                 so_luong_mua_hang, phan_tram_chuyen_doi_mua_hang, lien_ket_san_pham,
-                hinh_anh_san_pham, source_id, productstatus_id, gia_san_pham, gia_khuyen_mai, active
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                hinh_anh_san_pham, lien_ket_hinh_anh, source_id, productstatus_id,
+                gia_san_pham, gia_khuyen_mai, active
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING product_id
             ''', (
                 self.ten_san_pham, self.mo_ta_san_pham,
-                self.luot_xem_san_pham, self.luot_nhan, self.ctr,
+                self.luot_xem, self.luot_nhan, self.ctr,
                 self.so_luong_mua_hang, self.phan_tram_chuyen_doi_mua_hang,
                 self.lien_ket_san_pham, self.hinh_anh_san_pham,
-                self.source_id, self.productstatus_id, self.gia_san_pham, self.gia_khuyen_mai, self.active
+                self.lien_ket_hinh_anh, self.source_id, self.productstatus_id, 
+                self.gia_san_pham, self.gia_khuyen_mai, self.active
             ))
+            product_id = cursor.fetchone()[0]
             conn.commit()
+            return product_id
 
     @staticmethod
     def get_all():
@@ -123,7 +130,7 @@ class Product:
             UPDATE product
             SET ten_san_pham = %s,
                 mo_ta_san_pham = %s,
-                luot_xem_san_pham = %s,
+                luot_xem = %s,
                 luot_nhan = %s,
                 ctr = %s,
                 so_luong_mua_hang = %s,
@@ -139,7 +146,7 @@ class Product:
             WHERE product_id = %s
             ''', (
                 self.ten_san_pham, self.mo_ta_san_pham,
-                self.luot_xem_san_pham, self.luot_nhan, self.ctr,
+                self.luot_xem, self.luot_nhan, self.ctr,
                 self.so_luong_mua_hang, self.phan_tram_chuyen_doi_mua_hang,
                 self.lien_ket_san_pham, self.hinh_anh_san_pham,
                 self.source_id, self.productstatus_id,
@@ -173,10 +180,11 @@ class Product:
                 bo_chi_so=row[2].value,
                 lien_ket_san_pham=row[3].value,
                 hinh_anh_san_pham=row[4].value,
-                source_id=row[5].value,
-                productstatus_id=row[6].value,
-                gia_san_pham=row[7].value,
-                gia_khuyen_mai=row[6].value
+                lien_ket_hinh_anh=row[5].value,
+                source_id=row[6].value,
+                productstatus_id=row[7].value,
+                gia_san_pham=row[8].value,
+                gia_khuyen_mai=row[9].value
             )
             products.append(product)
             product.save()

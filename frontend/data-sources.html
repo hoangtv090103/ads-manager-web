@@ -123,8 +123,18 @@
         }
 
         .status-active {
+            background: #E8F5E9;
+            color: #27AE60;
+        }
+
+        .status-processing {
             background: #E3F2FD;
             color: #2F80ED;
+        }
+
+        .status-pending {
+            background: #FFF3E0;
+            color: #F2994A;
         }
 
         .status-inactive {
@@ -157,7 +167,7 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            
+
             <span class="logo-text">Ads Manager</span>
         </div>
 
@@ -187,7 +197,7 @@
 
 
 
-            
+
 
             <a href="/frontend/publishers.html" class="nav-item">
                 <i class="fas fa-users-cog"></i>
@@ -210,7 +220,7 @@
                 <i class="fas fa-user-shield"></i>
                 <span>Quản lý phân quyền</span>
             </a>
-<div class="nav-group">
+            <div class="nav-group">
                 <div class="nav-item" onclick="toggleSubmenu(this)">
                     <i class="fas fa-chart-bar"></i>
                     <span>Báo cáo</span>
@@ -230,8 +240,8 @@
         <!-- Header -->
         <div class="header-content">
             <div class="breadcrumb">
-                <i class="fas fa-box"></i>
-                <span>/ Quản lý sản phẩm / Nguồn cấp dữ liệu</span>
+                <i class="fas fa-database"></i>
+                <span>/ Quản lý nguồn dữ liệu</span>
             </div>
             <div class="user-info">
                 <div class="user-details">
@@ -239,33 +249,22 @@
                     <div class="user-email" id="user-email"></div>
                 </div>
                 <i class="fas fa-user"></i>
-<div class="user-dropdown">
+                <div class="user-dropdown">
                     <div class="dropdown-item" onclick="auth.logout()">
                         <i class="fas fa-sign-out-alt"></i>
                         Đăng xuất
                     </div>
                 </div>
-                
+
             </div>
         </div>
 
-        <h1 class="page-title">Nguồn cấp dữ liệu</h1>
-
-        <div class="description">
-            Bạn sẽ cập nhật dữ liệu sản phẩm của mình trên một tệp Google Trang tính và các cập nhật đó sẽ tự động áp
-            dụng cho tài khoản của bạn.
-            Tìm hiểu thêm phần mô tả trường dữ liệu sản phẩm <a href="#" class="link">tại đây</a>.
-            Trong trường hợp bị hủy cấp quyền, bạn vui lòng cấp quyền truy cập vào Google Sheet nguồn dữ liệu cho email
-            sau:
-            <a href="mailto:novanet-google-sheets@novanet-dev.iam.gserviceaccount.com" class="email-link">
-                novanet-google-sheets@novanet-dev.iam.gserviceaccount.com
-                <i class="fas fa-copy"></i>
-            </a>
-        </div>
-
-        <div class="table-container">
+        <!-- Content Section -->
+        <div class="content-section">
+            <h1 class="page-title">Nguồn cấp dữ liệu</h1>
+            <!-- Action Bar -->
             <div class="action-bar">
-                <div style="display: flex; gap: 16px;">
+                <div class="action-left">
                     <button class="btn-primary" onclick="createDataSource()">
                         <i class="fas fa-plus"></i>
                         Tạo nguồn dữ liệu
@@ -275,28 +274,36 @@
                         <input type="text" placeholder="Tìm kiếm...">
                     </div>
                 </div>
-                <button class="btn-secondary" onclick="viewProducts()">
-                    Xem sản phẩm
-                </button>
+                <div class="action-right">
+                    <button class="btn-secondary" onclick="viewProducts()">
+                        Xem sản phẩm
+                    </button>
+                </div>
             </div>
 
-            <table class="data-sources-table">
-                <thead>
-                    <tr>
-                        <th style="width: 40px;"><input type="checkbox"></th>
-                        <th>STT</th>
-                        <th>Nguồn cấp dữ liệu</th>
-                        <th>Phương thức nhập</th>
-                        <th>Trạng thái</th>
-                        <th>Cập nhật</th>
-                        <th>SP hiệu lực</th>
-                        <th>SP lỗi dữ liệu</th>
-                    </tr>
-                </thead>
-                <tbody id="dataSourcesTableBody">
-                    <!-- Data will be rendered here -->
-                </tbody>
-            </table>
+            <!-- Table -->
+            <div class="table-container">
+                <table class="data-sources-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;"><input type="checkbox"></th>
+                            <th>STT</th>
+                            <th>Nguồn cấp dữ liệu</th>
+                            <th>Trạng thái</th>
+                            <th>Cập nhật</th>
+                            <th>Số sản phẩm</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataSourcesTableBody">
+                        <!-- Data will be rendered here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer -->
+            <div class="table-footer">
+                <div>Số nguồn dữ liệu: <span id="total-sources" style="font-weight: 500;">0</span></div>
+            </div>
         </div>
     </div>
 
@@ -304,7 +311,7 @@
     <script>
         const baseUrl = 'http://127.0.0.1:5000/api/v1';
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             requireAuth();
             fetchDataSources();
         });
@@ -318,8 +325,8 @@
                     throw new Error('Không thể tải dữ liệu nguồn cấp');
                 }
 
-                renderDataSources(data);
-                updateFooter(data);
+                renderDataSources(data.data);
+                updateFooter(data.data);
             } catch (error) {
                 console.error('Error:', error);
                 if (error.message === 'Unauthorized') {
@@ -334,61 +341,47 @@
             const tbody = document.getElementById('dataSourcesTableBody');
             tbody.innerHTML = '';
 
-            dataSources.forEach((source, index) => {
+            dataSources.forEach((source) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><input type="checkbox"></td>
-                    <td>${index + 1}</td>
+                    <td>${source.stt}</td>
                     <td>
-                        <a href="#" class="link">${source.ten_nguon}</a>
+                        <a href="#" class="link">${source.ten_nguon_du_lieu}</a>
                     </td>
                     <td>
-                        <i class="fab fa-google"></i>
-                        Google Sheet
-                    </td>
-                    <td>
-                        <span class="status-badge ${getStatusClass(source.active)}">
-                            ${source.active ? 'Đang xử lý' : 'Không thể truy cập'}
+                        <span class="status-badge ${getStatusClass(source.trang_thai)}">
+                            ${source.trang_thai}
                         </span>
                     </td>
-                    <td>${formatDate(source.updated_at)}</td>
-                    <td>${getValidProductsCount(source)}</td>
-                    <td>${getErrorProductsCount(source)}</td>
+                    <td>${source.updated_at || '-'}</td>
+                    <td>${source.so_san_pham}</td>
                 `;
                 tbody.appendChild(tr);
             });
+
+            // Update total count
+            document.getElementById('total-sources').textContent = dataSources.length;
         }
 
-        function getStatusClass(active) {
-            return active ? 'status-active' : 'status-inactive';
-        }
-
-        function formatDate(dateString) {
-            if (!dateString) return '-';
-            const date = new Date(dateString);
-            return date.toLocaleString('vi-VN', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-
-        function getValidProductsCount(source) {
-            // Đây là placeholder, bạn cần thêm logic đếm sản phẩm hợp lệ
-            return 0;
-        }
-
-        function getErrorProductsCount(source) {
-            // Đây là placeholder, bạn cần thêm logic đếm sản phẩm lỗi
-            return 0;
+        function getStatusClass(status) {
+            switch (status.toLowerCase()) {
+                case 'đã xử lý':
+                    return 'status-active';
+                case 'đang xử lý':
+                    return 'status-processing';
+                case 'đang chờ xử lý':
+                    return 'status-pending';
+                case 'lỗi':
+                    return 'status-inactive';
+                default:
+                    return 'status-inactive';
+            }
         }
 
         function updateFooter(dataSources) {
             const footer = document.createElement('div');
             footer.className = 'table-footer';
-            footer.innerHTML = `Số nguồn dữ liệu: <span style="font-weight: 500;">${dataSources.length}</span>`;
             document.querySelector('.table-container').appendChild(footer);
         }
 

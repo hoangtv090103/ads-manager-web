@@ -99,3 +99,16 @@ INSERT INTO price_type (price_type_name)
 VALUES 
     ('CPM'),
     ('CPC');
+
+INSERT INTO source_status (ten_trang_thai)
+VALUES 
+    ('Đang chờ xử lý'),
+    ('Đang xử lý'),
+    ('Đã xử lý'),
+    ('Lỗi');
+
+INSERT INTO product_status (ten_trang_thai)
+VALUES 
+    ('Thực chạy'),
+    ('Hết hàng'),
+    ('Đã tắt');

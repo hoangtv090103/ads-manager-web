@@ -28,6 +28,7 @@ class User:
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE,
                 FOREIGN KEY (role_id) REFERENCES role(role_id)
+                
             )
             """)
             conn.commit()
