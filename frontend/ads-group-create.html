@@ -667,75 +667,16 @@
         .region-cities {
             display: none;
             padding: 16px;
-            background: white;
+            background: #f5f5f5;
             border-top: 1px solid #E0E0E0;
         }
 
         .region-header.expanded+.region-cities {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 12px;
-        }
-
-        .city-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .region-section {
-            margin-top: 16px;
-        }
-        
-        .region-group {
-            border: 1px solid #E0E0E0;
-            border-radius: 4px;
-            margin-bottom: 8px;
-        }
-        
-        .region-header {
-            display: flex;
-            align-items: center;
-            padding: 12px 16px;
-            cursor: pointer;
-            background: #fff;
-        }
-        
-        .region-header input[type="checkbox"] {
-            margin-right: 12px;
-        }
-        
-        .region-name {
-            flex: 1;
-            font-weight: 500;
-        }
-        
-        .region-count {
-            margin: 0 12px;
-            color: #666;
-        }
-        
-        .expand-icon {
-            transition: transform 0.3s;
-        }
-        
-        .region-header.expanded .expand-icon {
-            transform: rotate(180deg);
-        }
-        
-        .region-cities {
-            display: none;
-            padding: 16px;
-            background: #f5f5f5;
-            border-top: 1px solid #E0E0E0;
-        }
-        
-        .region-header.expanded + .region-cities {
-            display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 12px;
         }
-        
+
         .city-item {
             display: flex;
             align-items: center;
@@ -793,6 +734,7 @@
 
         /* Responsive styles */
         @media (max-width: 768px) {
+
             .gender-options,
             .age-options {
                 flex-direction: column;
@@ -806,7 +748,7 @@
         }
 
         /* Active states */
-        .option input:checked + span {
+        .option input:checked+span {
             font-weight: 500;
         }
 
@@ -836,6 +778,341 @@
                 width: 20px;
                 height: 20px;
             }
+        }
+
+        /* Add new styles for website selection */
+        .websites-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .website-list {
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
+
+        .website-list-header {
+            padding: 16px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .website-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        .website-list-footer {
+            border-top: 1px solid #E0E0E0;
+            padding: 12px 16px;
+            background: white;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .website-count-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex: 1;
+            color: #4F4F4F;
+            font-size: 14px;
+        }
+
+        .website-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #E0E0E0;
+            display: flex;
+            align-items: center;
+        }
+
+        .website-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .website-search {
+            margin: 12px 16px;
+            padding: 8px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            width: calc(100% - 32px);
+        }
+
+        .btn-add,
+        .btn-remove {
+            background: #27AE60;
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-left: 12px;
+        }
+
+        .btn-remove {
+            background: #EB5757;
+        }
+
+        .btn-add:hover {
+            background: #219653;
+        }
+
+        .btn-remove:hover {
+            background: #D64545;
+        }
+
+        /* Add new styles */
+        .targeting-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .option:hover {
+            background-color: #f5f5f5;
+        }
+
+        .option input[type="radio"] {
+            margin: 0;
+        }
+
+        .form-text {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .form-text a {
+            color: #0061C1;
+            text-decoration: none;
+        }
+
+        .form-text a:hover {
+            text-decoration: underline;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-check-input {
+            margin: 0;
+        }
+
+        /* Add new styles for geographic targeting */
+        .region-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .region-group {
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .region-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: #fff;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .region-header input[type="checkbox"] {
+            margin-right: 12px;
+        }
+
+        .region-name {
+            flex: 1;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .region-count {
+            margin: 0 12px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .expand-icon {
+            color: #666;
+            transition: transform 0.3s ease;
+        }
+
+        .region-header.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .region-cities {
+            display: none;
+            padding: 16px;
+            background: #f8f9fa;
+            border-top: 1px solid #E0E0E0;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        .region-header.expanded+.region-cities {
+            display: grid;
+        }
+
+        .city-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+        }
+
+        .city-item input[type="checkbox"] {
+            margin: 0;
+        }
+
+        .city-item span {
+            font-size: 14px;
+            color: #333;
+        }
+
+        @media (max-width: 1200px) {
+            .region-cities {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .region-cities {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .region-cities {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .region-cities {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .website-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        .website-item {
+            display: grid;
+            grid-template-columns: 60px 1fr 60px;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .website-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .website-item .stt {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .website-item .domain {
+            color: #333;
+            font-size: 14px;
+        }
+
+        .website-item .action {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .website-item .btn-select {
+            background: none;
+            border: none;
+            color: #27AE60;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .website-item .btn-select:hover {
+            color: #219653;
+        }
+
+        .website-item .btn-remove {
+            background: none;
+            border: none;
+            color: #EB5757;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .website-item .btn-remove:hover {
+            color: #D64545;
+        }
+
+        .website-list-header {
+            display: grid;
+            grid-template-columns: 60px 1fr 60px;
+            padding: 12px 16px;
+            border-bottom: 1px solid #E0E0E0;
+            background: #f8f9fa;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .website-search {
+            margin: 12px 16px;
+            padding: 8px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            width: calc(100% - 32px);
         }
     </style>
 </head>
@@ -879,7 +1156,7 @@
 
 
 
-            
+
 
             <a href="/frontend/publishers.html" class="nav-item">
                 <i class="fas fa-users-cog"></i>
@@ -902,7 +1179,7 @@
                 <i class="fas fa-user-shield"></i>
                 <span>Quản lý phân quyền</span>
             </a>
-<div class="nav-group">
+            <div class="nav-group">
                 <div class="nav-item" onclick="toggleSubmenu(this)">
                     <i class="fas fa-chart-bar"></i>
                     <span>Báo cáo</span>
@@ -932,18 +1209,75 @@
                     </div>
                 </div>
 
+                <!-- Phần chọn nhóm sản phẩm -->
+                <div class="section">
+                    <div class="section-title">Chọn nhóm sản phẩm</div>
+                    <div class="form-group">
+                        <div class="targeting-options">
+                            <label class="option">
+                                <input type="radio" name="product_group_type" value="all" checked>
+                                <span>Tất cả sản phẩm</span>
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="product_group_type" value="group">
+                                <span>Chọn theo nhóm</span>
+                            </label>
+                        </div>
+
+                        <div class="product-group-select" style="margin-top: 16px; display: none;">
+                            <select class="form-control" name="product_group_id" disabled>
+                                <option value="">Chọn nhóm sản phẩm</option>
+                            </select>
+                            <div class="form-text">
+                                Để tạo nhóm sản phẩm vui lòng chuyển qua trang <a
+                                    href="/frontend/product-group.html">quản lý nhóm sản phẩm</a> để tạo nhóm sản phẩm
+                                mới
+                            </div>
+                        </div>
+
+                        <!-- <div class="form-check" style="margin-top: 16px;">
+                            <input type="checkbox" class="form-check-input" id="hasBlockedProducts">
+                            <label class="form-check-label" for="hasBlockedProducts">
+                                Nhóm sp có chứa sản phẩm cấm
+                            </label>
+                        </div> -->
+                    </div>
+                </div>
+
                 <!-- Phần nhắm chọn đối tượng -->
                 <div class="section">
                     <div class="section-title">Nhắm chọn đối tượng</div>
-                    <div class="targeting-options">
-                        <label class="targeting-option">
-                            <input type="radio" name="targeting" checked>
-                            <span>Bỏ nhắm chọn theo đối tượng</span>
-                        </label>
-                        <label class="targeting-option">
-                            <input type="radio" name="targeting">
-                            <span>Sử dụng nhóm đối tượng có sẵn</span>
-                        </label>
+                    <div class="form-group">
+                        <div class="targeting-options">
+                            <label class="option">
+                                <input type="radio" name="target_type" value="none" checked>
+                                <span>Bỏ nhắm chọn theo đối tượng</span>
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="target_type" value="existing">
+                                <span>Sử dụng nhóm đối tượng có sẵn</span>
+                            </label>
+                        </div>
+
+                        <div class="target-audience-select" style="margin-top: 16px; display: none;">
+                            <select class="form-control" name="target_audience_id" disabled>
+                                <option value="">Chọn nhóm đối tượng</option>
+                            </select>
+                            <div class="form-text">
+                                Để tạo nhóm đối tượng vui lòng chuyển qua trang <a
+                                    href="/frontend/target-audience.html">quản lý đối tượng</a> để tạo nhóm đối tượng
+                                mới
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Nhắm chọn theo địa lý -->
+                <div class="section">
+                    <div class="section-title">Nhắm chọn theo địa lý</div>
+                    <div class="form-group">
+                        <div class="region-section" id="geographic-targeting">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
                     </div>
                 </div>
 
@@ -1001,6 +1335,8 @@
                     </div>
                 </div>
 
+
+
                 <!-- Phần Remarketing -->
                 <div class="section">
                     <div class="remarketing-tabs">
@@ -1008,39 +1344,35 @@
                             <button type="button" class="tab-btn active" data-tab="run-more">Chạy thêm
                                 Remarketing</button>
                             <button type="button" class="tab-btn" data-tab="no-run">Không chạy Remarketing</button>
-                            <button type="button" class="tab-btn" data-tab="run-only">Chỉ chạy Remarketing</button>
                         </div>
 
                         <div class="tab-content">
                             <!-- Tab Chạy thêm Remarketing -->
                             <div class="tab-pane active" id="run-more">
-                                <div class="website-selection">
+                                <div class="section-subtitle">Nhắm chọn Website</div>
+
+                                <div class="websites-container">
                                     <div class="website-list">
                                         <div class="website-list-header">
-                                            <span>Danh sách Website(0/0)</span>
+                                            <div>STT</div>
+                                            <div>Danh sách Website(100/124)</div>
+                                            <div></div>
                                         </div>
                                         <input type="text" class="website-search" placeholder="Tìm kiếm Domain...">
-                                        <div class="website-items" id="available-websites-run-more">
-                                            <!-- Will be populated by JS -->
+                                        <div class="website-items" id="availableWebsites">
+                                            <!-- Will be populated by JavaScript -->
                                         </div>
-                                    </div>
-
-                                    <div class="website-controls">
-                                        <button type="button" class="btn btn-primary" id="add-website-run-more">
-                                            <i class="fas fa-chevron-right"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-primary" id="remove-website-run-more">
-                                            <i class="fas fa-chevron-left"></i>
-                                        </button>
                                     </div>
 
                                     <div class="website-list">
                                         <div class="website-list-header">
-                                            <span>Website được chọn(0/123)</span>
+                                            <div>STT</div>
+                                            <div>Website được chọn(0/124)</div>
+                                            <div></div>
                                         </div>
                                         <input type="text" class="website-search" placeholder="Tìm kiếm Domain...">
-                                        <div class="website-items" id="selected-websites-run-more">
-                                            <!-- Will be populated by JS -->
+                                        <div class="website-items" id="selectedWebsites">
+                                            <!-- Will be populated by JavaScript -->
                                         </div>
                                     </div>
                                 </div>
@@ -1198,184 +1530,158 @@
 
     <script>
         const baseUrl = 'http://127.0.0.1:5000/api/v1';
-        document.addEventListener('DOMContentLoaded', function () {
-            // Tab switching
-            const tabBtns = document.querySelectorAll('.tab-btn');
-            const tabPanes = document.querySelectorAll('.tab-pane');
 
-            tabBtns.forEach(btn => {
-                btn.addEventListener('click', function () {
-                    tabBtns.forEach(b => b.classList.remove('active'));
-                    tabPanes.forEach(p => p.classList.remove('active'));
-
-                    this.classList.add('active');
-                    const tabId = this.getAttribute('data-tab');
-                    document.getElementById(tabId).classList.add('active');
-                });
-            });
-
-            // Load websites
-            async function loadWebsites() {
-                const response = await fetchWithAuth(`${baseUrl}/websites?has_price=true`);
-                const data = await response.json();
-                const websiteListRunMore = document.getElementById('available-websites-run-more');
-                const websiteListNoRun = document.getElementById('available-websites-no-run');
-
-                const websiteHTML = data.map(website => `
-                            <div class="website-item">
-                                <input type="checkbox">
-                                <span style="margin-left: 8px;">${website.domain_website}</span>
-                            </div>
-                        `).join('');
-
-                websiteListRunMore.innerHTML = websiteHTML;
-                websiteListNoRun.innerHTML = websiteHTML;
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async function () {
+            try {
+                await Promise.all([
+                    loadProductGroups(),
+                    loadTargetAudiences(),
+                    loadWebsites(),
+                    loadGeographicData()
+                ]);
+                setupEventListeners();
+                setupSelectionHandlers();
+            } catch (error) {
+                console.error('Error initializing page:', error);
+                Toast.error('Đã xảy ra lỗi khi khởi tạo trang');
             }
-
-            // Initialize
-            loadWebsites();
-
-            // Website transfer controls for "Chạy thêm Remarketing"
-            setupWebsiteTransfer('run-more');
-            // Website transfer controls for "Không chạy Remarketing"
-            setupWebsiteTransfer('no-run');
-
-            function setupWebsiteTransfer(tabId) {
-                document.getElementById(`add-website-${tabId}`).addEventListener('click', function () {
-                    transferWebsites(`available-websites-${tabId}`, `selected-websites-${tabId}`);
-                });
-
-                document.getElementById(`remove-website-${tabId}`).addEventListener('click', function () {
-                    transferWebsites(`selected-websites-${tabId}`, `available-websites-${tabId}`);
-                });
-            }
-
-            function transferWebsites(fromId, toId) {
-                const selectedItems = document.querySelectorAll(`#${fromId} .website-item input:checked`);
-                const targetList = document.getElementById(toId);
-
-                selectedItems.forEach(item => {
-                    const websiteItem = item.closest('.website-item');
-                    targetList.appendChild(websiteItem.cloneNode(true));
-                    websiteItem.remove();
-                });
-
-                updateWebsiteCounts(fromId.split('-')[2]); // Extract tab id (run-more or no-run)
-            }
-
-            function updateWebsiteCounts(tabId) {
-                const availableCount = document.getElementById(`available-websites-${tabId}`).children.length;
-                const selectedCount = document.getElementById(`selected-websites-${tabId}`).children.length;
-                const totalCount = availableCount + selectedCount;
-
-                const tabContainer = document.getElementById(tabId === 'run-more' ? 'run-more' : 'no-run');
-
-                tabContainer.querySelector('#available-websites-' + tabId).closest('.website-list')
-                    .querySelector('.website-list-header span').textContent =
-                    `Danh sách Website(${availableCount}/${totalCount})`;
-
-                tabContainer.querySelector('#selected-websites-' + tabId).closest('.website-list')
-                    .querySelector('.website-list-header span').textContent =
-                    `Website được chọn(${selectedCount}/${totalCount})`;
-            }
-
-            // Search functionality
-            document.querySelectorAll('.website-search').forEach(input => {
-                input.addEventListener('input', function () {
-                    const searchTerm = this.value.toLowerCase();
-                    const websiteItems = this.closest('.website-list').querySelectorAll('.website-item');
-
-                    websiteItems.forEach(item => {
-                        const domain = item.querySelector('span').textContent.toLowerCase();
-                        item.style.display = domain.includes(searchTerm) ? '' : 'none';
-                    });
-                });
-            });
-
-            // Handle "Select All" functionality
-            function setupSelectAll(containerSelector, itemSelector) {
-                const container = document.querySelector(containerSelector);
-                if (!container) return;
-
-                const selectAllCheckbox = container.querySelector('input[type="checkbox"][value="all"]');
-                const itemCheckboxes = container.querySelectorAll(`${itemSelector} input[type="checkbox"]:not([value="all"])`);
-
-                if (selectAllCheckbox) {
-                    selectAllCheckbox.addEventListener('change', function () {
-                        itemCheckboxes.forEach(checkbox => {
-                            checkbox.checked = this.checked;
-                        });
-                    });
-
-                    // Update "Select All" when individual items change
-                    itemCheckboxes.forEach(checkbox => {
-                        checkbox.addEventListener('change', function () {
-                            const allChecked = Array.from(itemCheckboxes).every(cb => cb.checked);
-                            selectAllCheckbox.checked = allChecked;
-                        });
-                    });
-                }
-            }
-
-            // Setup "Select All" for each section that needs it
-            setupSelectAll('.gender-section', '.gender-option');
-            setupSelectAll('.age-section', '.age-option');
-            // Add for other sections as needed
-
-            // Handle form submission
-            document.getElementById('adsGroupForm').addEventListener('submit', function (e) {
-                e.preventDefault();
-                // Add your form submission logic here
-            });
         });
 
-        // Add responsive handling
-        function handleResize() {
-            const width = window.innerWidth;
-            const mainContent = document.querySelector('.main-content');
+        // Load websites
+        async function loadWebsites() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/websites`);
+                const data = await response.json();
 
-            if (width <= 1024) {
-                mainContent.style.marginLeft = '0';
-            } else {
-                mainContent.style.marginLeft = 'var(--sidebar-width)';
+                if (data.websites) {
+                    renderWebsites(data.websites);
+                }
+            } catch (error) {
+                console.error('Error loading websites:', error);
+                Toast.error('Không thể tải danh sách website');
             }
         }
 
-        // Listen for resize events
-        window.addEventListener('resize', handleResize);
+        function renderWebsites(websites) {
+            const container = document.getElementById('availableWebsites');
+            if (!container) return;
 
-        // Initial call
-        handleResize();
+            container.innerHTML = websites.map((website, index) => `
+                <div class="website-item" data-id="${website.id}">
+                    <div class="stt">${index + 1}</div>
+                    <div class="domain">${website.domain_website}</div>
+                    <div class="action">
+                        <button type="button" class="btn-select" onclick="moveWebsite(this, 'available', 'selected')">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            updateWebsiteCounts();
+        }
+
+        function moveWebsite(button, fromId, toId) {
+            const item = button.closest('.website-item');
+            const fromContainer = document.getElementById(`${fromId}Websites`);
+            const toContainer = document.getElementById(`${toId}Websites`);
+            
+            if (!fromContainer || !toContainer) return;
+
+            // Update button before moving
+            const isMovingToSelected = toId === 'selected';
+            button.innerHTML = isMovingToSelected ? 
+                '<i class="fas fa-minus"></i>' : 
+                '<i class="fas fa-plus"></i>';
+            button.className = isMovingToSelected ? 'btn-remove' : 'btn-select';
+            button.onclick = () => moveWebsite(button, toId, fromId);
+
+            // Move the item
+            toContainer.appendChild(item);
+            
+            // Reorder STT numbers in both containers
+            reorderItems(fromContainer);
+            reorderItems(toContainer);
+            
+            updateWebsiteCounts();
+        }
+
+        function reorderItems(container) {
+            container.querySelectorAll('.website-item').forEach((item, index) => {
+                item.querySelector('.stt').textContent = index + 1;
+            });
+        }
+
+        // Update the search functionality
+        document.querySelectorAll('.website-search').forEach(input => {
+            input.addEventListener('input', function() {
+                const container = this.closest('.website-list').querySelector('.website-items');
+                const searchTerm = this.value.toLowerCase();
+                
+                container.querySelectorAll('.website-item').forEach(item => {
+                    const domain = item.querySelector('.domain').textContent.toLowerCase();
+                    item.style.display = domain.includes(searchTerm) ? '' : 'none';
+                });
+            });
+        });
+
+        // Update website counts
+        function updateWebsiteCounts() {
+            const totalWebsites = document.querySelectorAll('.website-item').length;
+            const selectedCount = document.querySelectorAll('#selectedWebsites .website-item').length;
+            
+            const availableHeader = document.querySelector('#availableWebsites')
+                .closest('.website-list')
+                .querySelector('.website-list-header div:nth-child(2)');
+            const selectedHeader = document.querySelector('#selectedWebsites')
+                .closest('.website-list')
+                .querySelector('.website-list-header div:nth-child(2)');
+            
+            if (availableHeader) {
+                availableHeader.textContent = `Danh sách Website(${totalWebsites - selectedCount}/${totalWebsites})`;
+            }
+            if (selectedHeader) {
+                selectedHeader.textContent = `Website được chọn(${selectedCount}/${totalWebsites})`;
+            }
+        }
 
         // Geographic targeting functionality
         async function loadGeographicData() {
             try {
                 const response = await fetchWithAuth(`${baseUrl}/cities`);
-                const cities = await response.json();
-                
+                const data = await response.json();
+
+                if (!data.cities) {
+                    throw new Error('No cities data received');
+                }
+
+                const container = document.getElementById('geographic-targeting');
+                if (!container) return;
+
                 // Group cities by region
                 const regions = {
                     'bac': { name: 'Miền Bắc', cities: [] },
                     'trung': { name: 'Miền Trung', cities: [] },
-                    'nam': { name: 'Miền Nam', cities: [] }
+                    'nam': { name: 'Miền Nam', cities: [] },
+                    'nuoc_ngoai': { name: 'Nước ngoài', cities: [] }
                 };
-                
-                cities.forEach(city => {
-                    if (city.mien && regions[city.mien]) {
-                        regions[city.mien].cities.push(city);
+
+                data.cities.forEach(city => {
+                    const region = city.mien || 'nuoc_ngoai';
+                    if (regions[region]) {
+                        regions[region].cities.push(city);
                     }
                 });
 
-                const container = document.getElementById('geographic-targeting');
-                
                 // Clear existing content
                 container.innerHTML = '';
-                
+
                 // Create region groups
                 Object.entries(regions).forEach(([regionKey, regionData]) => {
                     const regionElement = document.createElement('div');
                     regionElement.className = 'region-group';
-                    
+
                     const citiesCount = regionData.cities.length;
                     regionElement.innerHTML = `
                         <div class="region-header">
@@ -1399,29 +1705,30 @@
                             `).join('')}
                         </div>
                     `;
-                    
+
                     container.appendChild(regionElement);
                 });
 
-                // Add event listeners
                 setupRegionEventListeners();
-                
             } catch (error) {
                 console.error('Error loading geographic data:', error);
+                Toast.error('Không thể tải dữ liệu địa lý');
             }
         }
 
         function setupRegionEventListeners() {
             // Toggle region expansion
             document.querySelectorAll('.region-header').forEach(header => {
-                header.addEventListener('click', function() {
-                    this.classList.toggle('expanded');
+                header.addEventListener('click', function (e) {
+                    if (!e.target.matches('input')) {
+                        this.classList.toggle('expanded');
+                    }
                 });
             });
 
             // Handle region checkbox changes
             document.querySelectorAll('.region-checkbox').forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
+                checkbox.addEventListener('change', function () {
                     const region = this.dataset.region;
                     const cities = document.querySelectorAll(`.city-checkbox[data-region="${region}"]`);
                     cities.forEach(cityCheckbox => {
@@ -1433,7 +1740,7 @@
 
             // Handle city checkbox changes
             document.querySelectorAll('.city-checkbox').forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
+                checkbox.addEventListener('change', function () {
                     const region = this.dataset.region;
                     updateRegionCount(region);
                 });
@@ -1443,50 +1750,157 @@
         function updateRegionCount(region) {
             const cities = document.querySelectorAll(`.city-checkbox[data-region="${region}"]`);
             const checkedCities = document.querySelectorAll(`.city-checkbox[data-region="${region}"]:checked`);
+            const regionElement = document.querySelector(`#region-${region}`);
+
+            if (!regionElement) return;
+
+            const countElement = regionElement.previousElementSibling.querySelector('.region-count');
             const regionCheckbox = document.querySelector(`.region-checkbox[data-region="${region}"]`);
-            const countElement = document.querySelector(`#region-${region}`).previousElementSibling.querySelector('.region-count');
-            
-            countElement.textContent = `(${checkedCities.length}/${cities.length})`;
-            
-            // Update region checkbox state
-            regionCheckbox.checked = checkedCities.length === cities.length;
-            regionCheckbox.indeterminate = checkedCities.length > 0 && checkedCities.length < cities.length;
+
+            if (countElement) {
+                countElement.textContent = `(${checkedCities.length}/${cities.length})`;
+            }
+
+            if (regionCheckbox) {
+                regionCheckbox.checked = checkedCities.length === cities.length;
+                regionCheckbox.indeterminate = checkedCities.length > 0 && checkedCities.length < cities.length;
+            }
         }
 
-        // Call this when the page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            loadGeographicData();
-        });
-
-        function getSelectedCities() {
-            const selectedCities = [];
-            document.querySelectorAll('.city-checkbox:checked').forEach(checkbox => {
-                selectedCities.push({
-                    city_id: checkbox.dataset.cityId,
-                    region: checkbox.dataset.region
-                });
-            });
-            return selectedCities;
-        }
-
-        // Xử lý "Tất cả" cho độ tuổi
-        document.addEventListener('DOMContentLoaded', function() {
+        function setupEventListeners() {
+            // Age selection handling
             const allAgeCheckbox = document.querySelector('.age-options input[value="all"]');
             const ageCheckboxes = document.querySelectorAll('.age-options input[type="checkbox"]:not([value="all"])');
 
-            allAgeCheckbox.addEventListener('change', function() {
+            if (allAgeCheckbox && ageCheckboxes) {
+                allAgeCheckbox.addEventListener('change', function () {
+                    ageCheckboxes.forEach(checkbox => {
+                        checkbox.checked = this.checked;
+                    });
+                });
+
                 ageCheckboxes.forEach(checkbox => {
-                    checkbox.checked = this.checked;
+                    checkbox.addEventListener('change', function () {
+                        const allChecked = Array.from(ageCheckboxes).every(cb => cb.checked);
+                        allAgeCheckbox.checked = allChecked;
+                    });
+                });
+            }
+        }
+
+        // Form submission
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const formData = {
+                name: document.querySelector('input[placeholder="Tên nhóm quảng cáo"]').value,
+                product_group_type: document.querySelector('input[name="product_group_type"]:checked').value,
+                product_group_id: document.querySelector('select[name="product_group_id"]').value,
+                has_blocked_products: document.getElementById('hasBlockedProducts').checked,
+                target_type: document.querySelector('input[name="target_type"]:checked').value,
+                target_audience_id: document.querySelector('select[name="target_audience_id"]').value,
+                gender: document.querySelector('input[name="gender"]:checked').value,
+                age_groups: Array.from(document.querySelectorAll('.age-options input[type="checkbox"]:checked:not([value="all"])'))
+                    .map(cb => cb.value),
+                websites: Array.from(document.querySelectorAll('#selectedWebsites .website-item'))
+                    .map(item => item.dataset.id),
+                cities: Array.from(document.querySelectorAll('.city-checkbox:checked'))
+                    .map(cb => ({
+                        city_id: cb.dataset.cityId,
+                        region: cb.dataset.region
+                    }))
+            };
+
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/ads-groups`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    Toast.success('Tạo nhóm quảng cáo thành công');
+                    window.location.href = '/frontend/ads-group.html';
+                } else {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Có lỗi xảy ra');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Toast.error(error.message || 'Không thể tạo nhóm quảng cáo');
+            }
+        }
+
+        // Add new JavaScript for product groups and target audience
+        async function loadProductGroups() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/product-groups`);
+                const data = await response.json();
+
+                const select = document.querySelector('select[name="product_group_id"]');
+                if (data.data) {
+                    data.data.forEach(group => {
+                        const option = document.createElement('option');
+                        option.value = group.productgroup_id;
+                        option.textContent = group.ten_nhom;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading product groups:', error);
+                Toast.error('Không thể tải danh sách nhóm sản phẩm');
+            }
+        }
+
+        async function loadTargetAudiences() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/target-audiences`);
+                const data = await response.json();
+
+                const select = document.querySelector('select[name="target_audience_id"]');
+                if (data.target_audiences) {
+                    data.target_audiences.forEach(target => {
+                        const option = document.createElement('option');
+                        option.value = target.ta_id;
+                        option.textContent = target.ten_nhom_doi_tuong;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading target audiences:', error);
+                Toast.error('Không thể tải danh sách nhóm đối tượng');
+            }
+        }
+
+        function setupSelectionHandlers() {
+            // Product group selection
+            const productGroupRadios = document.querySelectorAll('input[name="product_group_type"]');
+            const productGroupSelect = document.querySelector('.product-group-select');
+            const productGroupDropdown = document.querySelector('select[name="product_group_id"]');
+
+            productGroupRadios.forEach(radio => {
+                radio.addEventListener('change', function () {
+                    const isGroupSelected = this.value === 'group';
+                    productGroupSelect.style.display = isGroupSelected ? 'block' : 'none';
+                    productGroupDropdown.disabled = !isGroupSelected;
                 });
             });
 
-            ageCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    const allChecked = Array.from(ageCheckboxes).every(cb => cb.checked);
-                    allAgeCheckbox.checked = allChecked;
+            // Target audience selection
+            const targetTypeRadios = document.querySelectorAll('input[name="target_type"]');
+            const targetAudienceSelect = document.querySelector('.target-audience-select');
+            const targetAudienceDropdown = document.querySelector('select[name="target_audience_id"]');
+
+            targetTypeRadios.forEach(radio => {
+                radio.addEventListener('change', function () {
+                    const isExistingSelected = this.value === 'existing';
+                    targetAudienceSelect.style.display = isExistingSelected ? 'block' : 'none';
+                    targetAudienceDropdown.disabled = !isExistingSelected;
                 });
             });
-        });
+        }
     </script>
 </body>
 

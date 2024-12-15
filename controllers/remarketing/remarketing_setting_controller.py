@@ -3,7 +3,7 @@ from models.remarketing_setting import RemarketingSetting
 from models.remarketing_excluded_website import RemarketingExcludedWebsite
 from controllers.base_controller import BaseController
 
-class RemarketingController(BaseController):
+class RemarketingSettingController(BaseController):
     def get(self, remarketing_id=None):
         try:
             if remarketing_id:

@@ -61,9 +61,9 @@ class Website:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-            SELECT * FROM website w
-            LEFT JOIN website_price wp ON w.website_id = wp.website_id
-            WHERE w.active = true AND wp.price_id IS NOT NULL
+            SELECT DISTINCT w.* FROM website w
+            JOIN global_price gp ON w.website_id = gp.website_id
+            WHERE w.active = true AND gp.active = true
             ''')
             rows = cursor.fetchall()
             if not rows:

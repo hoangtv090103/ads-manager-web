@@ -1,16 +1,18 @@
 from flask import jsonify, request
 from flask_restful import Resource
 from models.city import City
+
 from controllers.base_controller import BaseController
 
+
 class CityController(BaseController):
-    def get(self, city_id=None):
+    def get(self):
         try:
-            if city_id:
-                city = City.get_by_id(city_id)
-                return jsonify(city)
             cities = City.get_all()
-            return jsonify(cities)
+            return jsonify({
+                'status': 'success',
+                'cities': cities
+            })
         except Exception as e:
             return jsonify({
                 'status': 'error',

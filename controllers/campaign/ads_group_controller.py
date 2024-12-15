@@ -1,35 +1,59 @@
 from flask import request, jsonify
-from flask_restful import Resource
 from controllers.base_controller import BaseController
 from models.ads_group import AdsGroup
 from models.ads_group_website import AdsGroupWebsite
 from models.ads_group_target_audience import AdsGroupTargetAudience
 from models.ads_group_product_group_mapping import AdsGroupProductGroupMapping
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 
 class AdsGroupController(BaseController):
     def get(self, ads_group_id=None):
         try:
+            logger.debug("Starting get request for ads groups")
             if ads_group_id:
+                logger.debug(
+                    f"Fetching single ads group with ID: {ads_group_id}")
                 ads_group = AdsGroup.get_by_id(ads_group_id)
-                return jsonify({"ads_group": ads_group})
+                if not ads_group:
+                    return {"error": "Ads group not found"}, 404
+                return {"ads_group": ads_group}
+
+            logger.debug("Fetching all ads groups")
             ads_groups = AdsGroup.get_all()
-            return jsonify({"ads_groups": ads_groups})
+            logger.debug(
+                f"Found {len(ads_groups) if ads_groups else 0} ads groups")
+
+            if not ads_groups:
+                logger.warning("No ads groups found in database")
+                return {"ads_groups": []}
+
+            logger.debug("Successfully processed all ads groups")
+            return {"ads_groups": ads_groups}
         except Exception as e:
-            return jsonify({"error": str(e)}), 500
+            logger.error(f"Error in get ads groups: {str(e)}", exc_info=True)
+            return {"error": str(e)}, 500
 
     def post(self):
         try:
             data = request.json
-            
+            logger.debug(f"Received POST request with data: {data}")
+
             # Create ads group
             ads_group = AdsGroup(
                 camp_id=data.get('camp_id'),
                 ads_group_status_id=1,  # Default status
                 ten_nhom=data.get('ten_nhom'),
-                nham_chon_all_san_pham=data.get('nham_chon_all_san_pham', False),
+                nham_chon_all_san_pham=data.get(
+                    'nham_chon_all_san_pham', False),
                 nham_chon_doi_tuong=data.get('nham_chon_doi_tuong', False),
                 nham_chon_dia_ly=data.get('nham_chon_dia_ly', ''),
-                gioi_tinh_khong_xac_dinh=data.get('gioi_tinh_khong_xac_dinh', False),
+                gioi_tinh_khong_xac_dinh=data.get(
+                    'gioi_tinh_khong_xac_dinh', False),
                 gioi_tinh_nam=data.get('gioi_tinh_nam', False),
                 gioi_tinh_nu=data.get('gioi_tinh_nu', False),
                 tuoi_less_than_18=data.get('tuoi_less_than_18', False),
@@ -39,6 +63,7 @@ class AdsGroupController(BaseController):
                 tuoi_more_than_50=data.get('tuoi_more_than_50', False)
             )
             ads_group_id = ads_group.save()
+            logger.debug(f"Created ads group with ID: {ads_group_id}")
 
             # Create website mappings
             websites = data.get('websites', [])
@@ -66,12 +91,13 @@ class AdsGroupController(BaseController):
                 )
                 pg_mapping.create()
 
-            return jsonify({
+            return {
                 "message": "Ads group created successfully",
                 "ads_group_id": ads_group_id
-            }), 201
+            }, 201
         except Exception as e:
-            return jsonify({"error": str(e)}), 500
+            logger.error(f"Error creating ads group: {str(e)}", exc_info=True)
+            return {"error": str(e)}, 500
 
     def put(self, ads_group_id):
         try:
@@ -79,13 +105,13 @@ class AdsGroupController(BaseController):
             ads_group = AdsGroup(**data)
             ads_group.ads_group_id = ads_group_id
             ads_group.update()
-            return jsonify({"message": "Ads group updated successfully"})
+            return {"message": "Ads group updated successfully"}
         except Exception as e:
-            return jsonify({"error": str(e)}), 500
+            return {"error": str(e)}, 500
 
     def delete(self, ads_group_id):
         try:
             AdsGroup.delete_by_id(ads_group_id)
-            return jsonify({"message": "Ads group deleted successfully"})
+            return {"message": "Ads group deleted successfully"}
         except Exception as e:
-            return jsonify({"error": str(e)}), 500
+            return {"error": str(e)}, 500
