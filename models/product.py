@@ -1,6 +1,7 @@
 from configs.db import get_db_connection
 from openpyxl import load_workbook
 import io
+import base64
 
 
 class Product:
@@ -87,41 +88,89 @@ class Product:
 
     @staticmethod
     def get_all():
-        with get_db_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute('''
-                SELECT p.*, 
-                       ds.ten_nguon_du_lieu,
-                       ps.status_name as product_status_name
-                FROM product p
-                LEFT JOIN data_source ds ON p.source_id = ds.source_id
-                LEFT JOIN product_status ps ON p.productstatus_id = ps.productstatus_id
-                WHERE p.active = true
-                ORDER BY p.created_at DESC
-            ''')
-            rows = cursor.fetchall()
-            if not rows:
-                return []
-            return [dict(zip([column[0] for column in cursor.description], row))
-                    for row in rows]
+        try:
+            with get_db_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute('''
+                    SELECT p.*, 
+                           ds.ten_nguon_du_lieu,
+                           ps.ten_trang_thai as tinh_trang_san_pham
+                    FROM product p
+                    LEFT JOIN data_source ds ON p.source_id = ds.source_id
+                    LEFT JOIN product_status ps ON p.productstatus_id = ps.productstatus_id
+                    WHERE p.active = true
+                    ORDER BY p.created_at DESC
+                ''')
+                rows = cursor.fetchall()
+                if not rows:
+                    return []
+                
+                result = []
+                for row in rows:
+                    product_dict = dict(zip([column[0] for column in cursor.description], row))
+                    # Format numeric values
+                    product_dict['gia_san_pham'] = float(product_dict['gia_san_pham']) if product_dict['gia_san_pham'] else 0
+                    product_dict['gia_khuyen_mai'] = float(product_dict['gia_khuyen_mai']) if product_dict['gia_khuyen_mai'] else None
+                    product_dict['ctr'] = float(product_dict['ctr']) if product_dict['ctr'] else 0
+                    # Convert bytea to base64 if exists
+                    if product_dict['hinh_anh_san_pham']:
+                        product_dict['hinh_anh_san_pham'] = base64.b64encode(product_dict['hinh_anh_san_pham']).decode('utf-8')
+                    # Add default value for so_nhom_quang_cao since we removed the JOIN
+                    product_dict['so_nhom_quang_cao'] = 0
+                    result.append(product_dict)
+                return result
+        except Exception as e:
+            print(f"Error getting all products: {str(e)}")
+            raise
 
     @staticmethod
     def get_by_id(product_id):
-        with get_db_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute('''
-                SELECT p.*, 
-                       ds.ten_nguon_du_lieu,
-                       ps.status_name as product_status_name
-                FROM product p
-                LEFT JOIN data_source ds ON p.source_id = ds.source_id
-                LEFT JOIN product_status ps ON p.productstatus_id = ps.productstatus_id
-                WHERE p.product_id = %s
-            ''', (product_id,))
-            row = cursor.fetchone()
-            if not row:
-                return None
-            return dict(zip([column[0] for column in cursor.description], row))
+        try:
+            with get_db_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute('''
+                    SELECT p.*, 
+                           ds.ten_nguon_du_lieu,
+                           ps.ten_trang_thai as tinh_trang_san_pham
+                    FROM product p
+                    LEFT JOIN data_source ds ON p.source_id = ds.source_id
+                    LEFT JOIN product_status ps ON p.productstatus_id = ps.productstatus_id
+                    WHERE p.product_id = %s
+                ''', (product_id,))
+                row = cursor.fetchone()
+                if not row:
+                    return None
+                
+                product_dict = dict(zip([column[0] for column in cursor.description], row))
+                # Format numeric values
+                product_dict['gia_san_pham'] = float(product_dict['gia_san_pham']) if product_dict['gia_san_pham'] else 0
+                product_dict['gia_khuyen_mai'] = float(product_dict['gia_khuyen_mai']) if product_dict['gia_khuyen_mai'] else None
+                product_dict['ctr'] = float(product_dict['ctr']) if product_dict['ctr'] else 0
+                # Convert bytea to base64 if exists
+                if product_dict['hinh_anh_san_pham']:
+                    product_dict['hinh_anh_san_pham'] = base64.b64encode(product_dict['hinh_anh_san_pham']).decode('utf-8')
+                # Add default value for so_nhom_quang_cao since we removed the JOIN
+                product_dict['so_nhom_quang_cao'] = 0
+                return product_dict
+        except Exception as e:
+            print(f"Error getting product by ID: {str(e)}")
+            raise
+
+    @staticmethod
+    def update_status(product_id, active):
+        try:
+            with get_db_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute('''
+                    UPDATE product 
+                    SET active = %s,
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE product_id = %s
+                ''', (active, product_id))
+                conn.commit()
+        except Exception as e:
+            print(f"Error updating product status: {str(e)}")
+            raise
 
     def update(self):
         with get_db_connection() as conn:

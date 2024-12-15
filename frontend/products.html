@@ -368,7 +368,7 @@
                         <th style="width: 40px;"><input type="checkbox"></th>
                         <th>STT</th>
                         <th>Bật/tắt</th>
-                        <th>Hình ảnh sản phẩm</th>
+                        <!-- <th>Hình ảnh sản phẩm</th> -->
                         <th>Tiêu đề</th>
                         <th>Chiến dịch QC</th>
                         <th>Trạng thái</th>
@@ -398,14 +398,15 @@
         async function fetchProducts() {
             try {
                 const response = await fetchWithAuth(`${baseUrl}/products`);
-
                 if (!response.ok) {
                     throw new Error('Không thể tải dữ liệu sản phẩm');
                 }
 
-                const data = await response.json();
-                renderProducts(data);
-                updateStats(data);
+                const result = await response.json();
+                if (result.data) {
+                    renderProducts(result.data);
+                    updateStats(result.data);
+                }
             } catch (error) {
                 console.error('Error:', error);
                 if (error.message === 'Unauthorized') {
@@ -416,35 +417,35 @@
             }
         }
 
-        function updateStats(data) {
-            const totalProducts = data.length;
-            const activeProducts = data.filter(p => p.tinh_trang_san_pham === 'Thực chạy').length;
-            const outOfStockProducts = data.filter(p => p.tinh_trang_san_pham === 'Hết hàng').length;
-            const inactiveProducts = data.filter(p => !p.active).length;
-            const errorProducts = data.filter(p => p.tinh_trang_san_pham === 'Lỗi').length;
+        function updateStats(products) {
+            const totalProducts = products.length;
+            const activeProducts = products.filter(p => p.tinh_trang_san_pham === 'Thực chạy').length;
+            const outOfStockProducts = products.filter(p => p.tinh_trang_san_pham === 'Hết hàng').length;
+            const inactiveProducts = products.filter(p => !p.active).length;
+            const errorProducts = products.filter(p => p.tinh_trang_san_pham === 'Lỗi').length;
 
             document.querySelector('.stats-container').innerHTML = `
                 <div class="stat-card">
                     <div class="stat-title">Tổng số sản phẩm</div>
-                    <div id="totalProducts" class="stat-value blue">${totalProducts}</div>
+                    <div class="stat-value blue">${totalProducts}</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-title">Sản phẩm thực chạy</div>
-                    <div id="activeProducts" class="stat-value green">${activeProducts}</div>
+                    <div class="stat-value green">${activeProducts}</div>
                     <div class="stat-percentage">${Math.round(activeProducts / totalProducts * 100)}%</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-title">Sản phẩm hết hàng</div>
-                    <div id="outOfStockProducts" class="stat-value orange">${outOfStockProducts}</div>
+                    <div class="stat-value orange">${outOfStockProducts}</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-title">Sản phẩm đã tắt</div>
-                    <div id="inactiveProducts" class="stat-value gray">${inactiveProducts}</div>
+                    <div class="stat-value gray">${inactiveProducts}</div>
                     <div class="stat-percentage">${Math.round(inactiveProducts / totalProducts * 100)}%</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-title">Sản phẩm bị lỗi dữ liệu</div>
-                    <div id="errorProducts" class="stat-value red">${errorProducts}</div>
+                    <div class="stat-value red">${errorProducts}</div>
                 </div>
             `;
         }
@@ -452,11 +453,6 @@
         function renderProducts(products) {
             const tbody = document.getElementById('productsTableBody');
             tbody.innerHTML = '';
-
-            const activeProducts = products.filter(p => p.tinh_trang_san_pham === 'Thực chạy').length;
-            const outOfStockProducts = products.filter(p => p.tinh_trang_san_pham === 'Hết hàng').length;
-            const inactiveProducts = products.filter(p => !p.active).length;
-            const errorProducts = products.filter(p => p.tinh_trang_san_pham === 'Lỗi').length;
 
             products.forEach((product, index) => {
                 const tr = document.createElement('tr');
@@ -471,28 +467,42 @@
                         </label>
                     </td>
                     <td>
-                        <img src="data:image/jpeg;base64,${product.hinh_anh_san_pham}" 
-                             alt="${product.ten_san_pham}" 
-                             style="width: 60px; height: 60px; object-fit: cover;">
-                    </td>
-                    <td>
                         <div>${product.ten_san_pham}</div>
                         <a href="#" class="detail-link">Chi tiết</a>
                     </td>
                     <td>
-                        ${product.campaign_name || 'test cd ecom'}
-                        <div class="campaign-detail">CD testP</div>
-                        <a href="#" class="view-more">Xem thêm</a>
+                        ${product.so_nhom_quang_cao > 0 ? 
+                            `<div>Đang chạy ${product.so_nhom_quang_cao} nhóm QC</div>
+                             <a href="#" class="view-more">Xem thêm</a>` : 
+                            'Chưa có chiến dịch'
+                        }
                     </td>
-                    <td><span class="status-badge status-active">${product.tinh_trang_san_pham}</span></td>
-                    <td>${product.loai_san_pham}</td>
-                    <td style="text-align: right;">${product.gia.toLocaleString()}</td>
-                    <td style="text-align: right;">${product.luot_xem || '-'}</td>
-                    <td style="text-align: right;">${product.luot_nhan || '-'}</td>
-                    <td style="text-align: right;">${product.ctr || '-'}</td>
+                    <td>
+                        <span class="status-badge ${getStatusClass(product.tinh_trang_san_pham)}">
+                            ${product.tinh_trang_san_pham}
+                        </span>
+                    </td>
+                    <td>${product.ten_nguon_du_lieu || '-'}</td>
+                    <td style="text-align: right;">${product.gia_san_pham.toLocaleString()} đ</td>
+                    <td style="text-align: right;">${product.luot_xem || 0}</td>
+                    <td style="text-align: right;">${product.luot_nhan || 0}</td>
+                    <td style="text-align: right;">${product.ctr || 0}%</td>
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        function getStatusClass(status) {
+            switch (status?.toLowerCase()) {
+                case 'thực chạy':
+                    return 'status-active';
+                case 'hết hàng':
+                    return 'status-inactive';
+                case 'lỗi':
+                    return 'status-error';
+                default:
+                    return 'status-inactive';
+            }
         }
 
         async function toggleProduct(productId, active) {
@@ -509,7 +519,13 @@
                     throw new Error('Không thể cập nhật trạng thái sản phẩm');
                 }
 
-                fetchProducts(); // Refresh data
+                const result = await response.json();
+                if (result.message) {
+                    Toast.success(result.message);
+                }
+                
+                // Refresh data
+                fetchProducts();
             } catch (error) {
                 console.error('Error:', error);
                 Toast.error(error.message);
