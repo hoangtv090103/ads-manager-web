@@ -4,7 +4,7 @@ from configs.db import get_db_connection
 class TargetAudience:
     def __init__(self, ta_id=None, ten_nhom_doi_tuong="", trang_da_truy_cap="",
                  apply_all_product=False, HanhViID=None, LoaiTruHanhViID=None,
-                 created_at=None, updated_at=None, active=True):
+                 created_at=None, updated_at=None, active=False):
         self.ta_id = ta_id
         self.ten_nhom_doi_tuong = ten_nhom_doi_tuong
         self.trang_da_truy_cap = trang_da_truy_cap
@@ -62,7 +62,6 @@ class TargetAudience:
             cursor.execute('''
             SELECT *
             FROM target_audience
-            WHERE active = TRUE
             ORDER BY created_at DESC
             ''')
             rows = cursor.fetchall()

@@ -61,8 +61,32 @@
             margin-bottom: 12px;
         }
 
+        .url-section span {
+            color: #4F4F4F;
+            font-size: 14px;
+        }
+
         .url-input {
             flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid #E0E0E0;
+            color: #4F4F4F;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .btn-outline:hover {
+            background: #F8F9FA;
         }
 
         .behavior-block {
@@ -243,21 +267,35 @@
         .range-inputs input[type="text"],
         .range-inputs input[type="number"] {
             width: 120px;
-            padding: 6px 12px;
+            padding: 8px 12px;
             border: 1px solid #E0E0E0;
             border-radius: 4px;
             font-size: 14px;
+            background: white;
         }
 
         .range-inputs select {
-            padding: 6px 12px;
+            padding: 8px 12px;
             border: 1px solid #E0E0E0;
             border-radius: 4px;
             font-size: 14px;
+            background: white;
         }
 
         .range-inputs span {
-            color: #828282;
+            color: #4F4F4F;
+            font-size: 14px;
+        }
+
+        .range-inputs label {
+            color: #4F4F4F;
+            font-size: 14px;
+        }
+
+        .checkbox-group {
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: #4F4F4F;
         }
 
         .product-selection {
@@ -577,7 +615,6 @@
                     <div class="behavior-container">
                         <div class="behavior-group">
                             <select class="behavior-select">
-                                <option value="">Tất cả</option>
                                 ${behaviors.map(b => `<option value="${b.behav_id}">${b.ten_hanh_vi}</option>`).join('')}
                             </select>
                             <div class="behavior-content"></div>
@@ -654,7 +691,13 @@
         function populateBehaviorSelect() {
             const selects = document.querySelectorAll('.behavior-select');
             selects.forEach(select => {
-                select.innerHTML = '<option value="">Tất cả</option>';
+                select.innerHTML = '';
+                
+                const defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.textContent = "Chọn hành vi";
+                select.appendChild(defaultOption);
+                
                 behaviors.forEach(behavior => {
                     const option = document.createElement('option');
                     option.value = behavior.behav_id;
@@ -803,14 +846,29 @@
                 </div>
                 <div class="behavior-group">
                     <select class="behavior-select">
-                        <option value="">Tất cả</option>
-                        ${behaviors.map(b => `<option value="${b.behav_id}">${b.ten_hanh_vi}</option>`).join('')}
                     </select>
                     <div class="behavior-content"></div>
                 </div>
             `;
 
+            // Tạo lại select với options mới
             const select = newExclusion.querySelector('.behavior-select');
+            select.innerHTML = ''; // Xóa tất cả options hiện tại
+            
+            // Thêm option mặc định
+            const defaultOption = document.createElement('option');
+            defaultOption.value = "";
+            defaultOption.textContent = "Chọn hành vi";
+            select.appendChild(defaultOption);
+            
+            // Thêm các behavior options
+            behaviors.forEach(behavior => {
+                const option = document.createElement('option');
+                option.value = behavior.behav_id;
+                option.textContent = behavior.ten_hanh_vi;
+                select.appendChild(option);
+            });
+
             select.addEventListener('change', function() {
                 const behaviorId = this.value;
                 const behavior = behaviorId ? behaviors.find(b => b.behav_id === parseInt(behaviorId)) : { ten_hanh_vi: 'Tất cả' };
@@ -836,14 +894,28 @@
                 </div>
                 <div class="behavior-group">
                     <select class="behavior-select">
-                        <option value="">Tất cả</option>
-                        ${behaviors.map(b => `<option value="${b.behav_id}">${b.ten_hanh_vi}</option>`).join('')}
                     </select>
                     <div class="behavior-content"></div>
                 </div>
             `;
 
+            // Tạo lại select với options mới
             const select = newBehavior.querySelector('.behavior-select');
+            
+            // Thêm option mặc định
+            const defaultOption = document.createElement('option');
+            defaultOption.value = "";
+            defaultOption.textContent = "Chọn hành vi";
+            select.appendChild(defaultOption);
+            
+            // Thêm các behavior options
+            behaviors.forEach(behavior => {
+                const option = document.createElement('option');
+                option.value = behavior.behav_id;
+                option.textContent = behavior.ten_hanh_vi;
+                select.appendChild(option);
+            });
+
             select.addEventListener('change', function() {
                 const behaviorId = this.value;
                 const behavior = behaviorId ? behaviors.find(b => b.behav_id === parseInt(behaviorId)) : { ten_hanh_vi: 'Tất cả' };

@@ -119,7 +119,7 @@ class AccountController(BaseController):
                         u.email,
                         u.active as user_active,
                         u.created_at,
-                        r.name,
+                        r.name as role_name,
                         -- Publisher info
                         p.publisher_id,
                         p.ten_publisher,
@@ -139,9 +139,7 @@ class AccountController(BaseController):
                 """
 
                 if user_id:
-                    query += """
-                        WHERE u.user_id = %s
-                    """
+                    query += " WHERE u.user_id = %s"
                     cursor.execute(query, (user_id,))
                     row = cursor.fetchone()
                     if not row:
@@ -154,8 +152,15 @@ class AccountController(BaseController):
 
                 users = []
                 for row in cursor.fetchall():
-                    user_type = 'Khách hàng' if row[12] else (
-                        'Publisher' if row[7] else 'Admin')
+                    user_type = 'Khách hàng' if row[11] else ('Publisher' if row[7] else 'Admin')
+                    
+                    # Xác định full_name dựa trên user_type
+                    if user_type == 'Publisher':
+                        full_name = row[7]  # ten_publisher
+                    elif user_type == 'Khách hàng':
+                        full_name = row[11]  # ho_va_ten của customer
+                    else:
+                        full_name = row[1]  # username cho Admin
 
                     users.append({
                         'user_id': row[0],
@@ -164,10 +169,8 @@ class AccountController(BaseController):
                         'active': row[3],
                         'created_at': row[4].strftime('%d/%m/%Y') if row[4] else None,
                         'role': row[5],
-                        # ten_publisher or ho_va_ten or username
-                        'full_name': row[7] or row[12] or row[1],
+                        'full_name': full_name,
                         'user_type': user_type,
-                        # Use user active status for all types
                         'status': row[3]
                     })
 
