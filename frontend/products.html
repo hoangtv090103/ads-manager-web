@@ -37,11 +37,25 @@
             font-weight: 600;
         }
 
-        .blue { color: #0061C1; }
-        .green { color: #219653; }
-        .orange { color: #F2994A; }
-        .gray { color: #828282; }
-        .red { color: #EB5757; }
+        .blue {
+            color: #0061C1;
+        }
+
+        .green {
+            color: #219653;
+        }
+
+        .orange {
+            color: #F2994A;
+        }
+
+        .gray {
+            color: #828282;
+        }
+
+        .red {
+            color: #EB5757;
+        }
 
         .table-container {
             background: white;
@@ -219,7 +233,7 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            
+
             <span class="logo-text">Ads Manager</span>
         </div>
 
@@ -249,7 +263,7 @@
 
 
 
-            
+
 
             <a href="/frontend/publishers.html" class="nav-item">
                 <i class="fas fa-users-cog"></i>
@@ -272,7 +286,7 @@
                 <i class="fas fa-user-shield"></i>
                 <span>Quản lý phân quyền</span>
             </a>
-<div class="nav-group">
+            <div class="nav-group">
                 <div class="nav-item" onclick="toggleSubmenu(this)">
                     <i class="fas fa-chart-bar"></i>
                     <span>Báo cáo</span>
@@ -300,13 +314,13 @@
                     <div class="user-email" id="user-email"></div>
                 </div>
                 <i class="fas fa-user"></i>
-<div class="user-dropdown">
+                <div class="user-dropdown">
                     <div class="dropdown-item" onclick="auth.logout()">
                         <i class="fas fa-sign-out-alt"></i>
                         Đăng xuất
                     </div>
                 </div>
-                
+
             </div>
         </div>
 
@@ -339,25 +353,18 @@
 
         <div class="table-container">
             <div class="action-bar">
-                <div style="display: flex; align-items: center;">
-                    <button class="btn-primary" onclick="addProduct()">
+                <div class="action-left">
+                    <button class="btn-primary" onclick="window.location.href='data-sources.html'">
                         <i class="fas fa-plus"></i>
                         Thêm sản phẩm
                     </button>
+                    <button onclick="reloadProducts()" class="btn-secondary"
+                        style="display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
                     <div class="search-box">
                         <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Tìm kiếm sản phẩm, id sản phẩm...">
-                    </div>
-                </div>
-                <div style="display: flex; gap: 16px;">
-                    <button class="filter-button">
-                        <i class="fas fa-filter"></i>
-                        Lọc
-                    </button>
-                    <div class="date-range">
-                        <input type="text" placeholder="Ngày bắt đầu">
-                        <span>-</span>
-                        <input type="text" placeholder="Ngày kết thúc">
+                        <input type="text" placeholder="Tìm kiếm theo tên sản phẩm" onkeyup="handleSearch(event)">
                     </div>
                 </div>
             </div>
@@ -390,10 +397,12 @@
     <script>
         const baseUrl = 'http://127.0.0.1:5000/api/v1';
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             requireAuth();
             fetchProducts();
         });
+
+        let allProducts = []; // Store all products for filtering
 
         async function fetchProducts() {
             try {
@@ -404,8 +413,19 @@
 
                 const result = await response.json();
                 if (result.data) {
-                    renderProducts(result.data);
-                    updateStats(result.data);
+                    allProducts = result.data; // Store all products
+                    let products = [...allProducts];
+
+                    // Filter products based on selected data sources if any
+                    const selectedSourceIds = JSON.parse(sessionStorage.getItem('selectedSourceIds') || '[]');
+                    if (selectedSourceIds.length > 0) {
+                        products = products.filter(product =>
+                            selectedSourceIds.includes(product.source_id)
+                        );
+                    }
+
+                    renderProducts(products);
+                    updateStats(products);
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -417,12 +437,25 @@
             }
         }
 
+        function reloadProducts() {
+            // Clear any source filters
+            sessionStorage.removeItem('selectedSourceIds');
+            // Fetch fresh data
+            fetchProducts();
+            Toast.success('Đã tải lại dữ liệu');
+        }
+
         function updateStats(products) {
             const totalProducts = products.length;
             const activeProducts = products.filter(p => p.tinh_trang_san_pham === 'Thực chạy').length;
             const outOfStockProducts = products.filter(p => p.tinh_trang_san_pham === 'Hết hàng').length;
             const inactiveProducts = products.filter(p => !p.active).length;
             const errorProducts = products.filter(p => p.tinh_trang_san_pham === 'Lỗi').length;
+
+            // Calculate percentages
+            const activePercentage = totalProducts > 0 ? Math.round((activeProducts / totalProducts) * 100) : 0;
+            const outOfStockPercentage = totalProducts > 0 ? Math.round((outOfStockProducts / totalProducts) * 100) : 0;
+            const inactivePercentage = totalProducts > 0 ? Math.round((inactiveProducts / totalProducts) * 100) : 0;
 
             document.querySelector('.stats-container').innerHTML = `
                 <div class="stat-card">
@@ -432,16 +465,17 @@
                 <div class="stat-card">
                     <div class="stat-title">Sản phẩm thực chạy</div>
                     <div class="stat-value green">${activeProducts}</div>
-                    <div class="stat-percentage">${Math.round(activeProducts / totalProducts * 100)}%</div>
+                    <div class="stat-percentage">${activePercentage}%</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-title">Sản phẩm hết hàng</div>
                     <div class="stat-value orange">${outOfStockProducts}</div>
+                    <div class="stat-percentage">${outOfStockPercentage}%</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-title">Sản phẩm đã tắt</div>
                     <div class="stat-value gray">${inactiveProducts}</div>
-                    <div class="stat-percentage">${Math.round(inactiveProducts / totalProducts * 100)}%</div>
+                    <div class="stat-percentage">${inactivePercentage}%</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-title">Sản phẩm bị lỗi dữ liệu</div>
@@ -457,25 +491,24 @@
             products.forEach((product, index) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><input type="checkbox"></td>
+                    <td><input type="checkbox" onchange="toggleSelect(this)"></td>
                     <td>${index + 1}</td>
                     <td>
                         <label class="toggle-switch">
                             <input type="checkbox" ${product.active ? 'checked' : ''} 
-                                   onchange="toggleProduct(${product.product_id}, this.checked)">
+                                   onchange="toggleToggle(${product.product_id}, this.checked)">
                             <span class="toggle-slider"></span>
                         </label>
                     </td>
                     <td>
                         <div>${product.ten_san_pham}</div>
-                        <a href="#" class="detail-link">Chi tiết</a>
                     </td>
                     <td>
-                        ${product.so_nhom_quang_cao > 0 ? 
-                            `<div>Đang chạy ${product.so_nhom_quang_cao} nhóm QC</div>
-                             <a href="#" class="view-more">Xem thêm</a>` : 
-                            'Chưa có chiến dịch'
-                        }
+                        ${product.so_nhom_quang_cao > 0 ?
+                        `<div>Đang chạy ${product.so_nhom_quang_cao} nhóm QC</div>
+                             <a href="#" class="view-more">Xem thêm</a>` :
+                        'Chưa có chiến dịch'
+                    }
                     </td>
                     <td>
                         <span class="status-badge ${getStatusClass(product.tinh_trang_san_pham)}">
@@ -498,6 +531,8 @@
                     return 'status-active';
                 case 'hết hàng':
                     return 'status-inactive';
+                case 'đã tắt':
+                    return 'status-inactive';
                 case 'lỗi':
                     return 'status-error';
                 default:
@@ -505,7 +540,7 @@
             }
         }
 
-        async function toggleProduct(productId, active) {
+        async function toggleToggle(productId, active) {
             try {
                 const response = await fetchWithAuth(`${baseUrl}/products/${productId}`, {
                     method: 'PUT',
@@ -523,13 +558,38 @@
                 if (result.message) {
                     Toast.success(result.message);
                 }
-                
+
                 // Refresh data
                 fetchProducts();
             } catch (error) {
                 console.error('Error:', error);
                 Toast.error(error.message);
             }
+        }
+
+        function handleSearch(event) {
+            const searchTerm = event.target.value.toLowerCase().trim();
+            let filteredProducts = [...allProducts];
+
+            // Apply source filter if exists
+            const selectedSourceIds = JSON.parse(sessionStorage.getItem('selectedSourceIds') || '[]');
+            if (selectedSourceIds.length > 0) {
+                filteredProducts = filteredProducts.filter(product =>
+                    selectedSourceIds.includes(product.source_id)
+                );
+            }
+
+            // Apply search filter
+            if (searchTerm.length >= 2) {
+                filteredProducts = filteredProducts.filter(product => {
+                    return product.ten_san_pham?.toLowerCase().includes(searchTerm) ||
+                        product.mo_ta_san_pham?.toLowerCase().includes(searchTerm) ||
+                        product.ten_nguon_du_lieu?.toLowerCase().includes(searchTerm);
+                });
+            }
+
+            renderProducts(filteredProducts);
+            updateStats(filteredProducts);
         }
     </script>
 </body>

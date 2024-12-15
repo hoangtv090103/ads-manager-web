@@ -98,7 +98,6 @@ class Product:
                     FROM product p
                     LEFT JOIN data_source ds ON p.source_id = ds.source_id
                     LEFT JOIN product_status ps ON p.productstatus_id = ps.productstatus_id
-                    WHERE p.active = true
                     ORDER BY p.created_at DESC
                 ''')
                 rows = cursor.fetchall()

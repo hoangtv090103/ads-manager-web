@@ -265,37 +265,37 @@
             <!-- Action Bar -->
             <div class="action-bar">
                 <div class="action-left">
-                    <button class="btn-primary" onclick="createDataSource()">
+                    <button class="btn-primary" onclick="window.location.href='data-source-create.html'">
                         <i class="fas fa-plus"></i>
-                        Tạo nguồn dữ liệu
+                        Thêm nguồn dữ liệu
                     </button>
                     <div class="search-box">
                         <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Tìm kiếm...">
+                        <input type="text" placeholder="Tìm kiếm theo tên nguồn dữ liệu" onkeyup="handleSearch(event)">
                     </div>
                 </div>
-                <div class="action-right">
-                    <button class="btn-secondary" onclick="viewProducts()">
-                        Xem sản phẩm
-                    </button>
-                </div>
+                <button class="btn-view-products" onclick="viewSelectedProducts()" style="background: white; border: 1px solid #0061C1; color: #0061C1; padding: 8px 16px; border-radius: 4px; font-size: 14px; cursor: pointer;">
+                    Xem sản phẩm
+                </button>
             </div>
 
-            <!-- Table -->
             <div class="table-container">
                 <table class="data-sources-table">
                     <thead>
                         <tr>
-                            <th style="width: 40px;"><input type="checkbox"></th>
+                            <th style="width: 40px;">
+                                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
+                            </th>
                             <th>STT</th>
-                            <th>Nguồn cấp dữ liệu</th>
+                            <th>Tên nguồn dữ liệu</th>
+                            <th>Số lượng sản phẩm</th>
+                            <th>Ngày tạo</th>
                             <th>Trạng thái</th>
-                            <th>Cập nhật</th>
-                            <th>Số sản phẩm</th>
+                            <th>Thao tác</th>
                         </tr>
                     </thead>
                     <tbody id="dataSourcesTableBody">
-                        <!-- Data will be rendered here -->
+                        <!-- Data will be populated by JavaScript -->
                     </tbody>
                 </table>
             </div>
@@ -310,8 +310,11 @@
     <script src="./js/script.js"></script>
     <script>
         const baseUrl = 'http://127.0.0.1:5000/api/v1';
+        let dataSources = [];
+        let selectedDataSources = [];
+        let allDataSources = []; // Store all data sources for filtering
 
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             requireAuth();
             fetchDataSources();
         });
@@ -319,14 +322,15 @@
         async function fetchDataSources() {
             try {
                 const response = await fetchWithAuth(`${baseUrl}/data-sources`);
-                const data = await response.json();
-
                 if (!response.ok) {
-                    throw new Error('Không thể tải dữ liệu nguồn cấp');
+                    throw new Error('Failed to fetch data sources');
                 }
-
-                renderDataSources(data.data);
-                updateFooter(data.data);
+                const result = await response.json();
+                if (result.data) {
+                    allDataSources = result.data; // Store all data sources
+                    dataSources = [...allDataSources];
+                    renderDataSources(dataSources);
+                }
             } catch (error) {
                 console.error('Error:', error);
                 if (error.message === 'Unauthorized') {
@@ -337,35 +341,135 @@
             }
         }
 
-        function renderDataSources(dataSources) {
+        function renderDataSources(sources) {
             const tbody = document.getElementById('dataSourcesTableBody');
             tbody.innerHTML = '';
 
-            dataSources.forEach((source) => {
+            sources.forEach((source, index) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><input type="checkbox"></td>
-                    <td>${source.stt}</td>
                     <td>
-                        <a href="#" class="link">${source.ten_nguon_du_lieu}</a>
+                        <input type="checkbox" class="source-checkbox" 
+                               data-source-id="${source.source_id}"
+                               onchange="handleSourceSelection(this, ${source.source_id})">
                     </td>
+                    <td>${index + 1}</td>
+                    <td>${source.ten_nguon_du_lieu}</td>
+                    <td>${source.so_luong_san_pham || 0}</td>
+                    <td>${formatDateTime(source.created_at)}</td>
                     <td>
                         <span class="status-badge ${getStatusClass(source.trang_thai)}">
                             ${source.trang_thai}
                         </span>
                     </td>
-                    <td>${source.updated_at || '-'}</td>
-                    <td>${source.so_san_pham}</td>
+                    <td>
+                        <i class="fas fa-edit edit-icon" onclick="editDataSource(${source.source_id})" title="Sửa"></i>
+                        <i class="fas fa-trash delete-icon" onclick="deleteDataSource(${source.source_id})" title="Xóa"></i>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
 
             // Update total count
-            document.getElementById('total-sources').textContent = dataSources.length;
+            document.getElementById('total-sources').textContent = sources.length;
+            
+            // Update view products button state
+            updateViewProductsButton();
+        }
+
+        function handleSourceSelection(checkbox, sourceId) {
+            if (checkbox.checked) {
+                const source = dataSources.find(s => s.source_id === sourceId);
+                if (source && !selectedDataSources.some(s => s.source_id === sourceId)) {
+                    selectedDataSources.push(source);
+                }
+            } else {
+                selectedDataSources = selectedDataSources.filter(s => s.source_id !== sourceId);
+            }
+            updateViewProductsButton();
+        }
+
+        function toggleSelectAll(checkbox) {
+            const checkboxes = document.querySelectorAll('.source-checkbox');
+            const isChecked = checkbox.checked;
+
+            checkboxes.forEach(cb => {
+                cb.checked = isChecked;
+                const sourceId = parseInt(cb.getAttribute('data-source-id'));
+                const source = dataSources.find(s => s.source_id === sourceId);
+
+                if (isChecked && source && !selectedDataSources.some(s => s.source_id === sourceId)) {
+                    selectedDataSources.push(source);
+                }
+            });
+
+            if (!isChecked) {
+                selectedDataSources = [];
+            }
+
+            updateViewProductsButton();
+        }
+
+        function updateViewProductsButton() {
+            const viewProductsBtn = document.querySelector('.btn-view-products');
+            if (selectedDataSources.length > 0) {
+                viewProductsBtn.removeAttribute('disabled');
+                viewProductsBtn.style.opacity = '1';
+            } else {
+                viewProductsBtn.setAttribute('disabled', 'true');
+                viewProductsBtn.style.opacity = '0.5';
+            }
+        }
+
+        function viewSelectedProducts() {
+            if (selectedDataSources.length > 0) {
+                const sourceIds = selectedDataSources.map(s => s.source_id);
+                sessionStorage.setItem('selectedSourceIds', JSON.stringify(sourceIds));
+                window.location.href = '/frontend/products.html';
+            }
+        }
+
+        function reloadDataSources() {
+            // Clear selected sources
+            selectedDataSources = [];
+            sessionStorage.removeItem('selectedSourceIds');
+            
+            // Reset select all checkbox
+            document.getElementById('selectAllCheckbox').checked = false;
+            
+            // Fetch fresh data
+            fetchDataSources();
+            
+            Toast.success('Đã tải lại dữ liệu');
+        }
+
+        function handleSearch(event) {
+            const searchTerm = event.target.value.toLowerCase().trim();
+            if (searchTerm.length >= 2) {
+                const filteredSources = allDataSources.filter(source => {
+                    return source.ten_nguon_du_lieu?.toLowerCase().includes(searchTerm) ||
+                           source.trang_thai?.toLowerCase().includes(searchTerm);
+                });
+                renderDataSources(filteredSources);
+            } else if (searchTerm.length === 0) {
+                renderDataSources(allDataSources);
+            }
+        }
+
+        function formatDateTime(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleString('vi-VN', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
         }
 
         function getStatusClass(status) {
-            switch (status.toLowerCase()) {
+            switch (status?.toLowerCase()) {
                 case 'đã xử lý':
                     return 'status-active';
                 case 'đang xử lý':
@@ -379,19 +483,28 @@
             }
         }
 
-        function updateFooter(dataSources) {
-            const footer = document.createElement('div');
-            footer.className = 'table-footer';
-            document.querySelector('.table-container').appendChild(footer);
+        async function editDataSource(sourceId) {
+            window.location.href = `data-source-edit.html?id=${sourceId}`;
         }
 
-        async function createDataSource() {
-            // Implement logic to create new data source
-            window.location.href = '/frontend/data-source-create.html';
-        }
+        async function deleteDataSource(sourceId) {
+            if (confirm('Bạn có chắc chắn muốn xóa nguồn dữ liệu này?')) {
+                try {
+                    const response = await fetchWithAuth(`${baseUrl}/data-sources/${sourceId}`, {
+                        method: 'DELETE'
+                    });
 
-        function viewProducts() {
-            window.location.href = '/frontend/products.html';
+                    if (!response.ok) {
+                        throw new Error('Không thể xóa nguồn dữ liệu');
+                    }
+
+                    Toast.success('Xóa nguồn dữ liệu thành công');
+                    fetchDataSources();
+                } catch (error) {
+                    console.error('Error:', error);
+                    Toast.error('Đã xảy ra lỗi khi xóa nguồn dữ liệu');
+                }
+            }
         }
     </script>
 </body>
