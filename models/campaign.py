@@ -73,7 +73,7 @@ class Campaign:
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE,
-                FOREIGN KEY (customer_id) REFERENCES users(user_id) ON DELETE CASCADE,
+                FOREIGN KEY (customer_id) REFERENCES customer(customer_id) ON DELETE CASCADE,
                 FOREIGN KEY (camp_type_id) REFERENCES campaign_type(camp_type_id) ON DELETE CASCADE,
                 FOREIGN KEY (campstatus_id) REFERENCES campaign_status(campstatus_id) ON DELETE CASCADE,
                 FOREIGN KEY (source_id) REFERENCES data_source(source_id) ON DELETE CASCADE
