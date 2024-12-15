@@ -29,6 +29,7 @@ from controllers.ads_zone_size.ads_zone_size_controller import AdsZoneSizeContro
 from models.ads_format import AdsFormat
 from controllers.price.price_controller import PriceController
 from controllers.behaviour.behaviour_controller import BehaviourController
+from controllers.campaign.ads_ecom_controller import AdsEcomController
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Enable CORS for all routes
@@ -236,6 +237,12 @@ api.add_resource(BehaviourController,
                  '/behaviours/<int:behav_id>',
                  resource_class_kwargs={'decorators': [token_required]})
 
+# Add Ads Ecom routes
+api.add_resource(AdsEcomController,
+                 '/ads-ecom',
+                 '/ads-ecom/<int:ads_id>',
+                 resource_class_kwargs={'decorators': [token_required]}
+                 )
 
 @app.route('/api/v1/ad-size-formats/<int:size_id>', methods=['GET'])
 def get_ad_formats_by_size(size_id):

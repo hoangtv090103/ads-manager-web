@@ -1,5 +1,6 @@
 from configs.db import get_db_connection
 
+
 class AdsGroupStatus:
     def __init__(self, ads_group_status_id=None, ten_trang_thai=""):
         self.ads_group_status_id = ads_group_status_id
@@ -12,11 +13,22 @@ class AdsGroupStatus:
             cursor.execute('''
             CREATE TABLE IF NOT EXISTS ads_group_status (
                 ads_group_status_id SERIAL PRIMARY KEY,
-                ten_trang_thai VARCHAR(50),
+                ten_trang_thai VARCHAR(50) UNIQUE,
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 active BOOLEAN DEFAULT TRUE
             )
+            ''')
+
+            cursor.execute('''
+            INSERT INTO ads_group_status (ten_trang_thai)
+            VALUES 
+                ('Tất cả'),
+                ('Đang chạy'),
+                ('Tạm dừng'),
+                ('Lỗi'),
+                ('Chưa hoàn thành') 
+                ON CONFLICT (ten_trang_thai) DO NOTHING
             ''')
             conn.commit()
 

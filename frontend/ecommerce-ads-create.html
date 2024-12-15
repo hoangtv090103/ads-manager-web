@@ -10,9 +10,154 @@
     <link rel="stylesheet" href="./styles.css">
     <link rel="stylesheet" href="./css/toast.css">
     <script src="./js/auth.js"></script>
-        <script src="./js/toast.js"></script>
+    <script src="./js/toast.js"></script>
     <script src="./js/script.js"></script>
     <style>
+        /* Layout styles */
+        body {
+            display: flex;
+            min-height: 100vh;
+            background: #F5F5F5;
+        }
+
+        .sidebar {
+            width: 250px;
+            min-width: 250px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 24px 40px;
+            min-height: 100vh;
+            width: calc(100% - 250px);
+            box-sizing: border-box;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .user-email {
+            font-size: 12px;
+            color: #828282;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            padding: 8px 0;
+            display: none;
+            min-width: 160px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropdown-item:hover {
+            background: #F5F5F5;
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                padding: 24px 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 1000;
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #4F4F4F;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+
+        .form-container {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            margin-top: 24px;
+            max-width: 100%;
+        }
+
+        .form-title {
+            font-size: 20px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 24px;
+        }
+
+        .form-section {
+            margin-bottom: 32px;
+        }
+
+        .form-section h2 {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+        }
+
         .ad-format-list {
             display: flex;
             flex-direction: column;
@@ -20,20 +165,46 @@
         }
 
         .ad-format-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            padding: 12px;
             border: 1px solid #E0E0E0;
             border-radius: 4px;
-            cursor: pointer;
+            overflow: hidden;
         }
 
-        .format-details {
+        .ad-format-header {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            background: white;
+        }
+
+        .ad-format-content {
+            padding: 16px;
+            border-top: 1px solid #E0E0E0;
             display: none;
-            margin-top: 16px;
-            margin-left: 24px;
-            width: 100%;
+        }
+
+        .ad-format-item.active .ad-format-content {
+            display: block;
+        }
+
+        .upload-section {
+            margin-bottom: 24px;
+        }
+
+        .upload-btn {
+            color: #2F80ED;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .specs-info {
+            color: #828282;
+            font-size: 13px;
+            margin-top: 4px;
         }
 
         .warning-message {
@@ -43,16 +214,101 @@
             padding: 12px;
             background: #FFF4E5;
             border-radius: 4px;
-            margin: 8px 0;
+            margin: 16px 0;
+            color: #B54708;
+        }
+
+        .warning-message i {
+            color: #F79009;
+        }
+
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .toggle-switch input[type="checkbox"] {
+            width: 40px;
+            height: 20px;
+            position: relative;
+            appearance: none;
+            background: #E0E0E0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .toggle-switch input[type="checkbox"]:checked {
+            background: #2F80ED;
+        }
+
+        .toggle-switch input[type="checkbox"]::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: 0.3s;
+        }
+
+        .toggle-switch input[type="checkbox"]:checked::before {
+            left: 22px;
+        }
+
+        .btn-complete {
+            background: #0061C1;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 24px;
+            cursor: pointer;
+        }
+
+        .optional {
+            color: #828282;
+            font-size: 13px;
+        }
+
+        .specs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            background: #fff;
+        }
+
+        .specs-table th,
+        .specs-table td {
+            border: 1px solid #E0E0E0;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .specs-table th {
+            background: #F5F5F5;
+            font-weight: 500;
+        }
+
+        .specs-table tr:hover {
+            background: #F8F9FA;
         }
     </style>
 </head>
 
 <body>
+    <!-- Toggle Menu Button -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            
+
             <span class="logo-text">Ads Manager</span>
         </div>
 
@@ -77,12 +333,12 @@
 
             <a href="/frontend/target-audience.html" class="nav-item">
                 <i class="fas fa-users"></i>
-                <span>Quản lý đối tượng</span>
+                <span>Quản lý đối tợng</span>
             </a>
 
 
 
-            
+
 
             <a href="/frontend/publishers.html" class="nav-item">
                 <i class="fas fa-users-cog"></i>
@@ -105,7 +361,7 @@
                 <i class="fas fa-user-shield"></i>
                 <span>Quản lý phân quyền</span>
             </a>
-<div class="nav-group">
+            <div class="nav-group">
                 <div class="nav-item" onclick="toggleSubmenu(this)">
                     <i class="fas fa-chart-bar"></i>
                     <span>Báo cáo</span>
@@ -121,9 +377,25 @@
         </nav>
     </div>
     <div class="main-content">
-        <div class="breadcrumb">
-            <i class="fas fa-layer-group"></i>
-            <span>/ Quản lý chiến dịch / Tạo tin quảng cáo</span>
+        <!-- Header -->
+        <div class="header-content">
+            <div class="breadcrumb">
+                <i class="fas fa-layer-group"></i>
+                <span>/ Quản lý chiến dịch / Tạo tin quảng cáo</span>
+            </div>
+            <div class="user-info">
+                <div>
+                    <div class="user-name" id="user-name"></div>
+                    <div class="user-email" id="user-email"></div>
+                </div>
+                <i class="fas fa-user"></i>
+                <div class="user-dropdown">
+                    <div class="dropdown-item" onclick="auth.logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Đăng xuất
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="form-container">
@@ -131,357 +403,358 @@
 
             <form id="createAdForm">
                 <div class="form-section">
-                    <h2 class="section-title">Đặt tên tin quảng cáo</h2>
+                    <h2>Đặt tên tin quảng cáo</h2>
                     <div class="form-group">
-                        <input type="text" class="form-input" name="ad_name" placeholder="Tên tin quảng cáo" required>
+                        <input type="text" class="form-control" placeholder="Tên tin quảng cáo">
                     </div>
                 </div>
 
                 <div class="form-section">
-                    <h2 class="section-title">Định dạng quảng cáo</h2>
+                    <h2>Định dạng quảng cáo</h2>
                     <div class="ad-format-list">
+                        <!-- CatFish Ecom Video -->
                         <div class="ad-format-item">
-                            <input type="radio" name="ad_format" id="catfish_video" value="catfish_ecom_video">
-                            <label for="catfish_video">CatFish Ecom Video</label>
-
-                            <div class="format-details" id="catfish_video_details">
-                                <div class="upload-group">
+                            <div class="ad-format-header">
+                                <input type="checkbox" name="adFormat" id="catfishEcomVideo">
+                                <label for="catfishEcomVideo">CatFish Ecom Video</label>
+                            </div>
+                            <div class="ad-format-content">
+                                <div class="upload-section">
                                     <label>Banner chân trang</label>
-                                    <input type="file" id="footer_banner" accept="image/jpeg,image/png"
-                                        style="display: none" onchange="handleFileUpload(this, '375×120px', 1)">
-                                    <label for="footer_banner" class="upload-btn">
+                                    <a href="#" class="upload-btn">
                                         <i class="fas fa-upload"></i> Tải lên
-                                    </label>
-                                    <div class="format-info">Jpeg, png | 375×120px | 1 MB</div>
-                                    <div class="preview" id="footer_banner_preview"></div>
+                                    </a>
+                                    <div class="specs-info">375×120px | 1 MB</div>
                                 </div>
 
-                                <div class="upload-group">
+                                <div class="upload-section">
                                     <label>Sử dụng Video làm banner</label>
-                                    <input type="file" id="video_banner" accept="video/mp4,video/mov"
-                                        style="display: none" onchange="handleFileUpload(this, '375×810px')">
-                                    <label for="video_banner" class="upload-btn">
+                                    <a href="#" class="upload-btn">
                                         <i class="fas fa-upload"></i> Tải lên
-                                    </label>
-                                    <div class="format-info">MP4, MOV | 375×810px | Không giới hạn dung lượng</div>
-                                    <div class="preview" id="video_banner_preview"></div>
+                                    </a>
+                                    <div class="specs-info">375×810px | Không giới hạn dung lượng</div>
                                 </div>
 
-                                <div class="upload-group">
+                                <div class="upload-section">
                                     <label>Ảnh thumbnail</label>
-                                    <input type="file" id="thumbnail" accept="image/jpeg,image/png"
-                                        style="display: none" onchange="handleFileUpload(this, '375×810px', 1)">
-                                    <label for="thumbnail" class="upload-btn">
+                                    <a href="#" class="upload-btn">
                                         <i class="fas fa-upload"></i> Tải lên
-                                    </label>
-                                    <div class="format-info">Jpeg, png | 375×810px | 1 MB</div>
-                                    <div class="preview" id="thumbnail_preview"></div>
+                                    </a>
+                                    <div class="specs-info">375×810px | 1 MB</div>
                                 </div>
 
                                 <div class="toggle-options">
-                                    <label class="toggle-label">
-                                        <input type="checkbox" name="show_product_name">
-                                        <span>Tên sản phẩm</span>
-                                    </label>
-
-                                    <label class="toggle-label">
-                                        <input type="checkbox" name="show_promotion">
-                                        <span>Hiển thị giá khuyến mại và % giảm giá</span>
-                                    </label>
-
-                                    <label class="toggle-label">
-                                        <input type="checkbox" name="show_freeship">
-                                        <span>Hiển thị Freeship tất cả sản phẩm</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="ad-format-item">
-                            <input type="radio" name="ad_format" id="catfish_ecom" value="catfish_ecom">
-                            <label for="catfish_ecom">CatFish Ecom</label>
-
-                            <div class="format-details" id="catfish_ecom_details">
-                                <div class="toggle-options">
-                                    <div class="toggle-option">
-                                        <label class="toggle-label">
-                                            <label class="slider">
-                                                <input type="checkbox" name="use_default_banner">
-                                                <span class="slider-toggle"></span>
-                                            </label>
-                                            <span>Sử dụng mẫu banner có sẵn</span>
-                                        </label>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="showProductName" checked>
+                                        <label for="showProductName">Tên sản phẩm</label>
                                     </div>
-
-                                    <div class="warning-message">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                        <span>Khi sử dụng mẫu banner có sẵn của Ads Manager thì sẽ không hiển thị phần
-                                            banner mở rộng</span>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="showDiscount" checked>
+                                        <label for="showDiscount">Hiển thị giá khuyến mại và % giảm giá</label>
                                     </div>
-
-                                    <div class="toggle-option">
-                                        <label class="toggle-label">
-                                            <label class="slider">
-                                                <input type="checkbox" name="show_product_name">
-                                                <span class="slider-toggle"></span>
-                                            </label>
-                                            <span>Tên sản phẩm</span>
-                                        </label>
-                                    </div>
-
-                                    <div class="toggle-option">
-                                        <label class="toggle-label">
-                                            <label class="slider">
-                                                <input type="checkbox" name="show_promotion">
-                                                <span class="slider-toggle"></span>
-                                            </label>
-                                            <span>Hiển thị giá khuyến mại và % giảm giá</span>
-                                        </label>
-                                    </div>
-
-                                    <div class="toggle-option">
-                                        <label class="toggle-label">
-                                            <label class="slider">
-                                                <input type="checkbox" name="show_freeship">
-                                                <span class="slider-toggle"></span>
-                                            </label>
-                                            <span>Hiển thị Freeship tất cả sản phẩm</span>
-                                        </label>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="showFreeship" checked>
+                                        <label for="showFreeship">Hiển thị Freeship tất cả sản phẩm</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- CatFish Ecom -->
                         <div class="ad-format-item">
-                            <input type="radio" name="ad_format" id="mobile_banner" value="mobile_banner_card">
-                            <label for="mobile_banner">Mobile Banner Card</label>
+                            <div class="ad-format-header">
+                                <input type="checkbox" name="adFormat" id="catfishEcom">
+                                <label for="catfishEcom">CatFish Ecom</label>
+                            </div>
+                            <div class="ad-format-content">
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="useDefaultBanner" class="use-default-banner" checked>
+                                    <label for="useDefaultBanner">Sử dụng mẫu banner có sẵn</label>
+                                </div>
 
-                            <div class="format-details" id="mobile_banner_details">
+                                <div class="banner-specs-table">
+                                    <table class="specs-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Loại</th>
+                                                <th>Kích cỡ Banner</th>
+                                                <th>Vùng an toàn</th>
+                                                <th>Dung lượng tối đa</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Banner dọc</td>
+                                                <td>375×810px</td>
+                                                <td>375×255px</td>
+                                                <td>1mb</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="warning-message">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span>Khi sử dụng mẫu banner có sẵn của Novanet thì sẽ không hiển thị phần banner mở
+                                        rộng</span>
+                                </div>
+
                                 <div class="toggle-options">
-                                    <div class="toggle-option">
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" name="use_default_banner">
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                        <span>Sử dụng mẫu banner có sẵn</span>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="showProductName2" checked>
+                                        <label for="showProductName2">Tên sản phẩm</label>
                                     </div>
-
-                                    <div class="warning-message">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                        <span>Khi sử dụng mẫu banner có sẵn của Ads Manager thì sẽ không hiển thị phần
-                                            banner mở rộng</span>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="showDiscount2" checked>
+                                        <label for="showDiscount2">Hiển thị giá khuyến mại và % giảm giá</label>
                                     </div>
-
-                                    <div class="toggle-option">
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" name="show_product_name">
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                        <span>Tên sản phẩm</span>
-                                    </div>
-
-                                    <div class="toggle-option">
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" name="show_promotion">
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                        <span>Hiển thị giá khuyến mại và % giảm giá</span>
-                                    </div>
-
-                                    <div class="toggle-option">
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" name="show_freeship">
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                        <span>Hiển thị Freeship tất cả sản phẩm</span>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="showFreeship2" checked>
+                                        <label for="showFreeship2">Hiển thị Freeship tất cả sản phẩm</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Mobile Banner Card -->
                         <div class="ad-format-item">
-                            <input type="radio" name="ad_format" id="interactive_banner" value="interactive_banner">
-                            <label for="interactive_banner">Interactive Banner - Mobile Fullpage</label>
+                            <div class="ad-format-header">
+                                <input type="checkbox" name="adFormat" id="mobileBannerCard">
+                                <label for="mobileBannerCard">Mobile Banner Card</label>
+                            </div>
+                            <div class="ad-format-content">
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="useDefaultBannerMobile" class="use-default-banner"
+                                        checked>
+                                    <label for="useDefaultBannerMobile">Sử dụng mẫu banner có sẵn</label>
+                                </div>
 
-                            <div class="format-details" id="interactive_banner_details" style="display: none;">
+                                <div class="banner-specs-table">
+                                    <table class="specs-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Loại</th>
+                                                <th>Kích cỡ Banner</th>
+                                                <th>Vùng an toàn</th>
+                                                <th>Dung lượng tối đa</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Banner dọc</td>
+                                                <td>375×810px</td>
+                                                <td>375×255px</td>
+                                                <td>1mb</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
                                 <div class="toggle-options">
-                                    <div class="toggle-option">
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" name="use_default_banner">
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                        <span>Sử dụng mẫu banner có sẵn</span>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="showProductNameMobile" checked>
+                                        <label for="showProductNameMobile">Tên sản phẩm</label>
                                     </div>
-
-                                    <div class="warning-message">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                        <span>Khi sử dụng mẫu banner có sẵn của Ads Manager thì sẽ không hiển thị phần
-                                            banner mở rộng</span>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="showDiscountMobile" checked>
+                                        <label for="showDiscountMobile">Hiển thị giá khuyến mại và % giảm giá</label>
                                     </div>
-
-                                    <div class="toggle-option">
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" name="show_product_name">
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                        <span>Tên sản phẩm</span>
-                                    </div>
-
-                                    <div class="toggle-option">
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" name="show_promotion">
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                        <span>Hiển thị giá khuyến mại và % giảm giá</span>
-                                    </div>
-
-                                    <div class="toggle-option">
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" name="show_freeship">
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                        <span>Hiển thị Freeship tất cả sản phẩm</span>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="showFreeshipMobile" checked>
+                                        <label for="showFreeshipMobile">Hiển thị Freeship tất cả sản phẩm</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Interactive Banner - Mobile Fullpage -->
                         <div class="ad-format-item">
-                            <input type="radio" name="ad_format" id="flying_carpet" value="flying_carpet">
-                            <label for="flying_carpet">Flying Carpet</label>
+                            <div class="ad-format-header">
+                                <input type="checkbox" name="adFormat" id="interactiveBanner">
+                                <label for="interactiveBanner">Interactive Banner - Mobile Fullpage</label>
+                            </div>
+                            <div class="ad-format-content">
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="useDefaultBannerInteractive" class="use-default-banner"
+                                        checked>
+                                    <label for="useDefaultBannerInteractive">Sử dụng mẫu banner có sẵn</label>
+                                </div>
 
-                            <div class="format-details" id="flying_carpet_details" style="display: none;">
+                                <div class="banner-specs-table">
+                                    <table class="specs-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Loại</th>
+                                                <th>Kích cỡ Banner</th>
+                                                <th>Vùng an toàn</th>
+                                                <th>Dung lượng tối đa</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Banner dọc</td>
+                                                <td>375×810px</td>
+                                                <td>375×255px</td>
+                                                <td>1mb</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
                                 <div class="toggle-options">
-                                    <div class="toggle-option">
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" name="use_default_banner">
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                        <span>Sử dụng mẫu banner có sẵn</span>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="showProductNameInteractive" checked>
+                                        <label for="showProductNameInteractive">Tên sản phẩm</label>
                                     </div>
-
-                                    <div class="warning-message">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                        <span>Khi sử dụng mẫu banner có sẵn của Ads Manager thì sẽ không hiển thị phần
-                                            banner mở rộng</span>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="showDiscountInteractive" checked>
+                                        <label for="showDiscountInteractive">Hiển thị giá khuyến mại và % giảm
+                                            giá</label>
                                     </div>
-
-                                    <div class="toggle-option">
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" name="show_product_name">
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                        <span>Tên sản phẩm</span>
-                                    </div>
-
-                                    <div class="toggle-option">
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" name="show_promotion">
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                        <span>Hiển thị giá khuyến mại và % giảm giá</span>
-                                    </div>
-
-                                    <div class="toggle-option">
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" name="show_freeship">
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                        <span>Hiển thị Freeship tất cả sản phẩm</span>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="showFreeshipInteractive" checked>
+                                        <label for="showFreeshipInteractive">Hiển thị Freeship tất cả sản phẩm</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Flying Carpet -->
                         <div class="ad-format-item">
-                            <input type="radio" name="ad_format" id="inread_ecommerce" value="inread_ecommerce">
-                            <label for="inread_ecommerce">Inread Ecommerce</label>
+                            <div class="ad-format-header">
+                                <input type="checkbox" name="adFormat" id="flyingCarpet">
+                                <label for="flyingCarpet">Flying Carpet</label>
+                            </div>
+                            <div class="ad-format-content">
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="useDefaultBannerFlying" class="use-default-banner"
+                                        checked>
+                                    <label for="useDefaultBannerFlying">Sử dụng mẫu banner có sẵn</label>
+                                </div>
 
-                            <div class="format-details" id="inread_ecommerce_details">
+                                <div class="banner-specs-table">
+                                    <table class="specs-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Loại</th>
+                                                <th>Kích cỡ Banner</th>
+                                                <th>Vùng an toàn</th>
+                                                <th>Dung lượng tối đa</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Banner dọc</td>
+                                                <td>375×810px</td>
+                                                <td>375×255px</td>
+                                                <td>1mb</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
                                 <div class="toggle-options">
-                                    <div class="toggle-option">
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" name="use_default_banner">
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                        <span>Sử dụng mẫu banner có sẵn</span>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="showProductNameFlying" checked>
+                                        <label for="showProductNameFlying">Tên sản phẩm</label>
                                     </div>
-
-                                    <div class="warning-message">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                        <span>Khi sử dụng mẫu banner có sẵn của Ads Manager thì sẽ không hiển thị phần
-                                            banner mở rộng</span>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="showDiscountFlying" checked>
+                                        <label for="showDiscountFlying">Hiển thị giá khuyến mại và % giảm giá</label>
                                     </div>
-
-                                    <div class="toggle-option">
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" name="show_product_name">
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                        <span>Tên sản phẩm</span>
-                                    </div>
-
-                                    <div class="toggle-option">
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" name="show_promotion">
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                        <span>Hiển thị giá khuyến mại và % giảm giá</span>
-                                    </div>
-
-                                    <div class="toggle-option">
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" name="show_freeship">
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                        <span>Hiển thị Freeship tất cả sản phẩm</span>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="showFreeshipFlying" checked>
+                                        <label for="showFreeshipFlying">Hiển thị Freeship tất cả sản phẩm</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Inread Ecommerce -->
                         <div class="ad-format-item">
-                            <input type="radio" name="ad_format" id="post_inread" value="post_inread">
-                            <label for="post_inread">Post Inread</label>
+                            <div class="ad-format-header">
+                                <input type="checkbox" name="adFormat" id="inreadEcommerce">
+                                <label for="inreadEcommerce">Inread Ecommerce</label>
+                            </div>
+                            <div class="ad-format-content">
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="useDefaultBannerInread" class="use-default-banner"
+                                        checked>
+                                    <label for="useDefaultBannerInread">Sử dụng mẫu banner có sẵn</label>
+                                </div>
 
-                            <div class="format-details" id="post_inread_details">
+                                <div class="banner-specs-table">
+                                    <table class="specs-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Loại</th>
+                                                <th>Kích cỡ Banner</th>
+                                                <th>Vùng an toàn</th>
+                                                <th>Dung lượng tối đa</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Banner dọc</td>
+                                                <td>375×810px</td>
+                                                <td>375×255px</td>
+                                                <td>1mb</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
                                 <div class="toggle-options">
-                                    <div class="toggle-option">
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" name="use_default_banner">
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                        <span>Sử dụng mẫu banner có sẵn</span>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="showProductNameInread" checked>
+                                        <label for="showProductNameInread">Tên sản phẩm</label>
                                     </div>
-
-                                    <div class="warning-message">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                        <span>Khi sử dụng mẫu banner có sẵn của Ads Manager thì sẽ không hiển thị phần
-                                            banner mở rộng</span>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="showDiscountInread" checked>
+                                        <label for="showDiscountInread">Hiển thị giá khuyến mại và % giảm giá</label>
                                     </div>
-
-                                    <div class="toggle-option">
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" name="show_product_name">
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                        <span>Tên sản phẩm</span>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="showFreeshipInread" checked>
+                                        <label for="showFreeshipInread">Hiển thị Freeship tất cả sản phẩm</label>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
 
-                                    <div class="toggle-option">
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" name="show_promotion">
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                        <span>Hiển thị giá khuyến mại và % giảm giá</span>
+                        <!-- Post Inread -->
+                        <div class="ad-format-item">
+                            <div class="ad-format-header">
+                                <input type="checkbox" name="adFormat" id="postInread">
+                                <label for="postInread">Post Inread</label>
+                            </div>
+                            <div class="ad-format-content">
+                                <div class="form-group">
+                                    <label>Ảnh Avatar <input type="file" class="upload-btn"></label>
+                                    <div class="specs-info">Kích thước khuyến nghị: 100x100px</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Tên avatar</label>
+                                    <input type="text" class="form-control" placeholder="Nhập tên avatar">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Nội dung post</label>
+                                    <textarea class="form-control" rows="4" placeholder="Nhập nội dung post"></textarea>
+                                </div>
+
+                                <div class="toggle-options">
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="showProductNamePost" checked>
+                                        <label for="showProductNamePost">Tên sản phẩm</label>
                                     </div>
-
-                                    <div class="toggle-option">
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" name="show_freeship">
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                        <span>Hiển thị Freeship tất cả sản phẩm</span>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="showDiscountPost" checked>
+                                        <label for="showDiscountPost">Hiển thị giá khuyến mại và % giảm giá</label>
+                                    </div>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="showFreeshipPost" checked>
+                                        <label for="showFreeshipPost">Hiển thị Freeship tất cả sản phẩm</label>
                                     </div>
                                 </div>
                             </div>
@@ -490,37 +763,80 @@
                 </div>
 
                 <div class="form-section">
-                    <h2 class="section-title">Vùng ngoài sản phẩm</h2>
+                    <h2>Vùng ngoài sản phẩm</h2>
                     <div class="form-group">
-                        <label class="form-label">URL đến trang khuyến mại</label>
-                        <input type="url" class="form-input" name="promo_url" placeholder="https://">
-                        <div class="helper-text">(Không bắt buộc)</div>
+                        <label>URL đến trang khuyến mại <span class="optional">(không bắt buộc)</span></label>
+                        <input type="text" class="form-control" placeholder="Nhập URL">
                     </div>
                 </div>
 
                 <div class="form-actions">
-                    <button type="button" class="btn-cancel" onclick="window.history.back()">Huỷ</button>
-                    <button type="submit" class="btn-create">Hoàn tất</button>
+                    <button type="submit" class="btn-complete">Hoàn tất</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script src="./js/script.js"></script>
-
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        const baseUrl = 'http://localhost:5000/api/v1';
+        document.addEventListener('DOMContentLoaded', function () {
             requireAuth();
+
+            // Handle ad format selection
+            const adFormatItems = document.querySelectorAll('.ad-format-item');
+            adFormatItems.forEach(item => {
+                const header = item.querySelector('.ad-format-header');
+                const checkbox = header.querySelector('input[type="checkbox"]');
+                const content = item.querySelector('.ad-format-content');
+                const inputs = content.querySelectorAll('input, textarea');
+
+                header.addEventListener('click', (e) => {
+                    if (e.target !== checkbox) {
+                        checkbox.checked = !checkbox.checked;
+                    }
+
+                    if (checkbox.checked) {
+                        item.classList.add('active');
+                        // Add required attribute to inputs
+                        inputs.forEach(input => {
+                            if (!input.classList.contains('use-default-banner')) {
+                                input.setAttribute('required', '');
+                            }
+                        });
+                    } else {
+                        item.classList.remove('active');
+                        // Remove required attribute from inputs
+                        inputs.forEach(input => {
+                            input.removeAttribute('required');
+                        });
+                    }
+                });
+            });
+
+            // Handle "Sử dụng mẫu banner có sẵn" toggles
+            const defaultBannerToggles = document.querySelectorAll('.use-default-banner');
+            defaultBannerToggles.forEach(toggle => {
+                toggle.addEventListener('change', function () {
+                    const specsTable = this.closest('.ad-format-content').querySelector('.banner-specs-table');
+                    if (specsTable) {
+                        // Show table when unchecked, hide when checked
+                        specsTable.style.display = this.checked ? 'none' : 'block';
+                    }
+                });
+
+                // Trigger the change event initially to hide tables since toggles are checked by default
+                toggle.dispatchEvent(new Event('change'));
+            });
         });
 
-        document.getElementById('createAdForm').addEventListener('submit', async function(e) {
+        document.getElementById('createAdForm').addEventListener('submit', async function (e) {
             e.preventDefault();
             try {
                 const formData = new FormData(this);
-                
+
                 const response = await fetchWithAuth(`${baseUrl}/ads`, {
                     method: 'POST',
-                    body: formData
+                    body: JSON.stringify(formData)
                 });
 
                 if (!response.ok) {
@@ -532,121 +848,6 @@
             } catch (error) {
                 Toast.error(error.message);
             }
-        });
-
-        // Handle ad format selection
-        const adFormatOptions = document.querySelectorAll('.ad-format-option');
-        adFormatOptions.forEach(option => {
-            option.addEventListener('click', function () {
-                adFormatOptions.forEach(opt => opt.classList.remove('selected'));
-                this.classList.add('selected');
-                this.querySelector('input[type="radio"]').checked = true;
-            });
-        });
-
-        document.querySelectorAll('.ad-format-item').forEach(item => {
-            item.addEventListener('click', function () {
-                const radio = this.querySelector('input[type="radio"]');
-                radio.checked = true;
-
-                // Hide all format details
-                document.querySelectorAll('.format-details').forEach(detail => {
-                    detail.style.display = 'none';
-                });
-
-                // Show selected format details
-                const details = this.querySelector('.format-details');
-                if (details) {
-                    details.style.display = 'block';
-                }
-            });
-        });
-
-        function handleFileUpload(input, dimensions, maxSizeMB) {
-            const file = input.files[0];
-            if (!file) return;
-
-            const previewDiv = document.getElementById(`${input.id}_preview`);
-            previewDiv.innerHTML = ''; // Clear previous preview
-
-            // Kiểm tra kích thước file
-            if (maxSizeMB && file.size > maxSizeMB * 1024 * 1024) {
-                previewDiv.innerHTML = `
-                    <div class="error-message">
-                        File vượt quá ${maxSizeMB}MB. Vui lòng chọn file khác.
-                    </div>`;
-                input.value = '';
-                return;
-            }
-
-            // Tạo preview
-            if (file.type.startsWith('image/')) {
-                const img = document.createElement('img');
-                const reader = new FileReader();
-
-                reader.onload = function (e) {
-                    img.src = e.target.result;
-                };
-
-                reader.readAsDataURL(file);
-                previewDiv.appendChild(img);
-            } else if (file.type.startsWith('video/')) {
-                const video = document.createElement('video');
-                video.controls = true;
-                const reader = new FileReader();
-
-                reader.onload = function (e) {
-                    video.src = e.target.result;
-                };
-
-                reader.readAsDataURL(file);
-                previewDiv.appendChild(video);
-            }
-
-            // Hiển thị tên file
-            const fileName = document.createElement('div');
-            fileName.className = 'file-name';
-            fileName.textContent = file.name;
-            previewDiv.appendChild(fileName);
-
-            // Kiểm tra kích thước thực tế của ảnh/video
-            if (file.type.startsWith('image/')) {
-                const img = new Image();
-                img.onload = function () {
-                    const expectedDimensions = dimensions.split('×');
-                    if (img.width != expectedDimensions[0] || img.height != expectedDimensions[1]) {
-                        previewDiv.innerHTML += `
-                            <div class="error-message">
-                                Kích thước không đúng. Yêu cầu ${dimensions}
-                            </div>`;
-                    }
-                };
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            // Lắng nghe sự kiện click trên tất cả radio buttons
-            document.querySelectorAll('.ad-format-item input[type="radio"]').forEach(radio => {
-                radio.addEventListener('change', function () {
-                    // Ẩn tất cả các format details
-                    document.querySelectorAll('.format-details').forEach(detail => {
-                        detail.style.display = 'none';
-                    });
-
-                    // Hiển thị format details của radio button được chọn
-                    if (this.checked) {
-                        const details = document.getElementById(`${this.id}_details`);
-                        if (details) {
-                            details.style.display = 'block';
-                        }
-                    }
-                });
-            });
         });
     </script>
 </body>

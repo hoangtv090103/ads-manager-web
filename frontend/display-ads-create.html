@@ -10,125 +10,968 @@
     <link rel="stylesheet" href="./styles.css">
     <link rel="stylesheet" href="./css/toast.css">
     <script src="./js/auth.js"></script>
-        <script src="./js/toast.js"></script>
+    <script src="./js/toast.js"></script>
     <script src="./js/script.js"></script>
+    <style>
+        /* Layout styles */
+        body {
+            display: flex;
+            min-height: 100vh;
+            background: #F5F5F5;
+        }
+
+        .sidebar {
+            width: 250px;
+            min-width: 250px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 24px 40px;
+            min-height: 100vh;
+            width: calc(100% - 250px);
+            box-sizing: border-box;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #4F4F4F;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            margin-top: 24px;
+            max-width: 100%;
+        }
+
+        .form-title {
+            font-size: 20px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 24px;
+        }
+
+        .form-section {
+            margin-bottom: 32px;
+        }
+
+        .form-section h2 {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-control::placeholder {
+            color: #BDBDBD;
+        }
+
+        .format-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .format-tab {
+            padding: 8px 16px;
+            color: #4F4F4F;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-size: 14px;
+        }
+
+        .format-tab.active {
+            color: #2F80ED;
+            border-bottom-color: #2F80ED;
+        }
+
+        .format-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .format-item {
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+        }
+
+        .format-header {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            background: white;
+        }
+
+        .format-content {
+            padding: 16px;
+            border-top: 1px solid #E0E0E0;
+            display: none;
+        }
+
+        .format-item.active .format-content {
+            display: block;
+        }
+
+        .specs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+
+        .specs-table th,
+        .specs-table td {
+            border: 1px solid #E0E0E0;
+            padding: 12px;
+            text-align: left;
+            background: #F8F9FA;
+        }
+
+        .specs-table th {
+            background: #F5F5F5;
+            font-weight: 500;
+        }
+
+        .upload-section {
+            margin-top: 16px;
+        }
+
+        .upload-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #2F80ED;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .btn-complete {
+            background: #0061C1;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 24px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-complete:disabled {
+            background: #E0E0E0;
+            cursor: not-allowed;
+        }
+
+        .input-counter {
+            float: right;
+            color: #828282;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .warning-text {
+            color: #EB5757;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+    </style>
 </head>
 
 <body>
-    <!-- ... (all existing HTML content remains unchanged until the script section) ... -->
+    <!-- Toggle Menu Button -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
 
-    <script src="./js/script.js"></script>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+
+            <span class="logo-text">Ads Manager</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="/frontend/campaigns.html" class="nav-item">
+                <i class="fas fa-layer-group"></i>
+                <span>Quản lý chiến dịch</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-box"></i>
+                    <span>Quản lý sản phẩm</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/product-groups.html">• Danh sách nhóm SP</a>
+                    <a href="/frontend/products.html">• Danh sách SP</a>
+                    <a href="/frontend/data-sources.html">• Nguồn cấp dữ liệu</a>
+                </div>
+            </div>
+
+            <a href="/frontend/target-audience.html" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Quản lý đối tợng</span>
+            </a>
+
+
+
+
+
+            <a href="/frontend/publishers.html" class="nav-item">
+                <i class="fas fa-users-cog"></i>
+                <span>Danh sách Publisher</span>
+            </a>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-globe"></i>
+                    <span>Quản lý website</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/price-lists.html">• Danh sách bảng giá</a>
+                    <a href="/frontend/websites.html">• Danh sách website</a>
+                    <a href="/frontend/ad-zones.html">• Danh sách vùng QC</a>
+                </div>
+            </div>
+            <a href="/frontend/accounts.html" class="nav-item">
+                <i class="fas fa-user-shield"></i>
+                <span>Quản lý phân quyền</span>
+            </a>
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Báo cáo</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/website-report.html">• Báo cáo website</a>
+                    <a href="/frontend/zone-report.html">• Báo cáo vùng</a>
+                    <a href="/frontend/publisher-report.html" class="active">• Báo cáo publisher</a>
+                    <a href="/frontend/ad-format-report.html">• Báo cáo định dạng quảng cáo</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header-content"
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <div style="display: flex; align-items: center; gap: 8px; color: #4F4F4F;">
+                <i class="fas fa-layer-group"></i>
+                <span style="font-size: 14px;">/ Quản lý chiến dịch</span>
+            </div>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-name" id="user-name"></div>
+                    <div class="user-email" id="user-email"></div>
+                </div>
+                <i class="fas fa-user"></i>
+                <div class="user-dropdown">
+                    <div class="dropdown-item" onclick="auth.logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Đăng xuất
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="form-container">
+            <form id="createAdForm">
+                <div class="form-section">
+                    <h2>Đặt tên tin quảng cáo</h2>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Tên tin quảng cáo">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Link đích (bắt buộc)</label>
+                        <input type="url" class="form-control" placeholder="Nhập URL">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Định dạng quảng cáo</h2>
+                    <div class="format-tabs">
+                        <div class="format-tab active">Banner Standard (0/5)</div>
+                        <div class="format-tab">Banner Advance (0/7)</div>
+                    </div>
+
+                    <div class="format-list" id="bannerStandardList">
+                        <!-- Catfish Graphic Banner -->
+                        <div class="format-item">
+                            <div class="format-header">
+                                <input type="checkbox" id="catfishGraphicBanner">
+                                <label for="catfishGraphicBanner">Catfish Graphic Banner</label>
+                            </div>
+                            <div class="format-content">
+                                <div class="upload-section">
+                                    <a href="#" class="upload-btn">
+                                        <i class="fas fa-upload"></i> Tải lên
+                                    </a>
+                                </div>
+
+                                <div class="specs-table">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Loại</th>
+                                                <th>Định dạng nội dung</th>
+                                                <th>Tỉ lệ Banner</th>
+                                                <th>Dung lượng tối đa</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Banner</td>
+                                                <td>Jpeg, png, GIF, Html5</td>
+                                                <td>320×100px</td>
+                                                <td>5MB</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Banner Medium -->
+                        <div class="format-item">
+                            <div class="format-header">
+                                <input type="checkbox" id="bannerMedium">
+                                <label for="bannerMedium">Banner Medium 300×250</label>
+                            </div>
+                            <div class="format-content">
+                                <div class="upload-section">
+                                    <a href="#" class="upload-btn">
+                                        <i class="fas fa-upload"></i> Tải lên
+                                    </a>
+                                </div>
+
+                                <div class="specs-table">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Loại</th>
+                                                <th>Định dạng nội dung</th>
+                                                <th>Tỉ lệ Banner</th>
+                                                <th>Dung lượng tối đa</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Banner</td>
+                                                <td>Jpeg, png, GIF, Html5</td>
+                                                <td>300×250px</td>
+                                                <td>5MB</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Banner Standard 640×320 -->
+                        <div class="format-item">
+                            <div class="format-header">
+                                <input type="checkbox" id="bannerStandard640">
+                                <label for="bannerStandard640">Banner Standard 640×320</label>
+                            </div>
+                            <div class="format-content">
+                                <div class="upload-section">
+                                    <a href="#" class="upload-btn">
+                                        <i class="fas fa-upload"></i> Tải lên
+                                    </a>
+                                </div>
+
+                                <div class="specs-table">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Loại</th>
+                                                <th>Định dạng nội dung</th>
+                                                <th>Tỉ lệ Banner</th>
+                                                <th>Dung lượng tối đa</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Banner</td>
+                                                <td>Jpeg, png, GIF, Html5</td>
+                                                <td>640×320px</td>
+                                                <td>5MB</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Banner Standard 160×600 -->
+                        <div class="format-item">
+                            <div class="format-header">
+                                <input type="checkbox" id="bannerStandard160">
+                                <label for="bannerStandard160">Banner Standard 160×600</label>
+                            </div>
+                            <div class="format-content">
+                                <div class="upload-section">
+                                    <a href="#" class="upload-btn">
+                                        <i class="fas fa-upload"></i> Tải lên
+                                    </a>
+                                </div>
+
+                                <div class="specs-table">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Loại</th>
+                                                <th>Định dạng nội dung</th>
+                                                <th>Tỉ lệ Banner</th>
+                                                <th>Dung lượng tối đa</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Banner</td>
+                                                <td>Jpeg, png, GIF, Html5</td>
+                                                <td>160×600px</td>
+                                                <td>5MB</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Text Ads -->
+                        <div class="format-item">
+                            <div class="format-header">
+                                <input type="checkbox" id="textAds">
+                                <label for="textAds">Text Ads</label>
+                            </div>
+                            <div class="format-content">
+                                <div class="form-group">
+                                    <label>Tiêu đề</label>
+                                    <input type="text" class="form-control" placeholder="Nhập tiêu đề..." maxlength="40">
+                                    <div class="input-counter">0/40</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Nội dung</label>
+                                    <textarea class="form-control" rows="4" placeholder="Nhập nội dung..." maxlength="250"></textarea>
+                                    <div class="input-counter">0/250</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="format-list" id="bannerAdvanceList" style="display: none;">
+                        <!-- Notification banner -->
+                        <div class="format-item">
+                            <div class="format-header">
+                                <input type="checkbox" id="notificationBanner">
+                                <label for="notificationBanner">Notification banner</label>
+                            </div>
+                            <div class="format-content">
+                                <div class="upload-section">
+                                    <label>Logo (tối đa 1MB)</label>
+                                    <a href="#" class="upload-btn">
+                                        <i class="fas fa-upload"></i> Tải lên
+                                    </a>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Tiêu đề</label>
+                                    <input type="text" class="form-control" placeholder="Nhập tiêu đề thông báo..." maxlength="40">
+                                    <div class="input-counter">0/40</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Nội dung thông báo <i class="fas fa-info-circle" title="Thông báo rút gọn (không bắt buộc)"></i></label>
+                                    <input type="text" class="form-control" placeholder="Nhập tiêu đề thông báo..." maxlength="120">
+                                    <div class="input-counter">0/120</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Thông báo mở rộng</label>
+                                    <textarea class="form-control" rows="4" placeholder="Nhập nội dung..." maxlength="250"></textarea>
+                                    <div class="input-counter">0/250</div>
+                                </div>
+
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="showCTA">
+                                    <label for="showCTA">Nút CTA</label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Nội dung CTA</label>
+                                    <input type="text" class="form-control" placeholder="Nhập nội dung..." maxlength="20">
+                                    <div class="input-counter">0/20</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>URL CTA (không bắt buộc)</label>
+                                    <input type="url" class="form-control" placeholder="Nhập nội dung...">
+                                </div>
+
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="showExpandBanner">
+                                    <label for="showExpandBanner">Hiển thị trong banner mở rộng</label>
+                                </div>
+
+                                <div class="upload-section">
+                                    <i class="fas fa-image"></i>
+                                    <span>Tải ảnh lên</span>
+                                    <span>(Tối đa 3 ảnh)</span>
+                                </div>
+
+                                <div class="specs-table">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Loại</th>
+                                                <th>Định dạng nội dung</th>
+                                                <th>Tỉ lệ Banner</th>
+                                                <th>Dung lượng tối đa</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Banner ngang</td>
+                                                <td>Jpeg, png</td>
+                                                <td>300×200 px</td>
+                                                <td>1mb</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CatFish Collab Branding -->
+                        <div class="format-item">
+                            <div class="format-header">
+                                <input type="checkbox" id="catfishCollabBranding">
+                                <label for="catfishCollabBranding">CatFish Collab Branding</label>
+                            </div>
+                            <div class="format-content">
+                                <div class="upload-section">
+                                    <label>Banner thu gọn (tối đa 5MB)</label>
+                                    <a href="#" class="upload-btn">
+                                        <i class="fas fa-upload"></i> Tải lên
+                                    </a>
+                                </div>
+
+                                <div class="upload-section">
+                                    <label>Banner mở rộng (tối đa 5MB)</label>
+                                    <a href="#" class="upload-btn">
+                                        <i class="fas fa-upload"></i> Tải lên
+                                    </a>
+                                </div>
+
+                                <div class="upload-section">
+                                    <label>Logo (tối đa 1MB)</label>
+                                    <a href="#" class="upload-btn">
+                                        <i class="fas fa-upload"></i> Tải lên
+                                    </a>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Tiêu đề</label>
+                                    <input type="text" class="form-control" placeholder="Nhập tiêu đề thông báo..." maxlength="30">
+                                    <div class="input-counter">0/30</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Nội dung</label>
+                                    <textarea class="form-control" rows="4" placeholder="Nhập nội dung..." maxlength="250"></textarea>
+                                    <div class="input-counter">0/250</div>
+                                </div>
+
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="showCTACatfish">
+                                    <label for="showCTACatfish">Nút CTA</label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Nội dung CTA</label>
+                                    <input type="text" class="form-control" placeholder="Nhập nội dung..." maxlength="20">
+                                    <div class="input-counter">0/20</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>URL CTA (không bắt buộc)</label>
+                                    <input type="url" class="form-control" placeholder="Nhập nội dung...">
+                                </div>
+
+                                <div class="specs-table">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Loại</th>
+                                                <th>Định dạng nội dung</th>
+                                                <th>Tỉ lệ Banner</th>
+                                                <th>Dung lượng tối đa</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Banner thu gọn</td>
+                                                <td>Html5, Jpeg, png, Gif</td>
+                                                <td>375×120</td>
+                                                <td>5mb</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Banner mở rộng</td>
+                                                <td>Html5, Jpeg, png, Gif</td>
+                                                <td>375×810</td>
+                                                <td>5mb</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Popup Banner Video -->
+                        <div class="format-item">
+                            <div class="format-header">
+                                <input type="checkbox" id="popupBannerVideo">
+                                <label for="popupBannerVideo">Popup Banner Video</label>
+                            </div>
+                            <div class="format-content">
+                                <div class="upload-section">
+                                    <label>Sử dụng video làm banner</label>
+                                    <a href="#" class="upload-btn">
+                                        <i class="fas fa-upload"></i> Tải lên
+                                    </a>
+                                    <span>Không giới hạn dung lượng</span>
+                                </div>
+
+                                <div class="upload-section">
+                                    <label>Ảnh thumbnail</label>
+                                    <a href="#" class="upload-btn">
+                                        <i class="fas fa-upload"></i> Tải lên
+                                    </a>
+                                </div>
+
+                                <div class="specs-table">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Loại</th>
+                                                <th>Định dạng nội dung</th>
+                                                <th>Tỉ lệ Banner</th>
+                                                <th>Dung lượng tối đa</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Thumbnail video</td>
+                                                <td>Jpeg,png</td>
+                                                <td>375×810px</td>
+                                                <td>1MB</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Video</td>
+                                                <td>MP4,MOV</td>
+                                                <td>375×810px</td>
+                                                <td>Không giới hạn</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Interscroller Video Branding -->
+                        <div class="format-item">
+                            <div class="format-header">
+                                <input type="checkbox" id="interscrollerVideo">
+                                <label for="interscrollerVideo">Interscroller Video Branding</label>
+                            </div>
+                            <div class="format-content">
+                                <div class="radio-group">
+                                    <input type="radio" id="uploadFile" name="videoSource" checked>
+                                    <label for="uploadFile">Đăng tải tệp (.zip)</label>
+                                    
+                                    <input type="radio" id="uploadUrl" name="videoSource">
+                                    <label for="uploadUrl">Tải lên nguyên liệu</label>
+                                </div>
+
+                                <div class="upload-section">
+                                    <label>Banner</label>
+                                    <a href="#" class="upload-btn">
+                                        <i class="fas fa-upload"></i> Tải lên
+                                    </a>
+                                </div>
+
+                                <div class="video-section">
+                                    <div class="radio-group">
+                                        <input type="radio" id="youtubeVideo" name="videoType" checked>
+                                        <label for="youtubeVideo">Sử dụng video có sẵn trên YouTube</label>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label>Link YouTube</label>
+                                        <input type="text" class="form-control" placeholder="Nhập embed code">
+                                    </div>
+
+                                    <div class="radio-group">
+                                        <input type="radio" id="uploadVideo" name="videoType">
+                                        <label for="uploadVideo">Đăng tải video lên thiết bị</label>
+                                    </div>
+
+                                    <div class="upload-section">
+                                        <label>Video</label>
+                                        <a href="#" class="upload-btn">
+                                            <i class="fas fa-upload"></i> Tải lên
+                                        </a>
+                                    </div>
+
+                                    <div class="upload-section">
+                                        <label>Ảnh thumbnail</label>
+                                        <a href="#" class="upload-btn">
+                                            <i class="fas fa-upload"></i> Tải lên
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="specs-table">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Loại</th>
+                                                <th>Định dạng nội dung</th>
+                                                <th>Tỉ lệ Banner</th>
+                                                <th>Dung lượng tối đa</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Banner</td>
+                                                <td>Jpeg,png,gif</td>
+                                                <td>300×600px</td>
+                                                <td>1MB</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Video</td>
+                                                <td>MP4,MOV</td>
+                                                <td>1920×1080px</td>
+                                                <td>Không giới hạn</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Ảnh thumbnail</td>
+                                                <td>Jpeg,png</td>
+                                                <td>1920×1080px</td>
+                                                <td>1MB</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- In Read Branding -->
+                        <div class="format-item">
+                            <div class="format-header">
+                                <input type="checkbox" id="inReadBranding">
+                                <label for="inReadBranding">In Read Branding</label>
+                            </div>
+                            <div class="format-content">
+                                <div class="upload-section">
+                                    <label>Banner ngang</label>
+                                    <a href="#" class="upload-btn">
+                                        <i class="fas fa-upload"></i> Tải lên
+                                    </a>
+                                </div>
+
+                                <div class="upload-section">
+                                    <label>Slide ảnh</label>
+                                    <div class="image-upload-area">
+                                        <i class="fas fa-image"></i>
+                                        <span>Tải ảnh lên</span>
+                                        <span>(Tối đa 3 ảnh)</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Nội dung CTA</label>
+                                    <input type="text" class="form-control" placeholder="Nhập nội dung..." maxlength="20">
+                                    <div class="input-counter">0/20</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>URL CTA (không bắt buộc)</label>
+                                    <input type="url" class="form-control" placeholder="Nhập nội dung...">
+                                </div>
+
+                                <div class="specs-table">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Loại</th>
+                                                <th>Định dạng nội dung</th>
+                                                <th>Tỉ lệ Banner</th>
+                                                <th>Dung lượng tối đa</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Banner ngang</td>
+                                                <td>Jpeg, png, GIF, Html5</td>
+                                                <td>375×150px</td>
+                                                <td>5MB</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Slide ảnh</td>
+                                                <td>Jpeg, png, GIF</td>
+                                                <td>250×375px</td>
+                                                <td>1MB</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-complete">Hoàn tất</button>
+            </form>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Ẩn tất cả format-content khi tải trang
-            document.querySelectorAll('.format-content').forEach(content => {
-                content.style.display = 'none';
-            });
+            // Handle format tabs
+            const formatTabs = document.querySelectorAll('.format-tab');
+            const bannerStandardList = document.getElementById('bannerStandardList');
+            const bannerAdvanceList = document.getElementById('bannerAdvanceList');
 
-            // Xử lý sự kiện click vào format-header
-            document.querySelectorAll('.format-header').forEach(header => {
-                header.addEventListener('click', function () {
-                    const formatItem = this.closest('.format-item');
-                    const content = formatItem.querySelector('.format-content');
-                    const radio = this.querySelector('input[type="radio"]');
+            formatTabs.forEach(tab => {
+                tab.addEventListener('click', function () {
+                    formatTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
 
-                    // Ẩn tất cả các format-content khác
-                    document.querySelectorAll('.format-content').forEach(otherContent => {
-                        if (otherContent !== content) {
-                            otherContent.style.display = 'none';
-                        }
-                    });
-
-                    document.querySelectorAll('.format-item').forEach(item => {
-                        item.classList.remove('active');
-                    });
-
-                    // Toggle hiển thị content của item được click
-                    if (content.style.display === 'none') {
-                        content.style.display = 'block';
-                        formatItem.classList.add('active');
-                        radio.checked = true;
+                    // Show/hide corresponding list based on selected tab
+                    if (this.textContent.includes('Banner Standard')) {
+                        bannerStandardList.style.display = 'block';
+                        bannerAdvanceList.style.display = 'none';
                     } else {
-                        content.style.display = 'none';
-                        formatItem.classList.remove('active');
-                        radio.checked = false;
+                        bannerStandardList.style.display = 'none';
+                        bannerAdvanceList.style.display = 'block';
                     }
                 });
             });
-        });
 
-        document.addEventListener('DOMContentLoaded', function () {
-            // Xử lý đếm ký tự cho cả input và textarea
-            document.querySelectorAll('.form-input, .form-textarea').forEach(element => {
+            // Handle format items
+            const formatItems = document.querySelectorAll('.format-item');
+            
+            function disableOtherFormats(selectedItem) {
+                const parentList = selectedItem.closest('.format-list');
+                const items = parentList.querySelectorAll('.format-item');
+                
+                items.forEach(item => {
+                    if (item !== selectedItem) {
+                        const checkbox = item.querySelector('input[type="checkbox"]');
+                        const header = item.querySelector('.format-header');
+                        const content = item.querySelector('.format-content');
+                        
+                        checkbox.checked = false;
+                        checkbox.disabled = true;
+                        header.style.opacity = '0.5';
+                        header.style.cursor = 'not-allowed';
+                        item.classList.remove('active');
+                        content.style.display = 'none';
+                    }
+                });
+            }
+
+            function enableAllFormats() {
+                const activeList = document.querySelector('.format-list[style*="display: block"]');
+                const items = activeList.querySelectorAll('.format-item');
+                
+                items.forEach(item => {
+                    const checkbox = item.querySelector('input[type="checkbox"]');
+                    const header = item.querySelector('.format-header');
+                    
+                    checkbox.disabled = false;
+                    header.style.opacity = '1';
+                    header.style.cursor = 'pointer';
+                });
+            }
+
+            formatItems.forEach(item => {
+                const header = item.querySelector('.format-header');
+                const checkbox = header.querySelector('input[type="checkbox"]');
+                const content = item.querySelector('.format-content');
+
+                header.addEventListener('click', function (e) {
+                    if (e.target !== checkbox) {
+                        checkbox.checked = !checkbox.checked;
+                    }
+
+                    if (checkbox.checked) {
+                        item.classList.add('active');
+                        content.style.display = 'block';
+                        disableOtherFormats(item);
+                    } else {
+                        item.classList.remove('active');
+                        content.style.display = 'none';
+                        enableAllFormats();
+                    }
+                });
+            });
+
+            // Handle character counting
+            document.querySelectorAll('input[maxlength], textarea[maxlength]').forEach(element => {
                 const counter = element.parentElement.querySelector('.input-counter');
                 const maxLength = element.getAttribute('maxlength');
 
-                // Set giá trị ban đầu
-                counter.textContent = `0/${maxLength}`;
-
-                // Cập nhật khi người dùng nhập
                 element.addEventListener('input', function () {
                     counter.textContent = `${this.value.length}/${maxLength}`;
                 });
             });
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Đếm ký tự cho tiêu đề
-            const titleInput = document.querySelector('input[placeholder="Nhập tiêu đề..."]');
-            const titleCounter = titleInput.parentElement.querySelector('.input-counter');
-            const titleMaxLength = 50;
-
-            titleInput.addEventListener('input', function() {
-                const currentLength = this.value.length;
-                titleCounter.textContent = `${currentLength}/${titleMaxLength}`;
-                
-                // Optional: Highlight counter when approaching limit
-                if (currentLength >= titleMaxLength) {
-                    titleCounter.style.color = '#EB5757';
-                } else {
-                    titleCounter.style.color = '#828282';
-                }
-            });
-
-            // Đếm ký tự cho nội dung
-            const contentTextarea = document.querySelector('textarea[placeholder="Nhập nội dung..."]');
-            const contentCounter = contentTextarea.parentElement.querySelector('.input-counter');
-            const contentMaxLength = 250;
-
-            contentTextarea.addEventListener('input', function() {
-                const currentLength = this.value.length;
-                contentCounter.textContent = `${currentLength}/${contentMaxLength}`;
-                
-                // Optional: Highlight counter when approaching limit
-                if (currentLength >= contentMaxLength) {
-                    contentCounter.style.color = '#EB5757';
-                } else {
-                    contentCounter.style.color = '#828282';
-                }
-            });
-        });
-
-        document.getElementById('createAdForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            try {
-                const formData = new FormData(this);
-                
-                const response = await fetchWithAuth(`${baseUrl}/ads`, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (!response.ok) {
-                    throw new Error('Không thể tạo tin quảng cáo');
-                }
-
-                Toast.success('Đã tạo tin quảng cáo thành công!');
-                window.location.href = '/frontend/ads.html';
-            } catch (error) {
-                console.error('Error:', error);
-                Toast.error(error.message);
-            }
         });
     </script>
 </body>

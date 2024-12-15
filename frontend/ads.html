@@ -23,6 +23,29 @@
         .ads-table {
             width: 100%;
             min-width: 1600px;
+            border-collapse: collapse;
+        }
+
+        .frozen-column {
+            position: sticky;
+            left: 0;
+            background: #F8F9FA;
+            z-index: 1;
+        }
+
+        .frozen-column:last-of-type {
+            border-right: 2px solid #E0E0E0;
+        }
+
+        .ads-table tbody td:nth-child(-n+4) {
+            position: sticky;
+            left: 0;
+            background: white;
+            z-index: 1;
+        }
+
+        .ads-table tbody td:nth-child(4) {
+            border-right: 2px solid #E0E0E0;
         }
 
         .demo-link {
@@ -42,6 +65,158 @@
             color: #828282;
             font-size: 13px;
         }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .status-inactive {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+
+        .dropdown-container {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            min-width: 300px;
+            margin-top: 4px;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .dropdown-header {
+            padding: 16px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .dropdown-header input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+        }
+
+        .dropdown-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            cursor: pointer;
+        }
+
+        .dropdown-item:hover {
+            background: #F8F9FA;
+        }
+
+        .create-button {
+            background: #0061C1;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 24px 0;
+        }
+
+        .action-left {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .action-right {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .table-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-top: 1px solid #E0E0E0;
+            margin-top: 16px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
     </style>
 </head>
 
@@ -49,13 +224,11 @@
     <!-- Toggle Menu Button -->
     <button class="menu-toggle" onclick="toggleSidebar()">
         <i class="fas fa-bars"></i>
-        <span class="menu-text">Menu</span>
     </button>
 
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            
             <span class="logo-text">Ads Manager</span>
         </div>
 
@@ -100,11 +273,13 @@
                     <a href="/frontend/ad-zones.html">• Danh sách vùng QC</a>
                 </div>
             </div>
+
             <a href="/frontend/accounts.html" class="nav-item">
                 <i class="fas fa-user-shield"></i>
                 <span>Quản lý phân quyền</span>
             </a>
-<div class="nav-group">
+
+            <div class="nav-group">
                 <div class="nav-item" onclick="toggleSubmenu(this)">
                     <i class="fas fa-chart-bar"></i>
                     <span>Báo cáo</span>
@@ -113,7 +288,7 @@
                 <div class="submenu">
                     <a href="/frontend/website-report.html">• Báo cáo website</a>
                     <a href="/frontend/zone-report.html">• Báo cáo vùng</a>
-                    <a href="/frontend/publisher-report.html" class="active">• Báo cáo publisher</a>
+                    <a href="/frontend/publisher-report.html">• Báo cáo publisher</a>
                     <a href="/frontend/ad-format-report.html">• Báo cáo định dạng quảng cáo</a>
                 </div>
             </div>
@@ -121,105 +296,210 @@
     </div>
 
     <div class="main-content">
-        <div class="header-breadcrumb">
-            <i class="fas fa-layer-group"></i>
-            <span>/ Quản lý chiến dịch</span>
-        </div>
-
-        <h1 class="page-title">Danh sách quảng cáo</h1>
-
-        <!-- Tabs -->
-        <div class="tabs">
-            <a href="/frontend/campaigns.html" class="tab-item">Chiến dịch</a>
-            <a href="/frontend/ad-groups.html" class="tab-item">Nhóm quảng cáo</a>
-            <a href="/frontend/ads.html" class="tab-item active">Tin quảng cáo</a>
-        </div>
-
-        <!-- Action Bar -->
-        <div class="action-bar">
-            <div class="action-left">
-                <div class="dropdown-container">
-                    <button class="create-button">
-                        <i class="fas fa-plus"></i> Tạo tin quảng cáo
-                    </button>
-                    <!-- Dropdown sẽ được thêm vào đây -->
-                </div>
+        <!-- Header -->
+        <div class="header-content" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <div style="display: flex; align-items: center; gap: 8px; color: #4F4F4F;">
+                <i class="fas fa-layer-group"></i>
+                <span style="font-size: 14px;">/ Quản lý chiến dịch</span>
             </div>
-
-            <div class="action-right">
-                <div style="display: flex; gap: 16px;">
-                    <select style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px; width: 160px;">
-                        <option>Loại QC</option>
-                        <option>Display Ads</option>
-                        <option>Ecommerce</option>
-                        <option>Native Ads</option>
-                    </select>
-                    <select style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px; width: 160px;">
-                        <option>Trạng thái</option>
-                        <option>Tất cả</option>
-                        <option>Chưa chạy</option>
-                        <option>Đang chạy</option>
-                        <option>Tạm dừng</option>
-                        <option>Lỗi</option>
-                        <option>Hoàn thành</option>
-                        <option>Chưa hoàn thành</option>
-                    </select>
-                    <button
-                        style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px; background: white; display: flex; align-items: center; gap: 8px;">
-                        Tùy chỉnh cột <i class="fas fa-chevron-down"></i>
-                    </button>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-name" id="user-name"></div>
+                    <div class="user-email" id="user-email"></div>
+                </div>
+                <i class="fas fa-user"></i>
+                <div class="user-dropdown">
+                    <div class="dropdown-item" onclick="auth.logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Đăng xuất
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="table-container">
-            <table class="ads-table">
-                <thead>
-                    <tr>
-                        <th><input type="checkbox"></th>
-                        <th>STT</th>
-                        <th>Bật/tắt</th>
-                        <th>Tên QC | Chiến dịch | Nhóm</th>
-                        <th>Định dạng</th>
-                        <th>URL đích</th>
-                        <th>Trạng thái</th>
-                        <th>Chi phí (VNĐ)</th>
-                        <th>Lượt xem</th>
-                        <th>Lượt nhấn</th>
-                        <th>CTR</th>
-                        <th>CPC (VNĐ)</th>
-                        <th>CPM (VNĐ)</th>
-                        <th>SL mua hàng</th>
-                        <th>% chuyển đổi mua hàng</th>
-                        <th>CPS (VNĐ)</th>
-                        <th>Video view 3s</th>
-                    </tr>
-                </thead>
-                <tbody id="adsTable">
-                    <!-- Data will be populated by JavaScript -->
-                </tbody>
-            </table>
-        </div>
+        <!-- Campaign List Section -->
+        <div style="background: white; border-radius: 8px; padding: 24px;">
+            <h1 style="margin: 0 0 24px 0; font-size: 20px; color: #333;">Danh sách quảng cáo</h1>
 
-        <div class="table-footer">
-            <div>Số tin quảng cáo: <span id="total-ads" style="font-weight: 500;"></span></div>
-            <div>Tổng chi phí: <span id="total-cost" style="font-weight: 500;"></span></div>
+            <!-- Tabs -->
+            <div class="tabs" style="display: flex; gap: 32px; margin-bottom: 24px; border-bottom: 1px solid #E0E0E0;">
+                <div style="padding: 12px 0; color: #4F4F4F;">
+                    <a href="/frontend/campaigns.html" style="color: #4F4F4F; text-decoration: none;">Chiến dịch</a>
+                </div>
+                <div style="padding: 12px 0; color: #4F4F4F;">
+                    <a href="/frontend/ads-group.html" style="color: #4F4F4F; text-decoration: none;">Nhóm quảng cáo</a>
+                </div>
+                <div style="padding: 12px 0; color: #0061C1; border-bottom: 2px solid #0061C1; font-weight: 500;">
+                    <a href="/frontend/ads.html" style="color: #0061C1; text-decoration: none;">Tin quảng cáo</a>
+                </div>
+            </div>
+
+            <!-- Action Bar -->
+            <div class="action-bar">
+                <div class="action-left">
+                    <div class="dropdown-container">
+                        <button class="create-button">
+                            <i class="fas fa-plus"></i> Tạo tin quảng cáo
+                        </button>
+                    </div>
+                    <div style="position: relative;">
+                        <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #828282;"></i>
+                        <input type="text" placeholder="Tìm kiếm" style="padding: 8px 12px 8px 36px; border: 1px solid #E0E0E0; border-radius: 4px; width: 240px;">
+                    </div>
+                </div>
+
+                <div class="action-right">
+                    <div style="display: flex; gap: 16px;">
+                        <select id="adTypeFilter" style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px; width: 160px;">
+                            <option value="">Loại QC</option>
+                            <option value="Display Ads">Display Ads</option>
+                            <option value="Ecommerce">Ecommerce</option>
+                            <option value="Native Ads">Native Ads</option>
+                        </select>
+                        <select id="statusFilter" style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px; width: 160px;">
+                            <option value="">Trạng thái</option>
+                            <option value="Tất cả">Tất cả</option>
+                            <option value="Chưa chạy">Chưa chạy</option>
+                            <option value="Đang chạy">Đang chạy</option>
+                            <option value="Tạm dừng">Tạm dừng</option>
+                            <option value="Lỗi">Lỗi</option>
+                            <option value="Hoàn thành">Hoàn thành</option>
+                            <option value="Chưa hoàn thành">Chưa hoàn thành</option>
+                        </select>
+                        <button class="customize-column-btn">
+                            <i class="fas fa-columns"></i>
+                            Tùy chỉnh cột
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-container">
+                <table class="ads-table">
+                    <thead>
+                        <tr style="background: #F8F9FA;">
+                            <th class="frozen-column" style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                <input type="checkbox">
+                            </th>
+                            <th class="frozen-column" style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                STT
+                            </th>
+                            <th class="frozen-column" style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                Bật/tắt
+                            </th>
+                            <th class="frozen-column" style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                Tên QC | Chiến dịch | Nhóm
+                            </th>
+                            <th style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                Định dạng
+                            </th>
+                            <th style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                URL đích
+                            </th>
+                            <th style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                Trạng thái
+                            </th>
+                            <th style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                Chi phí (VNĐ)
+                            </th>
+                            <th style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                Lượt xem
+                            </th>
+                            <th style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                Lượt nhấn
+                            </th>
+                            <th style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                CTR
+                            </th>
+                            <th style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                CPC (VNĐ)
+                            </th>
+                            <th style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                CPM (VNĐ)
+                            </th>
+                            <th style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                SL mua hàng
+                            </th>
+                            <th style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                % chuyển đổi mua hàng
+                            </th>
+                            <th style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                CPS (VNĐ)
+                            </th>
+                            <th style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                Video view 3s
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="adsTable">
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer -->
+            <div class="table-footer">
+                <div style="color: #4F4F4F; font-size: 14px;">
+                    Số tin quảng cáo: <span id="total-ads" style="font-weight: 500;"></span>
+                </div>
+                <div style="display: flex; gap: 24px; color: #4F4F4F;">
+                    <div>Tổng chi phí: <span id="total-cost" style="font-weight: 500;"></span></div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <script src="./js/script.js"></script>
     <script>
         const baseUrl = 'http://127.0.0.1:5000/api/v1';
+        let originalAds = [];
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            requireAuth();
+            await loadAds();
+            setupEventListeners();
+        });
+
+        async function loadAds() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/ads`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error('Không thể tải dữ liệu quảng cáo');
+                }
+
+                originalAds = data;
+                renderAds(data);
+            } catch (error) {
+                console.error('Error:', error);
+                handleFetchError(error);
+            }
+        }
 
         function renderAds(ads) {
             const adsTable = document.getElementById('adsTable');
             adsTable.innerHTML = '';
 
-            let totalAds = ads.length;
-            let totalCost = ads.reduce((sum, ad) => sum + ad.banner_standard, 0);
+            if (!ads || ads.length === 0) {
+                adsTable.innerHTML = `
+                    <tr>
+                        <td colspan="17" style="text-align: center; padding: 20px;">
+                            Không có dữ liệu
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('total-ads').textContent = '0';
+                document.getElementById('total-cost').textContent = formatCurrency(0);
+                return;
+            }
+
+            const totalAds = ads.length;
+            const totalCost = ads.reduce((sum, ad) => sum + (parseFloat(ad.chi_phi) || 0), 0);
 
             document.getElementById('total-ads').textContent = totalAds;
-            document.getElementById('total-cost').textContent = totalCost;
+            document.getElementById('total-cost').textContent = formatCurrency(totalCost);
 
             ads.forEach((ad, index) => {
                 const row = document.createElement('tr');
@@ -234,87 +514,122 @@
                     </td>
                     <td style="color: #2F80ED; cursor: pointer;">
                         ${ad.ten_tin_quang_cao}<br>
-                        ${ad.ads_group_id} | ${ad.ads_id}
+                        ${ad.ten_chien_dich} | ${ad.ten_nhom}
                     </td>
-                    <td>${ad.dinh_dang_banner}</td>
-                    <td>${ad.link_dich}</td>
-                    <td><span class="status-badge ${ad.status_id.toLowerCase()}">${ad.status_id}</span></td>
-                    <td style="text-align: right;">${ad.banner_standard}</td>
-                    <td style="text-align: right;">${ad.dang_tai_tep}</td>
-                    <td style="text-align: right;">${ad.kich_thuoc_cho_phep}</td>
-                    <td style="text-align: right;">-</td>
-                    <td style="text-align: right;">-</td>
-                    <td style="text-align: right;">-</td>
-                    <td style="text-align: right;">-</td>
-                    <td style="text-align: right;">-</td>
-                    <td style="text-align: right;">-</td>
-                    <td style="text-align: right;">-</td>
+                    <td>${ad.dinh_dang || '-'}</td>
+                    <td class="url-cell">${ad.url_dich || '-'}</td>
+                    <td>
+                        <span class="status-badge ${ad.active ? 'status-active' : 'status-inactive'}">
+                            ${ad.trang_thai || '-'}
+                        </span>
+                    </td>
+                    <td style="text-align: right;">${formatCurrency(ad.chi_phi)}</td>
+                    <td style="text-align: right;">${formatNumber(ad.luot_xem)}</td>
+                    <td style="text-align: right;">${formatNumber(ad.luot_nhan)}</td>
+                    <td style="text-align: right;">${formatPercent(ad.ctr)}%</td>
+                    <td style="text-align: right;">${formatCurrency(ad.cpc)}</td>
+                    <td style="text-align: right;">${formatCurrency(ad.cpm)}</td>
+                    <td style="text-align: right;">${formatNumber(ad.sl_mua_hang)}</td>
+                    <td style="text-align: right;">${formatPercent(ad.ti_le_chuyen_doi)}%</td>
+                    <td style="text-align: right;">${formatCurrency(ad.cps)}</td>
+                    <td style="text-align: right;">${formatNumber(ad.video_view_3s)}</td>
                 `;
                 adsTable.appendChild(row);
             });
         }
 
-        async function fetchAds() {
-            const url = `${baseUrl}/ads`;
-            const response = await fetch(url);
-            const data = await response.json();
+        function setupEventListeners() {
+            // Search functionality
+            const searchInput = document.querySelector('input[placeholder="Tìm kiếm"]');
+            searchInput.addEventListener('input', function(e) {
+                const searchText = e.target.value.toLowerCase();
+                const filteredAds = originalAds.filter(ad => 
+                    ad.ten_tin_quang_cao?.toLowerCase().includes(searchText) ||
+                    ad.ten_chien_dich?.toLowerCase().includes(searchText) ||
+                    ad.ten_nhom?.toLowerCase().includes(searchText)
+                );
+                renderAds(filteredAds);
+            });
 
-            renderAds(data);
+            // Filter by ad type
+            const typeSelect = document.getElementById('adTypeFilter');
+            typeSelect.addEventListener('change', function(e) {
+                const selectedType = e.target.value;
+                const filteredAds = selectedType ? 
+                    originalAds.filter(ad => ad.loai_quang_cao === selectedType) :
+                    originalAds;
+                renderAds(filteredAds);
+            });
+
+            // Filter by status
+            const statusSelect = document.getElementById('statusFilter');
+            statusSelect.addEventListener('change', function(e) {
+                const selectedStatus = e.target.value;
+                const filteredAds = selectedStatus === 'Tất cả' ?
+                    originalAds :
+                    originalAds.filter(ad => ad.trang_thai === selectedStatus);
+                renderAds(filteredAds);
+            });
+
+            // Create ad button click
+            const createButton = document.querySelector('.create-button');
+            createButton.addEventListener('click', async function(e) {
+                e.stopPropagation();
+                await showAdsGroupDropdown(this);
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                const dropdown = document.querySelector('.dropdown-content');
+                if (dropdown && !dropdown.contains(e.target) && !e.target.matches('.create-button')) {
+                    dropdown.classList.remove('show');
+                }
+            });
         }
 
-        async function fetchAdGroups() {
+        async function showAdsGroupDropdown(button) {
+            // Remove existing dropdown if any
+            const existingDropdown = document.querySelector('.dropdown-content');
+            if (existingDropdown) {
+                existingDropdown.remove();
+            }
+
             try {
-                const response = await fetch(`${baseUrl}/ads-groups`, {
-                    headers: {
-                        'Access-Control-Allow-Origin': '*'
-                    }
-                });
+                const response = await fetchWithAuth(`${baseUrl}/ads-groups`);
                 const data = await response.json();
-                return data;
+
+                if (!response.ok) {
+                    throw new Error('Không thể tải danh sách nhóm quảng cáo');
+                }
+
+                const dropdownContent = document.createElement('div');
+                dropdownContent.className = 'dropdown-content';
+                dropdownContent.innerHTML = `
+                    <div class="dropdown-header">
+                        <div style="margin-bottom: 12px; font-weight: 500;">Chọn nhóm quảng cáo</div>
+                        <input type="text" placeholder="Tìm kiếm nhóm quảng cáo" onkeyup="filterAdsGroups(this.value)">
+                    </div>
+                    <div class="dropdown-list" id="adsGroupsList">
+                        ${data.ads_groups.length > 0 ? 
+                            data.ads_groups.map(group => `
+                                <div class="dropdown-item" onclick="selectAdsGroup('${group.ten_loai_quang_cao}')">
+                                    ${group.ten_nhom}
+                                </div>
+                            `).join('') :
+                            '<div class="dropdown-item">Không có nhóm quảng cáo nào</div>'
+                        }
+                    </div>
+                `;
+
+                button.parentElement.appendChild(dropdownContent);
+                setTimeout(() => dropdownContent.classList.add('show'), 0);
             } catch (error) {
-                console.error('Error fetching ad groups:', error);
-                return [];
+                console.error('Error fetching ads groups:', error);
+                Toast.error('Không thể tải danh sách nhóm quảng cáo');
             }
         }
 
-        function createDropdown(adGroups) {
-            const dropdownContent = document.createElement('div');
-            dropdownContent.className = 'dropdown-content';
-
-            // Header với ô tìm kiếm
-            const header = document.createElement('div');
-            header.className = 'dropdown-header';
-            header.innerHTML = `
-                <div style="margin-bottom: 12px; font-weight: 500;">Chọn nhóm quảng cáo</div>
-                <input type="text" placeholder="Tìm kiếm nhóm quảng cáo" onkeyup="filterAdGroups(this.value)">
-            `;
-
-            // Danh sách nhóm quảng cáo
-            const list = document.createElement('div');
-            list.className = 'dropdown-list';
-            list.id = 'adGroupsList';
-
-            if (Array.isArray(adGroups) && adGroups.length > 0) {
-                adGroups.forEach(group => {
-                    const item = document.createElement('div');
-                    item.className = 'dropdown-item';
-                    item.textContent = group.ten_nhom;
-                    item.onclick = () => selectAdGroup(group);
-                    list.appendChild(item);
-                });
-            } else {
-                const noData = document.createElement('div');
-                noData.className = 'dropdown-item';
-                noData.textContent = 'Không có nhóm quảng cáo nào';
-                list.appendChild(noData);
-            }
-
-            dropdownContent.appendChild(header);
-            dropdownContent.appendChild(list);
-            return dropdownContent;
-        }
-
-        function filterAdGroups(searchText) {
+        function filterAdsGroups(searchText) {
             const items = document.querySelectorAll('.dropdown-item');
             items.forEach(item => {
                 const text = item.textContent.toLowerCase();
@@ -326,114 +641,51 @@
             });
         }
 
-        function selectAdGroup(group) {
-            if (!group) return;
-            if (group.ten_loai_quang_cao === 'ecommerce') {
-                window.location.href = `/frontend/ecommerce-ads-create.html`;
-            } else if (group.ten_loai_quang_cao === 'native_ads') {
-                window.location.href = `/frontend/native-ads-create.html`;
+        function selectAdsGroup(adType) {
+            let targetUrl;
+            switch(adType) {
+                case 'Ecommerce':
+                    targetUrl = '/frontend/ecommerce-ads-create.html';
+                    break;
+                case 'Display Ads':
+                    targetUrl = '/frontend/display-ads-create.html';
+                    break;
+                case 'Native Ads':
+                    targetUrl = '/frontend/native-ads-create.html';
+                    break;
+                default:
+                    Toast.error('Loại quảng cáo không hợp lệ');
+                    return;
+            }
+            window.location.href = targetUrl;
+        }
+
+        function formatNumber(value) {
+            if (value === undefined || value === null) return '-';
+            return Number(value).toLocaleString('vi-VN');
+        }
+
+        function formatCurrency(value) {
+            if (value === undefined || value === null) return '-';
+            return Number(value).toLocaleString('vi-VN', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+        }
+
+        function formatPercent(value) {
+            if (value === undefined || value === null) return '-';
+            return Number(value).toFixed(2);
+        }
+
+        function handleFetchError(error) {
+            console.error('Error:', error);
+            if (error.message === 'Unauthorized') {
+                window.location.href = '/frontend/login.html';
             } else {
-                window.location.href = `/frontend/display-ads-create.html`;
+                Toast.error('Đã xảy ra lỗi khi tải dữ liệu');
             }
         }
-
-        // Thêm event listener cho nút tạo tin quảng cáo
-        document.querySelector('.create-button').addEventListener('click', async function (e) {
-            e.stopPropagation();
-
-            // Xóa dropdown cũ nếu có
-            const oldDropdown = document.querySelector('.dropdown-content');
-            if (oldDropdown) {
-                oldDropdown.remove();
-            }
-
-            const adGroups = await fetchAdGroups();
-            const dropdown = createDropdown(adGroups);
-            this.parentElement.appendChild(dropdown);
-
-            // Show dropdown
-            setTimeout(() => {
-                dropdown.classList.add('show');
-            }, 0);
-        });
-
-        // Đóng dropdown khi click ra ngoài
-        document.addEventListener('click', function (e) {
-            const dropdown = document.querySelector('.dropdown-content');
-            if (dropdown && !dropdown.contains(e.target) && !e.target.matches('.create-button')) {
-                dropdown.classList.remove('show');
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', async function () {
-            requireAuth();
-            await loadAds();
-        });
-
-        async function loadAds() {
-            try {
-                const response = await fetchWithAuth(`${baseUrl}/ads`);
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error('Không thể tải dữ liệu quảng cáo');
-                }
-
-                renderAds(data);
-            } catch (error) {
-                console.error('Error:', error);
-                if (error.message === 'Unauthorized') {
-                    window.location.href = '/frontend/login.html';
-                } else {
-                    Toast.error('Đã xảy ra lỗi khi tải dữ liệu');
-                }
-            }
-        }
-
-        async function fetchAdGroups() {
-            try {
-                const response = await fetchWithAuth(`${baseUrl}/ads-groups`);
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                console.error('Error fetching ad groups:', error);
-                if (error.message === 'Unauthorized') {
-                    window.location.href = '/frontend/login.html';
-                }
-                return [];
-            }
-        }
-
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.sidebar');
-            const overlay = document.querySelector('.sidebar-overlay');
-
-            sidebar.classList.toggle('sidebar-active');
-
-            if (!overlay) {
-                const newOverlay = document.createElement('div');
-                newOverlay.className = 'sidebar-overlay';
-                document.body.appendChild(newOverlay);
-
-                newOverlay.addEventListener('click', () => {
-                    sidebar.classList.remove('sidebar-active');
-                    newOverlay.classList.remove('active');
-                });
-            }
-
-            overlay?.classList.toggle('active');
-        }
-
-        // Add resize listener to handle sidebar visibility
-        window.addEventListener('resize', () => {
-            if (window.innerWidth > 992) {
-                const sidebar = document.querySelector('.sidebar');
-                const overlay = document.querySelector('.sidebar-overlay');
-
-                sidebar.classList.remove('sidebar-active');
-                overlay?.classList.remove('active');
-            }
-        });
     </script>
 </body>
 

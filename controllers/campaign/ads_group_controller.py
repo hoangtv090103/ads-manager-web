@@ -4,6 +4,7 @@ from models.ads_group import AdsGroup
 from models.ads_group_website import AdsGroupWebsite
 from models.ads_group_target_audience import AdsGroupTargetAudience
 from models.ads_group_product_group_mapping import AdsGroupProductGroupMapping
+from models.remarketing_setting import RemarketingSetting
 import logging
 
 # Set up logging
@@ -20,8 +21,8 @@ class AdsGroupController(BaseController):
                     f"Fetching single ads group with ID: {ads_group_id}")
                 ads_group = AdsGroup.get_by_id(ads_group_id)
                 if not ads_group:
-                    return {"error": "Ads group not found"}, 404
-                return {"ads_group": ads_group}
+                    return jsonify({"error": "Ads group not found"})
+                return jsonify({"ads_group": ads_group})
 
             logger.debug("Fetching all ads groups")
             ads_groups = AdsGroup.get_all()
@@ -30,30 +31,27 @@ class AdsGroupController(BaseController):
 
             if not ads_groups:
                 logger.warning("No ads groups found in database")
-                return {"ads_groups": []}
+                return jsonify({"ads_groups": []})
 
             logger.debug("Successfully processed all ads groups")
-            return {"ads_groups": ads_groups}
+            return jsonify({"ads_groups": ads_groups})
         except Exception as e:
             logger.error(f"Error in get ads groups: {str(e)}", exc_info=True)
-            return {"error": str(e)}, 500
+            return jsonify({"error": str(e)})
 
     def post(self):
         try:
             data = request.json
             logger.debug(f"Received POST request with data: {data}")
 
-            # Create ads group
+            # 1. Tạo nhóm quảng cáo cơ bản
             ads_group = AdsGroup(
                 camp_id=data.get('camp_id'),
-                ads_group_status_id=1,  # Default status
+                ads_group_status_id=1,  # Trạng thái mặc định
                 ten_nhom=data.get('ten_nhom'),
-                nham_chon_all_san_pham=data.get(
-                    'nham_chon_all_san_pham', False),
+                nham_chon_all_san_pham=data.get('nham_chon_all_san_pham', False),
                 nham_chon_doi_tuong=data.get('nham_chon_doi_tuong', False),
-                nham_chon_dia_ly=data.get('nham_chon_dia_ly', ''),
-                gioi_tinh_khong_xac_dinh=data.get(
-                    'gioi_tinh_khong_xac_dinh', False),
+                gioi_tinh_khong_xac_dinh=data.get('gioi_tinh_khong_xac_dinh', False),
                 gioi_tinh_nam=data.get('gioi_tinh_nam', False),
                 gioi_tinh_nu=data.get('gioi_tinh_nu', False),
                 tuoi_less_than_18=data.get('tuoi_less_than_18', False),
@@ -63,9 +61,8 @@ class AdsGroupController(BaseController):
                 tuoi_more_than_50=data.get('tuoi_more_than_50', False)
             )
             ads_group_id = ads_group.save()
-            logger.debug(f"Created ads group with ID: {ads_group_id}")
 
-            # Create website mappings
+            # 2. Xử lý website được chọn
             websites = data.get('websites', [])
             for website_id in websites:
                 website_mapping = AdsGroupWebsite(
@@ -74,30 +71,49 @@ class AdsGroupController(BaseController):
                 )
                 website_mapping.create()
 
-            # Create target audience mappings
-            target_audiences = data.get('target_audiences', [])
-            for ta_id in target_audiences:
-                ta_mapping = AdsGroupTargetAudience(
+            # 3. Xử lý remarketing settings nếu có
+            remarketing_data = data.get('remarketing_settings')
+            if remarketing_data:
+                remarketing = RemarketingSetting(
                     ads_group_id=ads_group_id,
-                    ta_id=ta_id
+                    auto_remarketing=remarketing_data.get('auto_remarketing', False),
+                    tan_suat_hien_thi=remarketing_data.get('tan_suat_hien_thi', 0),
+                    thoi_gian_giua_hai_lan_hien_thi=remarketing_data.get('thoi_gian_giua_hai_lan_hien_thi', 0),
+                    thoi_gian_remarketing=remarketing_data.get('thoi_gian_remarketing', 0),
+                    stop_on_click=remarketing_data.get('stop_on_click', False),
+                    stop_on_view=remarketing_data.get('stop_on_view', False),
+                    max_view=remarketing_data.get('max_view', 0)
                 )
-                ta_mapping.create()
+                remarketing.create()
 
-            # Create product group mappings
-            product_groups = data.get('product_groups', [])
-            for product_group_id in product_groups:
-                pg_mapping = AdsGroupProductGroupMapping(
-                    product_group_id=product_group_id
-                )
-                pg_mapping.create()
+            # 4. Xử lý nhóm sản phẩm
+            if not data.get('nham_chon_all_san_pham'):
+                product_group_id = data.get('product_group_id')
+                if product_group_id:
+                    product_group_mapping = AdsGroupProductGroupMapping(
+                        ads_group_id=ads_group_id,
+                        product_group_id=product_group_id
+                    )
+                    product_group_mapping.create()
 
-            return {
+            # 5. Xử lý nhóm đối tượng
+            if data.get('nham_chon_doi_tuong'):
+                target_audience_id = data.get('target_audience_id')
+                if target_audience_id:
+                    ta_mapping = AdsGroupTargetAudience(
+                        ads_group_id=ads_group_id,
+                        ta_id=target_audience_id
+                    )
+                    ta_mapping.create()
+
+            return jsonify({
                 "message": "Ads group created successfully",
                 "ads_group_id": ads_group_id
-            }, 201
+            })
+
         except Exception as e:
             logger.error(f"Error creating ads group: {str(e)}", exc_info=True)
-            return {"error": str(e)}, 500
+            return jsonify({"error": str(e)})
 
     def put(self, ads_group_id):
         try:
@@ -105,13 +121,13 @@ class AdsGroupController(BaseController):
             ads_group = AdsGroup(**data)
             ads_group.ads_group_id = ads_group_id
             ads_group.update()
-            return {"message": "Ads group updated successfully"}
+            return jsonify({"message": "Ads group updated successfully"})
         except Exception as e:
-            return {"error": str(e)}, 500
+            return jsonify({"error": str(e)})
 
     def delete(self, ads_group_id):
         try:
             AdsGroup.delete_by_id(ads_group_id)
-            return {"message": "Ads group deleted successfully"}
+            return jsonify({"message": "Ads group deleted successfully"})
         except Exception as e:
-            return {"error": str(e)}, 500
+            return jsonify({"error": str(e)})

@@ -13,137 +13,39 @@
     <script src="./js/toast.js"></script>
     <script src="./js/script.js"></script>
     <style>
-        .content-wrapper {
-            padding: 24px;
-            background: #fff;
-            border-radius: 8px;
-            margin: 24px;
-        }
-
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #4F4F4F;
-            font-size: 14px;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 32px;
-            border-bottom: 1px solid #E0E0E0;
-            margin-bottom: 24px;
-        }
-
-        .tab-item {
-            padding: 12px 0;
-            color: #4F4F4F;
-            text-decoration: none;
-            position: relative;
-        }
-
-        .tab-item.active {
-            color: #0061C1;
-            font-weight: 500;
-        }
-
-        .tab-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: #0061C1;
-        }
-
-        .action-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            gap: 16px;
-        }
-
-        .action-left {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .action-right {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .search-box {
-            position: relative;
-        }
-
-        .search-box input {
-            padding: 8px 12px 8px 36px;
-            border: 1px solid #E0E0E0;
-            border-radius: 4px;
-            width: 240px;
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #828282;
-        }
-
-        .filter-select {
-            padding: 8px 12px;
-            border: 1px solid #E0E0E0;
-            border-radius: 4px;
-            min-width: 160px;
-        }
-
         .table-container {
             overflow-x: auto;
-            margin-bottom: 24px;
+            margin-top: 24px;
+            background: white;
+            border-radius: 8px;
         }
 
         .ads-group-table {
             width: 100%;
-            border-collapse: collapse;
             min-width: 1200px;
+            border-collapse: collapse;
         }
 
-        .ads-group-table th,
-        .ads-group-table td {
-            padding: 12px 16px;
-            text-align: left;
-            border-bottom: 1px solid #E0E0E0;
-        }
-
-        .ads-group-table th {
+        .frozen-column {
+            position: sticky;
+            left: 0;
             background: #F8F9FA;
-            font-weight: 500;
-            color: #4F4F4F;
+            z-index: 1;
         }
 
-        .ads-group-table td {
-            color: #333;
+        .frozen-column:last-of-type {
+            border-right: 2px solid #E0E0E0;
         }
 
-        .table-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 0;
-            color: #4F4F4F;
+        .ads-group-table tbody td:nth-child(-n+3) {
+            position: sticky;
+            left: 0;
+            background: white;
+            z-index: 1;
+        }
+
+        .ads-group-table tbody td:nth-child(3) {
+            border-right: 2px solid #E0E0E0;
         }
 
         .status-badge {
@@ -163,7 +65,55 @@
             color: #C62828;
         }
 
-        .btn-create {
+        .dropdown-container {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            min-width: 300px;
+            margin-top: 4px;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .dropdown-header {
+            padding: 16px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .dropdown-header input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+        }
+
+        .dropdown-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            cursor: pointer;
+        }
+
+        .dropdown-item:hover {
+            background: #F8F9FA;
+        }
+
+        .create-button {
             background: #0061C1;
             color: white;
             border: none;
@@ -175,21 +125,34 @@
             cursor: pointer;
         }
 
-        .btn-create i {
-            font-size: 14px;
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 24px 0;
         }
 
-        .frozen-columns th:nth-child(-n+3),
-        .frozen-columns td:nth-child(-n+3) {
-            position: sticky;
-            left: 0;
-            background: white;
-            z-index: 1;
+        .action-left {
+            display: flex;
+            gap: 16px;
+            align-items: center;
         }
 
-        .frozen-columns th:nth-child(3),
-        .frozen-columns td:nth-child(3) {
-            border-right: 2px solid #E0E0E0;
+        .action-right {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .table-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-top: 1px solid #E0E0E0;
+            margin-top: 16px;
+            flex-wrap: wrap;
+            gap: 16px;
         }
     </style>
 </head>
@@ -203,7 +166,6 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-
             <span class="logo-text">Ads Manager</span>
         </div>
 
@@ -253,6 +215,7 @@
                 <i class="fas fa-user-shield"></i>
                 <span>Quản lý phân quyền</span>
             </a>
+
             <div class="nav-group">
                 <div class="nav-item" onclick="toggleSubmenu(this)">
                     <i class="fas fa-chart-bar"></i>
@@ -262,19 +225,19 @@
                 <div class="submenu">
                     <a href="/frontend/website-report.html">• Báo cáo website</a>
                     <a href="/frontend/zone-report.html">• Báo cáo vùng</a>
-                    <a href="/frontend/publisher-report.html" class="active">• Báo cáo publisher</a>
+                    <a href="/frontend/publisher-report.html">• Báo cáo publisher</a>
                     <a href="/frontend/ad-format-report.html">• Báo cáo định dạng quảng cáo</a>
                 </div>
             </div>
         </nav>
     </div>
 
-    <!-- Main Content -->
     <div class="main-content">
-        <div class="header-content">
-            <div class="breadcrumb">
+        <!-- Header -->
+        <div class="header-content" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <div style="display: flex; align-items: center; gap: 8px; color: #4F4F4F;">
                 <i class="fas fa-layer-group"></i>
-                <span>/ Quản lý chiến dịch</span>
+                <span style="font-size: 14px;">/ Quản lý chiến dịch</span>
             </div>
             <div class="user-info">
                 <div class="user-details">
@@ -291,58 +254,97 @@
             </div>
         </div>
 
-        <div class="content-wrapper">
-            <div class="tabs">
-                <a href="/frontend/campaigns.html" class="tab-item">Chiến dịch</a>
-                <a href="/frontend/ads-group.html" class="tab-item active">Nhóm quảng cáo</a>
-                <a href="/frontend/ads.html" class="tab-item">Tin quảng cáo</a>
+        <!-- Campaign List Section -->
+        <div style="background: white; border-radius: 8px; padding: 24px;">
+            <h1 style="margin: 0 0 24px 0; font-size: 20px; color: #333;">Danh sách nhóm quảng cáo</h1>
+
+            <!-- Tabs -->
+            <div class="tabs" style="display: flex; gap: 32px; margin-bottom: 24px; border-bottom: 1px solid #E0E0E0;">
+                <div style="padding: 12px 0; color: #4F4F4F;">
+                    <a href="/frontend/campaigns.html" style="color: #4F4F4F; text-decoration: none;">Chiến dịch</a>
+                </div>
+                <div style="padding: 12px 0; color: #0061C1; border-bottom: 2px solid #0061C1; font-weight: 500;">
+                    <a href="/frontend/ads-group.html" style="color: #0061C1; text-decoration: none;">Nhóm quảng cáo</a>
+                </div>
+                <div style="padding: 12px 0; color: #4F4F4F;">
+                    <a href="/frontend/ads.html" style="color: #4F4F4F; text-decoration: none;">Tin quảng cáo</a>
+                </div>
             </div>
 
+            <!-- Action Bar -->
             <div class="action-bar">
                 <div class="action-left">
-                    <button class="btn-create" onclick="window.location.href='ads-group-create.html'">
-                        <i class="fas fa-plus"></i>
-                        Tạo nhóm quảng cáo
-                    </button>
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Tìm kiếm">
+                    <div class="dropdown-container">
+                        <button class="create-button" onclick="showCampaignDropdown(this)">
+                            <i class="fas fa-plus"></i> Tạo nhóm quảng cáo
+                        </button>
+                    </div>
+                    <div style="position: relative;">
+                        <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #828282;"></i>
+                        <input type="text" placeholder="Tìm kiếm" style="padding: 8px 12px 8px 36px; border: 1px solid #E0E0E0; border-radius: 4px; width: 240px;">
                     </div>
                 </div>
 
                 <div class="action-right">
-                    <select class="filter-select">
-                        <option value="">Loại QC</option>
-                        <option value="display">Display Ads</option>
-                        <option value="native">Native Ads</option>
-                        <option value="video">Video Ads</option>
-                    </select>
-                    <select class="filter-select">
-                        <option value="">Trạng thái</option>
-                        <option value="all">Tất cả</option>
-                        <option value="active">Đang chạy</option>
-                        <option value="paused">Tạm dừng</option>
-                        <option value="completed">Hoàn thành</option>
-                    </select>
+                    <div style="display: flex; gap: 16px;">
+                        <select id="adTypeFilter" style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px; width: 160px;">
+                            <option value="">Loại QC</option>
+                            <option value="Display Ads">Display Ads</option>
+                            <option value="Ecommerce">Ecommerce</option>
+                            <option value="Native Ads">Native Ads</option>
+                        </select>
+                        <select id="statusFilter" style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px; width: 160px;">
+                            <option value="">Trạng thái</option>
+                            <option value="all">Tất cả</option>
+                            <option value="active">Đang chạy</option>
+                            <option value="paused">Tạm dừng</option>
+                            <option value="completed">Hoàn thành</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
+            <!-- Table -->
             <div class="table-container">
-                <table class="ads-group-table frozen-columns">
+                <table class="ads-group-table">
                     <thead>
-                        <tr>
-                            <th><input type="checkbox"></th>
-                            <th>STT</th>
-                            <th>Tên nhóm</th>
-                            <th>Chiến dịch QC</th>
-                            <th>Trạng thái</th>
-                            <th>Loại QC</th>
-                            <th>Tổng chi phí (VNĐ)</th>
-                            <th>Lượt xem</th>
-                            <th>Lượt nhấn</th>
-                            <th>CTR (%)</th>
-                            <th>CPC (VNĐ)</th>
-                            <th>CPM (VNĐ)</th>
+                        <tr style="background: #F8F9FA;">
+                            <th class="frozen-column" style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                <input type="checkbox">
+                            </th>
+                            <th class="frozen-column" style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                STT
+                            </th>
+                            <th class="frozen-column" style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                Tên nhóm
+                            </th>
+                            <th style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                Chiến dịch QC
+                            </th>
+                            <th style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                Trạng thái
+                            </th>
+                            <th style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                Loại QC
+                            </th>
+                            <th style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                Chi phí (VNĐ)
+                            </th>
+                            <th style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                Lượt xem
+                            </th>
+                            <th style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                Lượt nhấn
+                            </th>
+                            <th style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                CTR
+                            </th>
+                            <th style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                CPC (VNĐ)
+                            </th>
+                            <th style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                CPM (VNĐ)
+                            </th>
                         </tr>
                     </thead>
                     <tbody id="adGroupsTableBody">
@@ -351,9 +353,14 @@
                 </table>
             </div>
 
+            <!-- Footer -->
             <div class="table-footer">
-                <div>Số nhóm quảng cáo: <span id="totalGroups">0</span></div>
-                <div>Tổng chi phí: <span id="totalCost">0 VNĐ</span></div>
+                <div style="color: #4F4F4F; font-size: 14px;">
+                    Số nhóm quảng cáo: <span id="totalGroups" style="font-weight: 500;">0</span>
+                </div>
+                <div style="display: flex; gap: 24px; color: #4F4F4F;">
+                    <div>Tổng chi phí: <span id="totalCost" style="font-weight: 500;">0 VNĐ</span></div>
+                </div>
             </div>
         </div>
     </div>
@@ -362,52 +369,26 @@
         const baseUrl = 'http://127.0.0.1:5000/api/v1';
         let originalAdsGroups = [];
 
-        document.addEventListener('DOMContentLoaded', function () {
-            if (checkAuthentication()) {
-                initializePage();
-            }
+        document.addEventListener('DOMContentLoaded', async function() {
+            requireAuth();
+            await loadAdsGroups();
+            setupEventListeners();
         });
-
-        function checkAuthentication() {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                window.location.href = '/frontend/login.html';
-                return false;
-            }
-            return true;
-        }
-
-        async function initializePage() {
-            try {
-                await Promise.all([
-                    loadAdsGroups(),
-                    setupEventListeners()
-                ]);
-            } catch (error) {
-                console.error('Error initializing page:', error);
-                Toast.error('Đã xảy ra lỗi khi khởi tạo trang');
-            }
-        }
 
         async function loadAdsGroups() {
             try {
-                const response = await fetch(`${baseUrl}/ads-groups`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
+                const response = await fetchWithAuth(`${baseUrl}/ads-groups`);
+                const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error('Failed to fetch ads groups');
+                    throw new Error('Không thể tải dữ liệu nhóm quảng cáo');
                 }
 
-                const data = await response.json();
                 originalAdsGroups = data.ads_groups || [];
                 renderAdGroups(originalAdsGroups);
                 updateSummary(originalAdsGroups);
             } catch (error) {
+                console.error('Error:', error);
                 handleFetchError(error);
             }
         }
@@ -432,7 +413,7 @@
                 tr.innerHTML = `
                     <td><input type="checkbox"></td>
                     <td>${index + 1}</td>
-                    <td>${group.ten_nhom || '-'}</td>
+                    <td style="color: #2F80ED; cursor: pointer;">${group.ten_nhom || '-'}</td>
                     <td>${group.ten_chien_dich || '-'}</td>
                     <td>
                         <span class="status-badge ${group.active ? 'status-active' : 'status-inactive'}">
@@ -443,7 +424,7 @@
                     <td style="text-align: right">${formatCurrency(group.tong_chi_phi)}</td>
                     <td style="text-align: right">${formatNumber(group.luot_xem)}</td>
                     <td style="text-align: right">${formatNumber(group.luot_nhan)}</td>
-                    <td style="text-align: right">${formatPercent(group.ctr)}</td>
+                    <td style="text-align: right">${formatPercent(group.ctr)}%</td>
                     <td style="text-align: right">${formatCurrency(group.cpc)}</td>
                     <td style="text-align: right">${formatCurrency(group.cpm)}</td>
                 `;
@@ -453,7 +434,10 @@
 
         function updateSummary(groups) {
             const totalGroups = groups.length;
-            const totalCost = groups.reduce((sum, group) => sum + (parseFloat(group.tong_chi_phi) || 0), 0);
+            const totalCost = groups.reduce((sum, group) => {
+                const cost = parseFloat(group.tong_chi_phi) || 0;
+                return sum + cost;
+            }, 0);
 
             document.getElementById('totalGroups').textContent = totalGroups;
             document.getElementById('totalCost').textContent = formatCurrency(totalCost);
@@ -461,8 +445,8 @@
 
         function setupEventListeners() {
             // Search functionality
-            const searchInput = document.querySelector('.search-box input');
-            searchInput.addEventListener('input', function (e) {
+            const searchInput = document.querySelector('input[placeholder="Tìm kiếm"]');
+            searchInput.addEventListener('input', function(e) {
                 const searchText = e.target.value.toLowerCase();
                 const filteredGroups = originalAdsGroups.filter(group =>
                     (group.ten_nhom?.toLowerCase().includes(searchText)) ||
@@ -473,8 +457,8 @@
             });
 
             // Filter by ad type
-            const typeSelect = document.querySelector('select[value=""]');
-            typeSelect?.addEventListener('change', function (e) {
+            const typeSelect = document.getElementById('adTypeFilter');
+            typeSelect.addEventListener('change', function(e) {
                 const selectedType = e.target.value;
                 const filteredGroups = selectedType ?
                     originalAdsGroups.filter(group => group.ten_loai_quang_cao === selectedType) :
@@ -484,8 +468,8 @@
             });
 
             // Filter by status
-            const statusSelect = document.querySelector('select[value=""]');
-            statusSelect?.addEventListener('change', function (e) {
+            const statusSelect = document.getElementById('statusFilter');
+            statusSelect.addEventListener('change', function(e) {
                 const selectedStatus = e.target.value;
                 const filteredGroups = selectedStatus === 'all' ?
                     originalAdsGroups :
@@ -493,37 +477,105 @@
                 renderAdGroups(filteredGroups);
                 updateSummary(filteredGroups);
             });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                const dropdown = document.querySelector('.dropdown-content');
+                if (dropdown && !dropdown.contains(e.target) && !e.target.matches('.create-button')) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        }
+
+        async function showCampaignDropdown(button) {
+            // Remove existing dropdown if any
+            const existingDropdown = document.querySelector('.dropdown-content');
+            if (existingDropdown) {
+                existingDropdown.remove();
+            }
+
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/campaigns`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error('Không thể tải danh sách chiến dịch');
+                }
+
+                const dropdownContent = document.createElement('div');
+                dropdownContent.className = 'dropdown-content';
+                dropdownContent.innerHTML = `
+                    <div class="dropdown-header">
+                        <div style="margin-bottom: 12px; font-weight: 500;">Chọn chiến dịch</div>
+                        <input type="text" placeholder="Tìm kiếm chiến dịch" onkeyup="filterCampaigns(this.value)">
+                    </div>
+                    <div class="dropdown-list" id="campaignsList">
+                        ${data.campaigns.length > 0 ? 
+                            data.campaigns.map(campaign => `
+                                <div class="dropdown-item" onclick="selectCampaign('${campaign.camp_id}', '${campaign.ten_chien_dich}')">
+                                    ${campaign.ten_chien_dich}
+                                </div>
+                            `).join('') :
+                            '<div class="dropdown-item">Không có chiến dịch nào</div>'
+                        }
+                    </div>
+                `;
+
+                button.parentElement.appendChild(dropdownContent);
+                setTimeout(() => dropdownContent.classList.add('show'), 0);
+            } catch (error) {
+                console.error('Error fetching campaigns:', error);
+                Toast.error('Không thể tải danh sách chiến dịch');
+            }
+        }
+
+        function filterCampaigns(searchText) {
+            const items = document.querySelectorAll('.dropdown-item');
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(searchText.toLowerCase())) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function selectCampaign(campId, campName) {
+            const campaignData = {
+                camp_id: parseInt(campId),
+                ten_chien_dich: campName
+            };
+
+            sessionStorage.setItem('selected_campaign', JSON.stringify(campaignData));
+            window.location.href = 'ads-group-create.html';
         }
 
         function formatNumber(value) {
             if (value === undefined || value === null) return '-';
-            return value.toLocaleString('vi-VN');
+            return Number(value).toLocaleString('vi-VN');
         }
 
         function formatCurrency(value) {
-            if (value === undefined || value === null || isNaN(value)) return '-';
-            return value.toLocaleString('vi-VN', {
+            if (value === undefined || value === null) return '-';
+            return Number(value).toLocaleString('vi-VN', {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0
             });
         }
 
         function formatPercent(value) {
-            if (value === undefined || value === null || isNaN(value)) return '-';
-            return value.toFixed(2);
+            if (value === undefined || value === null) return '-';
+            return Number(value).toFixed(2);
         }
 
         function handleFetchError(error) {
             console.error('Error:', error);
-            Toast.error('Đã xảy ra lỗi khi tải dữ liệu');
-            const tbody = document.getElementById('adGroupsTableBody');
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="12" style="text-align: center; padding: 20px; color: #dc3545;">
-                        Không thể tải dữ liệu. Vui lòng thử lại sau.
-                    </td>
-                </tr>
-            `;
+            if (error.message === 'Unauthorized') {
+                window.location.href = '/frontend/login.html';
+            } else {
+                Toast.error('Đã xảy ra lỗi khi tải dữ liệu');
+            }
         }
     </script>
 </body>

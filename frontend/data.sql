@@ -1,65 +1,179 @@
--- Thêm roles
+INSERT INTO
+    campaign_type (ten_loai_chien_dich)
+VALUES ('Native Ads'),
+    ('Display Ads'),
+    ('Ecommerce');
 
--- Thêm users (password hash cho "123456")
-INSERT INTO users (user_id, username, email, password, role_id, active) VALUES
--- Admin users
-(1, 'admin', 'Administrator', 'admin@novanet.vn', '$2b$12$LQVGHl9.8vQVBB6v9X8/suYY3t/wPyUTESVFyBCH6.GGk9GNhYwQe', 1, true)
+INSERT INTO
+    ads_zone_size (ten_kich_thuoc)
+VALUES ('375x400 - In page'),
+    ('300x600 - In page'),
+    ('375x600 - In page'),
+    ('300x250 - In page'),
+    ('375x810 - In page'),
+    ('359x70 - Top banner'),
+    ('640x320 - Top banner'),
+    ('375x180 - Top banner'),
+    ('375x810 - Popup mobile'),
+    ('375x120 - In footer'),
+    ('320x100 - In footer'),
+    ('160x600 - Side page');
 
--- Publisher users
-(2, 'vietnamnet', 'VietNamNet', 'publisher@vietnamnet.vn', '$2b$12$LQVGHl9.8vQVBB6v9X8/suYY3t/wPyUTESVFyBCH6.GGk9GNhYwQe', 2, true),
-(3, 'dantri', 'Dân Trí', 'publisher@dantri.vn', '$2b$12$LQVGHl9.8vQVBB6v9X8/suYY3t/wPyUTESVFyBCH6.GGk9GNhYwQe', 2, true),
-(4, 'vnexpress', 'VnExpress', 'publisher@vnexpress.net', '$2b$12$LQVGHl9.8vQVBB6v9X8/suYY3t/wPyUTESVFyBCH6.GGk9GNhYwQe', 2, true),
+-- Native Ads formats
+INSERT INTO
+    ads_format (campaign_type_id, format_name)
+SELECT ct.camp_type_id, format_name
+FROM (
+        VALUES ('Native video post'), ('Native post in read')
+    ) AS formats (format_name)
+    CROSS JOIN campaign_type ct
+WHERE
+    ct.ten_loai_chien_dich = 'Native Ads';
 
--- Customer users
-(5, 'tgdd', 'Thế Giới Di Động', 'marketing@thegioididong.com', '$2b$12$LQVGHl9.8vQVBB6v9X8/suYY3t/wPyUTESVFyBCH6.GGk9GNhYwQe', 2, true),
-(6, 'fpt', 'FPT Shop', 'marketing@fptshop.com.vn', '$2b$12$LQVGHl9.8vQVBB6v9X8/suYY3t/wPyUTESVFyBCH6.GGk9GNhYwQe', 2, true),
-(7, 'shopee', 'Shopee', 'marketing@shopee.vn', '$2b$12$LQVGHl9.8vQVBB6v9X8/suYY3t/wPyUTESVFyBCH6.GGk9GNhYwQe', 2, true);
+-- Display Ads formats
+INSERT INTO
+    ads_format (campaign_type_id, format_name)
+SELECT ct.camp_type_id, format_name
+FROM (
+        VALUES ('Notification Banner'), ('CatFish Collab Branding'), ('Popup Banner Branding'), ('CatFish Collab Video'), ('Popup Banner Video'), (
+                'Interscroller Video Branding'
+            ), ('CatFish Graphic Banner'), ('In Read Branding'), ('Banner Medium 300x250'), ('Banner Standard 640x320'), ('Banner Standard 160x600'), ('Text Ads 300x600'), ('Text Ads 300x250'), ('Text Ads 320x100')
+    ) AS formats (format_name)
+    CROSS JOIN campaign_type ct
+WHERE
+    ct.ten_loai_chien_dich = 'Display Ads';
 
--- Thêm publishers
-INSERT INTO publisher (publisher_id, ten_publisher, user_id, email, so_dien_thoai, active) VALUES
-(1, 'VietNamNet', 2, 'publisher@vietnamnet.vn', '0987654321', true),
-(2, 'Dân Trí', 3, 'publisher@dantri.vn', '0987654322', true),
-(3, 'VnExpress', 4, 'publisher@vnexpress.net', '0987654323', true);
+-- Ecommerce formats
+INSERT INTO
+    ads_format (campaign_type_id, format_name)
+SELECT ct.camp_type_id, format_name
+FROM (
+        VALUES ('Mobile Banner Card'), ('Interactive Banner'), ('Flying Carpet'), ('In Read Ecommerce'), ('Post In Read'), ('CatFish Ecom'), ('CatFish Video Ecom')
+    ) AS formats (format_name)
+    CROSS JOIN campaign_type ct
+WHERE
+    ct.ten_loai_chien_dich = 'Ecommerce';
 
--- Thêm customers
-INSERT INTO customer (
-    customer_id, 
-    ho_va_ten, 
-    user_id,
-    gioi_tinh,
-    ten_doanh_nghiep,
-    dia_chi_doanh_nghiep,
-    website_doanh_nghiep,
-    so_dien_thoai,
-    email_doanh_nghiep,
-    ma_remarketing,
-    active
-) VALUES
-(1, 'Thế Giới Di Động', 5, 1, 'Công ty CP Thế Giới Di Động', 
-   '128 Trần Quang Khải, P. Tân Định, Q.1, TP.HCM', 
-   'www.thegioididong.com', 
-   '0987654324',
-   'marketing@thegioididong.com',
-   'GTM-TGDD123',
-   true),
+INSERT INTO
+    ad_size_format (format_id, size_id)
+SELECT f.format_id, s.size_id
+FROM ads_format f
+    CROSS JOIN ads_zone_size s
+WHERE (
+        f.format_name = 'Native video post'
+        AND s.ten_kich_thuoc = '375x400 - In page'
+    )
+    OR (
+        f.format_name = 'Native post in read'
+        AND s.ten_kich_thuoc = '375x400 - In page'
+    )
+    OR (
+        f.format_name = 'Notification Banner'
+        AND s.ten_kich_thuoc = '359x70 - Top banner'
+    )
+    OR (
+        f.format_name = 'CatFish Collab Branding'
+        AND s.ten_kich_thuoc = '375x120 - In footer'
+    )
+    OR (
+        f.format_name = 'Popup Banner Branding'
+        AND s.ten_kich_thuoc = '375x810 - Popup mobile'
+    )
+    OR (
+        f.format_name = 'CatFish Collab Video'
+        AND s.ten_kich_thuoc = '375x120 - In footer'
+    )
+    OR (
+        f.format_name = 'Popup Banner Video'
+        AND s.ten_kich_thuoc = '375x810 - Popup mobile'
+    )
+    OR (
+        f.format_name = 'Interscroller Video Branding'
+        AND s.ten_kich_thuoc = '300x600 - In page'
+    )
+    OR (
+        f.format_name = 'CatFish Graphic Banner'
+        AND s.ten_kich_thuoc = '320x100 - In footer'
+    )
+    OR (
+        f.format_name = 'In Read Branding'
+        AND s.ten_kich_thuoc = '375x600 - In page'
+    )
+    OR (
+        f.format_name = 'Banner Medium 300x250'
+        AND s.ten_kich_thuoc = '300x250 - In page'
+    )
+    OR (
+        f.format_name = 'Banner Standard 640x320'
+        AND s.ten_kich_thuoc = '640x320 - Top banner'
+    )
+    OR (
+        f.format_name = 'Banner Standard 160x600'
+        AND s.ten_kich_thuoc = '160x600 - Side page'
+    )
+    OR (
+        f.format_name = 'Text Ads 300x600'
+        AND s.ten_kich_thuoc = '300x600 - In page'
+    )
+    OR (
+        f.format_name = 'Text Ads 300x250'
+        AND s.ten_kich_thuoc = '300x250 - In page'
+    )
+    OR (
+        f.format_name = 'Text Ads 320x100'
+        AND s.ten_kich_thuoc = '320x100 - In footer'
+    )
+    OR (
+        f.format_name = 'Mobile Banner Card'
+        AND s.ten_kich_thuoc = '375x180 - Top banner'
+    )
+    OR (
+        f.format_name = 'Interactive Banner'
+        AND s.ten_kich_thuoc = '375x810 - Popup mobile'
+    )
+    OR (
+        f.format_name = 'Flying Carpet'
+        AND s.ten_kich_thuoc = '375x810 - In page'
+    )
+    OR (
+        f.format_name = 'In Read Ecommerce'
+        AND s.ten_kich_thuoc = '375x600 - In page'
+    )
+    OR (
+        f.format_name = 'Post In Read'
+        AND s.ten_kich_thuoc = '375x600 - In page'
+    )
+    OR (
+        f.format_name = 'CatFish Ecom'
+        AND s.ten_kich_thuoc = '375x120 - In footer'
+    )
+    OR (
+        f.format_name = 'CatFish Video Ecom'
+        AND s.ten_kich_thuoc = '375x120 - In footer'
+    );
 
-(2, 'FPT Shop', 6, 1, 'Công ty CP Bán lẻ Kỹ thuật số FPT', 
-   'Tòa nhà FPT Cầu Giấy, Số 17 Duy Tân, Cầu Giấy, Hà Nội',
-   'www.fptshop.com.vn',
-   '0987654325',
-   'marketing@fptshop.com.vn',
-   'GTM-FPT123',
-   true),
+INSERT INTO
+    price_type (price_type_name)
+VALUES ('CPM'),
+    ('CPC');
 
-(3, 'Shopee', 7, 1, 'Công ty TNHH Shopee', 
-   'Tòa nhà Lim Tower, 9-11 Tôn Đức Thắng, Bến Nghé, Q.1, TP.HCM',
-   'www.shopee.vn',
-   '0987654326',
-   'marketing@shopee.vn',
-   'GTM-SHOPEE123',
-   true);
+INSERT INTO
+    source_status (ten_trang_thai)
+VALUES ('Đang chờ xử lý'),
+    ('Đang xử lý'),
+    ('Đã xử lý'),
+    ('Lỗi');
 
--- Reset sequence
-SELECT setval('users_user_id_seq', (SELECT MAX(user_id) FROM users));
-SELECT setval('publisher_publisher_id_seq', (SELECT MAX(publisher_id) FROM publisher));
-SELECT setval('customer_customer_id_seq', (SELECT MAX(customer_id) FROM customer));
+INSERT INTO
+    product_status (ten_trang_thai)
+VALUES ('Thực chạy'),
+    ('Hết hàng'),
+    ('Đã tắt');
+
+INSERT INTO
+    ads_group_status (ten_trang_thai)
+VALUES ('Tất cả'),
+    ('Đang chạy'),
+    ('Tạm dừng'),
+    ('Lỗi'),
+    ('Chưa hoàn thành');

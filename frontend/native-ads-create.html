@@ -5,14 +5,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tạo tin quảng cáo Native - Ads Manager</title>
-    <script src="./js/auth.js"></script>
-    <script src="./js/toast.js"></script>
-    <script src="./js/script.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <link rel="stylesheet" href="./css/toast.css">
+    <script src="./js/auth.js"></script>
+    <script src="./js/toast.js"></script>
+    <script src="./js/script.js"></script>
     <style>
+        /* Layout styles */
+        body {
+            display: flex;
+            min-height: 100vh;
+            background: #F5F5F5;
+        }
+
+        .sidebar {
+            width: 250px;
+            min-width: 250px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 24px 40px;
+            min-height: 100vh;
+            width: calc(100% - 250px);
+            box-sizing: border-box;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #4F4F4F;
+            font-size: 14px;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            margin-top: 24px;
+            max-width: 100%;
+        }
+
+        .form-section {
+            margin-bottom: 32px;
+        }
+
+        .form-section h2 {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-control::placeholder {
+            color: #BDBDBD;
+        }
 
         .format-list {
             display: flex;
@@ -60,39 +140,8 @@
             display: block;
         }
 
-        .btn-cancel {
-            padding: 8px 16px;
-            border: 1px solid #E0E0E0;
-            border-radius: 4px;
-            background: white;
-            color: #4F4F4F;
-            cursor: pointer;
-        }
-
-        .btn-create {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            background: #2F80ED;
-            color: white;
-            cursor: pointer;
-        }
-
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-            margin-top: 24px;
-        }
-
         .upload-section {
             margin-bottom: 24px;
-        }
-
-        .section-label {
-            font-weight: 500;
-            color: #333;
-            margin-bottom: 12px;
         }
 
         .upload-container {
@@ -103,14 +152,15 @@
         }
 
         .upload-btn {
-            background: none;
-            border: none;
-            color: #2F80ED;
-            cursor: pointer;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 8px;
-            margin: 0 auto;
+            color: #2F80ED;
+            text-decoration: none;
+            font-size: 14px;
+            background: none;
+            border: none;
+            cursor: pointer;
         }
 
         .specs-table {
@@ -134,16 +184,17 @@
         }
 
         .char-counter {
+            float: right;
             color: #828282;
             font-size: 12px;
-            text-align: right;
             margin-top: 4px;
         }
 
-        .cta-toggle {
+        .toggle-switch {
             display: flex;
             align-items: center;
             gap: 12px;
+            margin-bottom: 16px;
         }
 
         /* Switch toggle style */
@@ -184,12 +235,43 @@
             border-radius: 50%;
         }
 
-        input:checked+.slider {
+        input:checked + .slider {
             background-color: #2F80ED;
         }
 
-        input:checked+.slider:before {
+        input:checked + .slider:before {
             transform: translateX(20px);
+        }
+
+        .btn-complete {
+            background: #0061C1;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 24px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-complete:disabled {
+            background: #E0E0E0;
+            cursor: not-allowed;
+        }
+
+        .preview-container {
+            margin-top: 16px;
+        }
+
+        .preview-container img,
+        .preview-container video {
+            max-width: 100%;
+            border-radius: 4px;
+        }
+
+        .error-message {
+            color: #EB5757;
+            font-size: 12px;
+            margin-top: 8px;
         }
     </style>
 </head>
@@ -203,7 +285,6 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            
             <span class="logo-text">Ads Manager</span>
         </div>
 
@@ -231,10 +312,6 @@
                 <span>Quản lý đối tượng</span>
             </a>
 
-
-
-            
-
             <a href="/frontend/publishers.html" class="nav-item">
                 <i class="fas fa-users-cog"></i>
                 <span>Danh sách Publisher</span>
@@ -252,11 +329,13 @@
                     <a href="/frontend/ad-zones.html">• Danh sách vùng QC</a>
                 </div>
             </div>
+
             <a href="/frontend/accounts.html" class="nav-item">
                 <i class="fas fa-user-shield"></i>
                 <span>Quản lý phân quyền</span>
             </a>
-<div class="nav-group">
+
+            <div class="nav-group">
                 <div class="nav-item" onclick="toggleSubmenu(this)">
                     <i class="fas fa-chart-bar"></i>
                     <span>Báo cáo</span>
@@ -265,12 +344,13 @@
                 <div class="submenu">
                     <a href="/frontend/website-report.html">• Báo cáo website</a>
                     <a href="/frontend/zone-report.html">• Báo cáo vùng</a>
-                    <a href="/frontend/publisher-report.html" class="active">• Báo cáo publisher</a>
+                    <a href="/frontend/publisher-report.html">• Báo cáo publisher</a>
                     <a href="/frontend/ad-format-report.html">• Báo cáo định dạng quảng cáo</a>
                 </div>
             </div>
         </nav>
     </div>
+
     <div class="main-content">
         <!-- Header -->
         <div class="header-content">
@@ -284,160 +364,135 @@
                     <div class="user-email" id="user-email"></div>
                 </div>
                 <i class="fas fa-user"></i>
-<div class="user-dropdown">
+                <div class="user-dropdown">
                     <div class="dropdown-item" onclick="auth.logout()">
                         <i class="fas fa-sign-out-alt"></i>
                         Đăng xuất
                     </div>
                 </div>
-                
             </div>
         </div>
-
-        <h1 class="page-title">Tạo tin quảng cáo Native</h1>
 
         <div class="form-container">
             <form id="createNativeAdForm">
                 <div class="form-section">
-                    <div class="section-title">Đặt tên tin quảng cáo</div>
+                    <h2>Đặt tên tin quảng cáo</h2>
                     <div class="form-group">
-                        <label class="form-label">Tên tin quảng cáo</label>
-                        <input type="text" class="form-input" name="ad_name" required>
+                        <input type="text" class="form-control" placeholder="Tên tin quảng cáo">
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Link đích <span class="text-note">(Bắt buộc)</span></label>
-                        <input type="url" class="form-input" name="target_url" placeholder="Nhập URL" required>
+                        <label>Link đích (bắt buộc)</label>
+                        <input type="url" class="form-control" placeholder="Nhập URL">
                     </div>
                 </div>
 
                 <div class="form-section">
-                    <div class="section-title">Định dạng quảng cáo</div>
+                    <h2>Định dạng quảng cáo</h2>
                     <div class="format-list">
                         <!-- Native Video Post -->
                         <div class="format-item">
                             <div class="format-header">
-                                <input type="radio" name="ad_format" id="native_video" value="native_video">
+                                <input type="radio" name="ad_format" id="native_video">
                                 <label for="native_video">Native Video Post</label>
                             </div>
                             <div class="format-content">
-                                <!-- Video Upload Section -->
                                 <div class="upload-section">
-                                    <div class="section-label">Video</div>
+                                    <h3>Đăng tải video</h3>
+                                    <div class="form-group">
+                                        <label>Video</label>
+                                        <div class="upload-container">
+                                            <button type="button" class="upload-btn" onclick="document.getElementById('videoUpload').click()">
+                                                <i class="fas fa-upload"></i> Tải lên
+                                            </button>
+                                            <input type="file" id="videoUpload" accept="video/mp4,video/mov" style="display: none;">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Ảnh thumbnail</label>
+                                        <div class="upload-container">
+                                            <button type="button" class="upload-btn" onclick="document.getElementById('thumbnailUpload').click()">
+                                                <i class="fas fa-upload"></i> Tải lên
+                                            </button>
+                                            <input type="file" id="thumbnailUpload" accept="image/jpeg,image/png" style="display: none;">
+                                        </div>
+                                    </div>
+
+                                    <div class="specs-table">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Loại</th>
+                                                    <th>Định dạng nội dung</th>
+                                                    <th>Tỉ lệ Banner</th>
+                                                    <th>Dung lượng tối đa</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Video</td>
+                                                    <td>MP4, MOV</td>
+                                                    <td>1920×1080px</td>
+                                                    <td>Không giới hạn</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Ảnh thumbnail</td>
+                                                    <td>Jpeg, png</td>
+                                                    <td>1920×1080px</td>
+                                                    <td>1MB</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Logo</label>
                                     <div class="upload-container">
-                                        <input type="file" id="videoUpload" accept="video/mp4,video/mov"
-                                            style="display: none;">
-                                        <button type="button" class="upload-btn"
-                                            onclick="document.getElementById('videoUpload').click()">
+                                        <button type="button" class="upload-btn" onclick="document.getElementById('logoUpload').click()">
                                             <i class="fas fa-upload"></i> Tải lên
                                         </button>
-                                    </div>
-                                    <div id="videoPreview" class="preview-container"></div>
-                                </div>
-
-                                <!-- Thumbnail Upload Section -->
-                                <div class="upload-section">
-                                    <div class="section-label">Ảnh thumbnail</div>
-                                    <div class="upload-container">
-                                        <input type="file" id="thumbnailUpload" accept="image/jpeg,image/png"
-                                            style="display: none;">
-                                        <button type="button" class="upload-btn"
-                                            onclick="document.getElementById('thumbnailUpload').click()">
-                                            <i class="fas fa-upload"></i> Tải lên
-                                        </button>
-                                    </div>
-                                    <div id="thumbnailPreview" class="preview-container"></div>
-                                </div>
-
-                                <!-- Technical Specifications Table -->
-                                <div class="specs-section">
-                                    <div class="section-label">Các kích thước cho phép</div>
-                                    <table class="specs-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Loại</th>
-                                                <th>Định dạng nội dung</th>
-                                                <th>Tỉ lệ Banner</th>
-                                                <th>Dung lượng tối đa</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Video</td>
-                                                <td>MP4, MOV</td>
-                                                <td>1920×1080px</td>
-                                                <td>Không giới hạn</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Ảnh thumbnail</td>
-                                                <td>Jpeg, png</td>
-                                                <td>1920×1080px</td>
-                                                <td>1MB</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                                <!-- Logo Upload Section -->
-                                <div class="upload-section">
-                                    <div class="section-label">Logo</div>
-                                    <div class="upload-container">
                                         <input type="file" id="logoUpload" accept="image/*" style="display: none;">
-                                        <button type="button" class="upload-btn"
-                                            onclick="document.getElementById('logoUpload').click()">
-                                            <i class="fas fa-upload"></i> Tải lên
-                                        </button>
                                     </div>
-                                    <div id="logoPreview" class="preview-container"></div>
                                 </div>
 
-                                <!-- Brand and Content Section -->
-                                <div class="content-section">
+                                <div class="form-group">
+                                    <label>Tên Brand</label>
+                                    <input type="text" class="form-control" placeholder="Nhập tên brand..." maxlength="70">
+                                    <div class="char-counter">0/70</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Tiêu đề</label>
+                                    <input type="text" class="form-control" placeholder="Nhập tiêu đề quảng cáo..." maxlength="100">
+                                    <div class="char-counter">0/100</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Nội dung</label>
+                                    <textarea class="form-control" rows="4" placeholder="Nhập nội dung..." maxlength="300"></textarea>
+                                    <div class="char-counter">0/300</div>
+                                </div>
+
+                                <div class="toggle-switch">
+                                    <label class="switch">
+                                        <input type="checkbox" id="ctaToggle">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <span>Nút CTA</span>
+                                </div>
+
+                                <div class="cta-section" style="display: none;">
                                     <div class="form-group">
-                                        <label class="form-label">Tên Brand</label>
-                                        <input type="text" class="form-input" name="brand_name"
-                                            placeholder="Nhập tên brand..." maxlength="70">
-                                        <div class="char-counter">0/70</div>
+                                        <label>Nội dung CTA</label>
+                                        <input type="text" class="form-control" placeholder="Nhập nội dung..." maxlength="25">
+                                        <div class="char-counter">0/25</div>
                                     </div>
 
                                     <div class="form-group">
-                                        <label class="form-label">Tiêu đề</label>
-                                        <input type="text" class="form-input" name="title"
-                                            placeholder="Nhập tiêu đề quảng cáo..." maxlength="100">
-                                        <div class="char-counter">0/100</div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="form-label">Nội dung</label>
-                                        <textarea class="form-input" name="content" placeholder="Nhập nội dung..."
-                                            maxlength="300"></textarea>
-                                        <div class="char-counter">0/300</div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <div class="cta-toggle">
-                                            <label class="switch">
-                                                <input type="checkbox" id="ctaToggle">
-                                                <span class="slider round"></span>
-                                            </label>
-                                            <span>Nút CTA</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="cta-section" style="display: none;">
-                                        <div class="form-group">
-                                            <label class="form-label">Nội dung CTA</label>
-                                            <input type="text" class="form-input" name="cta_text"
-                                                placeholder="Nhập nội dung..." maxlength="25">
-                                            <div class="char-counter">0/25</div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="form-label">URL CTA <span class="text-note">(không bắt
-                                                    buộc)</span></label>
-                                            <input type="url" class="form-input" name="cta_url"
-                                                placeholder="Nhập nội dung...">
-                                        </div>
+                                        <label>URL CTA (không bắt buộc)</label>
+                                        <input type="url" class="form-control" placeholder="Nhập nội dung...">
                                     </div>
                                 </div>
                             </div>
@@ -446,97 +501,77 @@
                         <!-- Native Post In Read -->
                         <div class="format-item">
                             <div class="format-header">
-                                <input type="radio" name="ad_format" id="native_post_read" value="native_post_read">
+                                <input type="radio" name="ad_format" id="native_post_read">
                                 <label for="native_post_read">Native Post In Read</label>
                             </div>
                             <div class="format-content">
-                                <div class="section-title">Đăng tải video</div>
-
-                                <!-- Logo Upload -->
                                 <div class="form-group">
-                                    <label class="form-label">Logo nhãn hàng</label>
+                                    <label>Logo nhãn hàng</label>
                                     <div class="upload-container">
+                                        <button type="button" class="upload-btn" onclick="document.getElementById('brandLogoUpload').click()">
+                                            <i class="fas fa-upload"></i> Tải lên
+                                        </button>
                                         <input type="file" id="brandLogoUpload" accept="image/*" style="display: none;">
-                                        <button type="button" class="upload-btn"
-                                            onclick="document.getElementById('brandLogoUpload').click()">
-                                            <i class="fas fa-upload"></i> Tải lên
-                                        </button>
                                     </div>
                                 </div>
 
-                                <!-- Ad Image Upload -->
                                 <div class="form-group">
-                                    <label class="form-label">Tải ảnh quảng cáo</label>
+                                    <label>Tải ảnh quảng cáo</label>
                                     <div class="upload-container">
-                                        <input type="file" id="adImageUpload" accept="image/jpeg,image/png,image/gif"
-                                            style="display: none;">
-                                        <button type="button" class="upload-btn"
-                                            onclick="document.getElementById('adImageUpload').click()">
+                                        <button type="button" class="upload-btn" onclick="document.getElementById('adImageUpload').click()">
                                             <i class="fas fa-upload"></i> Tải lên
                                         </button>
+                                        <input type="file" id="adImageUpload" accept="image/jpeg,image/png,image/gif" style="display: none;">
                                     </div>
                                 </div>
 
-                                <!-- Brand Info -->
                                 <div class="form-group">
-                                    <label class="form-label">Tên Brand</label>
-                                    <input type="text" class="form-input" name="brand_name"
-                                        placeholder="Nhập tên thương hiệu..." maxlength="70">
+                                    <label>Tên Brand</label>
+                                    <input type="text" class="form-control" placeholder="Nhập tên thương hiệu..." maxlength="70">
                                     <div class="char-counter">0/70</div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="form-label">Tiêu đề</label>
-                                    <input type="text" class="form-input" name="title"
-                                        placeholder="Nhập tiêu đề quảng cáo..." maxlength="250">
+                                    <label>Tiêu đề</label>
+                                    <input type="text" class="form-control" placeholder="Nhập tiêu đề quảng cáo..." maxlength="250">
                                     <div class="char-counter">0/250</div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="form-label">Lĩnh vực</label>
-                                    <input type="text" class="form-input" name="field" placeholder="Nhập tên lĩnh vực"
-                                        maxlength="3">
+                                    <label>Lĩnh vực</label>
+                                    <input type="text" class="form-control" placeholder="Nhập tên lĩnh vực" maxlength="3">
                                     <div class="char-counter">0/3</div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="form-label">Thông điệp kêu gọi</label>
-                                    <input type="text" class="form-input" name="call_message"
-                                        value="Có thể bạn quan tâm" maxlength="30">
+                                    <label>Thông điệp kêu gọi</label>
+                                    <input type="text" class="form-control" value="Có thể bạn quan tâm" maxlength="30">
                                     <div class="char-counter">19/30</div>
                                 </div>
 
-                                <!-- CTA Section -->
-                                <div class="form-group">
-                                    <div class="cta-toggle">
-                                        <label class="switch">
-                                            <input type="checkbox" id="postReadCtaToggle" checked>
-                                            <span class="slider round"></span>
-                                        </label>
-                                        <span>Nút CTA</span>
-                                    </div>
+                                <div class="toggle-switch">
+                                    <label class="switch">
+                                        <input type="checkbox" id="postReadCtaToggle" checked>
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <span>Nút CTA</span>
                                 </div>
 
                                 <div class="cta-section">
                                     <div class="form-group">
-                                        <label class="form-label">Nội dung CTA</label>
-                                        <input type="text" class="form-input" name="cta_text"
-                                            placeholder="Nhập nội dung..." maxlength="25">
+                                        <label>Nội dung CTA</label>
+                                        <input type="text" class="form-control" placeholder="Nhập nội dung..." maxlength="25">
                                         <div class="char-counter">0/25</div>
                                     </div>
 
                                     <div class="form-group">
-                                        <label class="form-label">URL CTA <span class="text-note">(không bắt
-                                                buộc)</span></label>
-                                        <input type="url" class="form-input" name="cta_url"
-                                            placeholder="Nhập nội dung...">
+                                        <label>URL CTA (không bắt buộc)</label>
+                                        <input type="url" class="form-control" placeholder="Nhập nội dung...">
                                     </div>
                                 </div>
 
-                                <!-- Specifications Table -->
-                                <div class="specs-section">
-                                    <div class="section-label">Các kích thước cho phép</div>
-                                    <table class="specs-table">
+                                <div class="specs-table">
+                                    <table>
                                         <thead>
                                             <tr>
                                                 <th>Loại</th>
@@ -560,158 +595,119 @@
                     </div>
                 </div>
 
-                <div class="form-actions">
-                    <button type="button" class="btn-cancel">Huỷ</button>
-                    <button type="submit" class="btn-create">Hoàn tất</button>
-                </div>
+                <button type="submit" class="btn-complete">Hoàn tất</button>
             </form>
         </div>
     </div>
 
-    <script src="./scripts.js"></script>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            requireAuth();
-
-            // Xử lý click cho radio buttons và labels
+            // Handle format items
             const formatItems = document.querySelectorAll('.format-item');
             
             formatItems.forEach(item => {
                 const radio = item.querySelector('input[type="radio"]');
                 const header = item.querySelector('.format-header');
+                const content = item.querySelector('.format-content');
                 
                 header.addEventListener('click', function() {
-                    // Ẩn tất cả các format-content và bỏ active
+                    // Hide all contents and remove active class
                     formatItems.forEach(otherItem => {
-                        const otherContent = otherItem.querySelector('.format-content');
-                        otherContent.style.display = 'none';
+                        otherItem.querySelector('.format-content').style.display = 'none';
                         otherItem.classList.remove('active');
                         otherItem.querySelector('input[type="radio"]').checked = false;
                     });
 
-                    // Hiển thị content của item được click và set active
-                    const content = item.querySelector('.format-content');
+                    // Show selected content and add active class
                     content.style.display = 'block';
                     item.classList.add('active');
                     radio.checked = true;
                 });
             });
 
-            // Xử lý character counter cho các input
-            document.querySelectorAll('input[maxlength], textarea[maxlength]').forEach(input => {
-                const counter = input.nextElementSibling;
-                if (counter && counter.classList.contains('char-counter')) {
-                    // Set giá trị ban đầu
-                    counter.textContent = `${input.value.length}/${input.maxLength}`;
-                    
-                    // Update khi input thay đổi
-                    input.addEventListener('input', function() {
-                        counter.textContent = `${this.value.length}/${this.maxLength}`;
-                    });
-                }
-            });
-
-            // Xử lý toggle CTA
-            const ctaToggles = document.querySelectorAll('input[type="checkbox"]#ctaToggle, input[type="checkbox"]#postReadCtaToggle');
+            // Handle CTA toggles
+            const ctaToggles = document.querySelectorAll('#ctaToggle, #postReadCtaToggle');
             ctaToggles.forEach(toggle => {
-                const ctaSection = toggle.closest('.form-group').nextElementSibling;
-                // Set trạng thái ban đầu
-                if (toggle.checked) {
-                    ctaSection.style.display = 'block';
-                }
+                const ctaSection = toggle.closest('.toggle-switch').nextElementSibling;
                 
                 toggle.addEventListener('change', function() {
                     ctaSection.style.display = this.checked ? 'block' : 'none';
                 });
             });
-        });
 
-        // Hàm xử lý file upload
-        function handleFileUpload(event, previewId, type, maxSizeMB, dimensions) {
-            const file = event.target.files[0];
-            const previewDiv = document.getElementById(previewId);
-            previewDiv.innerHTML = '';
-
-            if (!file) return;
-
-            // Kiểm tra dung lượng
-            if (file.size > maxSizeMB * 1024 * 1024) {
-                previewDiv.innerHTML = `
-                    <div class="error-message">
-                        File vượt quá ${maxSizeMB}MB
-                    </div>`;
-                return;
-            }
-
-            // Tạo preview
-            if (type === 'image') {
-                const img = document.createElement('img');
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    img.src = e.target.result;
-                    checkImageDimensions(img, dimensions, previewDiv);
-                };
-                reader.readAsDataURL(file);
-                previewDiv.appendChild(img);
-            } else if (type === 'video') {
-                const video = document.createElement('video');
-                video.controls = true;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    video.src = e.target.result;
-                    checkVideoDuration(video, dimensions, previewDiv);
-                };
-                reader.readAsDataURL(file);
-                previewDiv.appendChild(video);
-            }
-        }
-
-        // Kiểm tra kích thước ảnh
-        function checkImageDimensions(img, dimensions, previewDiv) {
-            img.onload = function () {
-                const [width, height] = dimensions.split('×');
-                if (img.width != width || img.height != height) {
-                    previewDiv.innerHTML += `
-                        <div class="error-message">
-                            Kích thước không đúng. Yêu cầu ${dimensions}px
-                        </div>`;
+            // Handle character counters
+            document.querySelectorAll('input[maxlength], textarea[maxlength]').forEach(element => {
+                const counter = element.nextElementSibling;
+                if (counter && counter.classList.contains('char-counter')) {
+                    counter.textContent = `${element.value.length}/${element.maxLength}`;
+                    
+                    element.addEventListener('input', function() {
+                        counter.textContent = `${this.value.length}/${this.maxLength}`;
+                    });
                 }
-            };
-        }
+            });
 
-        // Kiểm tra thời lượng video
-        function checkVideoDuration(video, duration, previewDiv) {
-            video.onloadedmetadata = function () {
-                const [min, max] = duration.split('-');
-                if (video.duration < min || video.duration > max) {
-                    previewDiv.innerHTML += `
-                        <div class="error-message">
-                            Thời lượng video phải từ ${min} đến ${max} giây
-                        </div>`;
-                }
-            };
-        }
+            // Handle file uploads
+            function handleFileUpload(input, previewId, maxSize, allowedTypes) {
+                input.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    const preview = document.getElementById(previewId);
+                    
+                    if (!file) return;
 
-        document.getElementById('createNativeAdForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            try {
-                const formData = new FormData(this);
-                
-                const response = await fetchWithAuth(`${baseUrl}/ads`, {
-                    method: 'POST',
-                    body: formData
+                    // Check file type
+                    if (!allowedTypes.includes(file.type)) {
+                        preview.innerHTML = '<div class="error-message">Định dạng file không được hỗ trợ</div>';
+                        return;
+                    }
+
+                    // Check file size
+                    if (maxSize && file.size > maxSize * 1024 * 1024) {
+                        preview.innerHTML = `<div class="error-message">File vượt quá ${maxSize}MB</div>`;
+                        return;
+                    }
+
+                    // Create preview
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        if (file.type.startsWith('image/')) {
+                            preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                        } else if (file.type.startsWith('video/')) {
+                            preview.innerHTML = `<video src="${e.target.result}" controls></video>`;
+                        }
+                    };
+                    reader.readAsDataURL(file);
                 });
-
-                if (!response.ok) {
-                    throw new Error('Không thể tạo tin quảng cáo');
-                }
-
-                Toast.success('Đã tạo tin quảng cáo thành công!');
-                window.location.href = '/frontend/ads.html';
-            } catch (error) {
-                Toast.error(error.message);
             }
+
+            // Initialize file upload handlers
+            handleFileUpload(document.getElementById('videoUpload'), 'videoPreview', null, ['video/mp4', 'video/mov']);
+            handleFileUpload(document.getElementById('thumbnailUpload'), 'thumbnailPreview', 1, ['image/jpeg', 'image/png']);
+            handleFileUpload(document.getElementById('logoUpload'), 'logoPreview', 1, ['image/jpeg', 'image/png']);
+            handleFileUpload(document.getElementById('brandLogoUpload'), 'brandLogoPreview', 1, ['image/jpeg', 'image/png']);
+            handleFileUpload(document.getElementById('adImageUpload'), 'adImagePreview', 5, ['image/jpeg', 'image/png', 'image/gif']);
+
+            // Handle form submission
+            document.getElementById('createNativeAdForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                try {
+                    const formData = new FormData(this);
+                    
+                    const response = await fetchWithAuth(`${baseUrl}/ads/native`, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Không thể tạo tin quảng cáo');
+                    }
+
+                    Toast.success('Đã tạo tin quảng cáo thành công!');
+                    window.location.href = '/frontend/ads.html';
+                } catch (error) {
+                    Toast.error(error.message);
+                }
+            });
         });
     </script>
 </body>
