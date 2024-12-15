@@ -197,7 +197,7 @@
       <div class="action-bar">
         <div class="action-left">
           <div class="filter-group">
-            <select id="customerFilter" class="form-select">
+            <select id="customerFilter" class="form-select" style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px; width: 200px;">
               <option value="">Chọn khách hàng</option>
             </select>
           </div>
@@ -215,21 +215,18 @@
 
         <div class="action-right">
           <div style="display: flex; gap: 16px;">
-            <select style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px; width: 160px;">
-              <option>Loại QC</option>
-              <option>Display Ads</option>
-              <option>Ecommerce</option>
-              <option>Native Ads</option>
+            <select id="adTypeFilter" style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px; width: 160px;">
+              <option value="">Loại QC</option>
             </select>
-            <select style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px; width: 160px;">
-              <option>Trạng thái</option>
-              <option>Tất cả</option>
-              <option>Chưa chạy</option>
-              <option>Đang chạy</option>
-              <option>Tạm dừng</option>
-              <option>Lỗi</option>
-              <option>Hoàn thành</option>
-              <option>Chưa hoàn thành</option>
+            <select id="statusFilter" style="padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 4px; width: 160px;">
+              <option value="">Trạng thái</option>
+              <option value="Tất cả">Tất cả</option>
+              <option value="Chưa chạy">Chưa chạy</option>
+              <option value="Đang chạy">Đang chạy</option>
+              <option value="Tạm dừng">Tạm dừng</option>
+              <option value="Lỗi">Lỗi</option>
+              <option value="Hoàn thành">Hoàn thành</option>
+              <option value="Chưa hoàn thành">Chưa hoàn thành</option>
             </select>
             <div class="customize-column-dropdown">
               <button class="customize-column-btn">
@@ -485,135 +482,243 @@
       return date.toLocaleDateString('vi-VN');
     }
 
-    function renderCampaigns(campaigns) {
-      const tbody = document.getElementById('campaignTableBody');
-      tbody.innerHTML = '';
+    // Thêm biến để lưu trữ bộ lọc
+    let filters = {
+        search: '',
+        adType: '',
+        status: '',
+        customer: ''
+    };
 
-      campaigns.forEach((campaign, index) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td style="padding: 12px 16px; text-align: left; border-bottom: 1px solid #E0E0E0;">
-            <input type="checkbox">
-          </td>
-          <td style="padding: 12px 16px; text-align: left; border-bottom: 1px solid #E0E0E0;">
-            ${index + 1}
-          </td>
-          <td style="padding: 12px 16px; text-align: left; border-bottom: 1px solid #E0E0E0;">
-            <label class="switch">
-              <input type="checkbox" 
-                     ${campaign.active ? 'checked' : ''} 
-                     onchange="toggleCampaignStatus(${campaign.camp_id}, this.checked)">
-              <span class="slider round"></span>
-            </label>
-          </td>
-          <td style="padding: 12px 16px; text-align: left; border-bottom: 1px solid #E0E0E0;">
-            ${campaign.ten_chien_dich || '-'}
-          </td>
-          <td style="padding: 12px 16px; text-align: left; border-bottom: 1px solid #E0E0E0;">
-            ${campaign.trang_thai}
-          </td>
-          <td style="padding: 12px 16px; text-align: left; border-bottom: 1px solid #E0E0E0;">
-            ${campaign.ten_loai_quang_cao || '-'}
-          </td>
-          <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
-            <div>${formatCurrency(campaign.ngan_sach_ngay)}</div>
-            <div>${formatCurrency(campaign.tong_ngan_sach)}</div>
-          </td>
-          <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
-            <div>${formatNumber(campaign.luot_xem_ngay)}</div>
-            <div>${formatNumber(campaign.tong_luot_xem)}</div>
-          </td>
-          <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
-            <div>${formatNumber(campaign.luot_nhan_ngay)}</div>
-            <div>${formatNumber(campaign.tong_luot_nhan)}</div>
-          </td>
-          <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
-            <div>${formatNumber(campaign.ctr_ngay)}%</div>
-            <div>${formatNumber(campaign.ctr_tong)}%</div>
-          </td>
-          <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
-            <div>${formatCurrency(campaign.cpc_ngay)}</div>
-            <div>${formatCurrency(campaign.cpc_tong)}</div>
-          </td>
-          <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
-            <div>${formatCurrency(campaign.cpm_ngay)}</div>
-            <div>${formatCurrency(campaign.cpm_tong)}</div>
-          </td>
-          <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
-            <div>${formatNumber(campaign.video_view_3s_ngay)}</div>
-            <div>${formatNumber(campaign.video_view_3s_tong)}</div>
-          </td>
-          <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
-            ${formatDate(campaign.ngay_bat_dau)} - ${formatDate(campaign.ngay_ket_thuc)}
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
+    // Cập nhật hàm filterCampaigns
+    function filterCampaigns(campaigns) {
+        return campaigns.filter(campaign => {
+            // Lọc theo từ khóa tìm kiếm (tên chiến dịch)
+            const searchMatch = !filters.search || 
+                (campaign.ten_chien_dich && campaign.ten_chien_dich.toLowerCase().includes(filters.search.toLowerCase()));
 
-    async function toggleCampaignStatus(campId, active) {
-      try {
-        const response = await fetchWithAuth(`${baseUrl}/campaigns/${campId}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ active: active })
+            // Lọc theo loại quảng cáo
+            const typeMatch = !filters.adType || 
+                campaign.ten_loai_quang_cao === filters.adType;
+
+            // Lọc theo trạng thái
+            const statusMatch = !filters.status || filters.status === 'Tất cả' || 
+                campaign.ten_trang_thai === filters.status;
+
+            // Lọc theo khách hàng
+            const customerMatch = !filters.customer || 
+                (campaign.ho_va_ten && campaign.ho_va_ten === filters.customer);
+
+            return searchMatch && typeMatch && statusMatch && customerMatch;
         });
-
-        if (!response.ok) {
-          throw new Error('Failed to update campaign status');
-        }
-
-        // Nếu thành công, không cần làm gì thêm vì UI đã được cập nhật
-      } catch (error) {
-        console.error('Error:', error);
-        // Nếu có lỗi, revert lại trạng thái của switch
-        const checkbox = document.querySelector(`input[type="checkbox"][data-campaign-id="${campId}"]`);
-        if (checkbox) {
-          checkbox.checked = !active;
-        }
-        Toast.error('Không thể cập nhật trạng thái chiến dịch');
-      }
     }
 
-    async function fetchCampaigns() {
-      try {
-        const response = await fetchWithAuth(`${baseUrl}/campaigns`);
-        const data = await response.json();
+    // Cập nhật hàm renderCampaigns để hiển thị dữ liệu chính xác
+    function renderCampaigns(campaigns) {
+        const tbody = document.getElementById('campaignTableBody');
+        tbody.innerHTML = '';
 
-        if (!response.ok) {
-          throw new Error(data.error || 'Không thể tải dữ liệu chiến dịch');
+        if (!campaigns || campaigns.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="18" style="text-align: center; padding: 20px;">
+                        Không tìm thấy chiến dịch nào
+                    </td>
+                </tr>
+            `;
+            // Reset các số liệu tổng khi không có dữ liệu
+            document.getElementById('total-campaigns').textContent = '0';
+            document.getElementById('total-budget').textContent = formatCurrency(0);
+            document.getElementById('total-cost').textContent = formatCurrency(0);
+            return;
         }
 
-        if (!data.campaigns || !Array.isArray(data.campaigns)) {
-          throw new Error('Dữ liệu không đúng định dạng');
-        }
+        // Tính toán tổng cho các chiến dịch đã được lọc
+        const totalBudget = campaigns.reduce((sum, camp) => sum + (parseFloat(camp.ngan_sach_ngay) || 0), 0);
+        const totalCost = campaigns.reduce((sum, camp) => sum + (parseFloat(camp.tong_chi_phi) || 0), 0);
 
-        // Tính tổng với xử lý số 0 cho các giá trị null/undefined
-        const totalBudget = data.campaigns.reduce((acc, campaign) =>
-          acc + (parseFloat(campaign.ngan_sach_ngay) || 0), 0);
-        const totalCost = data.campaigns.reduce((acc, campaign) =>
-          acc + (parseFloat(campaign.tong_chi_phi) || 0), 0);
-
-        // Cập nhật UI
+        // Cập nhật UI với số liệu tổng mới
+        document.getElementById('total-campaigns').textContent = campaigns.length;
         document.getElementById('total-budget').textContent = formatCurrency(totalBudget);
         document.getElementById('total-cost').textContent = formatCurrency(totalCost);
-        document.getElementById('total-campaigns').textContent = data.campaigns.length;
 
-        // Render campaigns
-        renderCampaigns(data.campaigns);
+        // Render các chiến dịch
+        campaigns.forEach((campaign, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="padding: 12px 16px; text-align: left; border-bottom: 1px solid #E0E0E0;">
+                    <input type="checkbox">
+                </td>
+                <td style="padding: 12px 16px; text-align: left; border-bottom: 1px solid #E0E0E0;">
+                    ${index + 1}
+                </td>
+                <td style="padding: 12px 16px; text-align: left; border-bottom: 1px solid #E0E0E0;">
+                    <label class="switch">
+                        <input type="checkbox" 
+                               ${campaign.active ? 'checked' : ''} 
+                               onchange="toggleCampaignStatus(${campaign.camp_id}, this.checked)">
+                        <span class="slider round"></span>
+                    </label>
+                </td>
+                <td style="padding: 12px 16px; text-align: left; border-bottom: 1px solid #E0E0E0;">
+                    <a href="#" style="color: #2F80ED; text-decoration: none;">
+                        ${campaign.ten_chien_dich || '-'}
+                    </a>
+                </td>
+                <td style="padding: 12px 16px; text-align: left; border-bottom: 1px solid #E0E0E0;">
+                    ${campaign.ten_trang_thai || '-'}
+                </td>
+                <td style="padding: 12px 16px; text-align: left; border-bottom: 1px solid #E0E0E0;">
+                    ${campaign.ten_loai_quang_cao || '-'}
+                </td>
+                <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
+                    <div>${formatCurrency(campaign.ngan_sach_ngay)}</div>
+                    <div>${formatCurrency(campaign.tong_chi_phi)}</div>
+                </td>
+                <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
+                    <div>${formatNumber(campaign.luot_xem)}</div>
+                    <div>${formatNumber(campaign.luot_xem)}</div>
+                </td>
+                <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
+                    <div>${formatNumber(campaign.luot_nhan)}</div>
+                    <div>${formatNumber(campaign.luot_nhan)}</div>
+                </td>
+                <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
+                    <div>${formatNumber(campaign.ctr)}%</div>
+                    <div>${formatNumber(campaign.ctr)}%</div>
+                </td>
+                <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
+                    <div>${formatCurrency(campaign.cpc)}</div>
+                    <div>${formatCurrency(campaign.cpc)}</div>
+                </td>
+                <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
+                    <div>${formatCurrency(campaign.cpm)}</div>
+                    <div>${formatCurrency(campaign.cpm)}</div>
+                </td>
+                <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
+                    <div>${formatNumber(campaign.videoview3s)}</div>
+                    <div>${formatNumber(campaign.videoview3s)}</div>
+                </td>
+                <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
+                    <div>${formatNumber(campaign.so_luong_mua_hang)}</div>
+                    <div>${formatNumber(campaign.so_luong_mua_hang)}</div>
+                </td>
+                <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
+                    <div>${formatNumber(campaign.conversion_rate)}%</div>
+                    <div>${formatNumber(campaign.conversion_rate)}%</div>
+                </td>
+                <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
+                    <div>${formatCurrency(campaign.cps)}</div>
+                    <div>${formatCurrency(campaign.cps)}</div>
+                </td>
+                <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
+                    ${campaign.ngay_bat_dau} - ${campaign.ngay_ket_thuc}
+                </td>
+                <td style="padding: 12px 16px; text-align: left; border-bottom: 1px solid #E0E0E0;">
+                    ${campaign.ho_va_ten || '-'}
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
 
-      } catch (error) {
-        console.error('Error fetching campaigns:', error);
+    // Cập nhật hàm setupEventListeners để xử lý các sự kiện lọc
+    function setupEventListeners() {
+        // Lọc theo khách hàng
+        const customerSelect = document.getElementById('customerFilter');
+        if (customerSelect) {
+            customerSelect.addEventListener('change', function(e) {
+                filters.customer = this.value;
+                applyFilters();
+            });
+        }
 
-        // Xử lý các loại lỗi cụ thể
+        // Lọc theo từ khóa
+        const searchInput = document.querySelector('input[type="text"][placeholder="Tìm kiếm"]');
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                filters.search = e.target.value;
+                applyFilters();
+            });
+        }
+
+        // Lọc theo loại quảng cáo
+        const adTypeSelect = document.getElementById('adTypeFilter');
+        if (adTypeSelect) {
+            adTypeSelect.addEventListener('change', function(e) {
+                filters.adType = this.value;
+                applyFilters();
+            });
+        }
+
+        // Lọc theo trạng thái
+        const statusSelect = document.querySelector('select[id="statusFilter"]');
+        if (statusSelect) {
+            statusSelect.addEventListener('change', function(e) {
+                filters.status = this.value;
+                applyFilters();
+            });
+        }
+    }
+
+    // Cập nhật hàm fetchCampaigns để log dữ liệu nhận được
+    async function fetchCampaigns() {
+        try {
+            console.log('Fetching campaigns...');
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error('No authentication token found');
+                window.location.href = '/frontend/login.html';
+                return;
+            }
+
+            const response = await fetch(`${baseUrl}/campaigns`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            console.log('Response status:', response.status);
+            const data = await response.json();
+            console.log('Response data:', data);
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Không thể tải dữ liệu chiến dịch');
+            }
+
+            if (!data.campaigns || !Array.isArray(data.campaigns)) {
+                throw new Error('Dữ liệu không đúng định dạng');
+            }
+
+            // Lưu dữ liệu gốc và log để debug
+            originalCampaigns = data.campaigns;
+            console.log('Loaded campaigns:', originalCampaigns);
+            
+            // Render với bộ lọc hiện tại
+            applyFilters();
+
+        } catch (error) {
+            console.error('Error fetching campaigns:', error);
+            handleFetchError(error);
+        }
+    }
+
+    // Hàm áp dụng bộ lọc
+    function applyFilters() {
+        const filteredCampaigns = filterCampaigns(originalCampaigns);
+        renderCampaigns(filteredCampaigns);
+    }
+
+    // Hàm xử lý lỗi
+    function handleFetchError(error) {
         if (error.message === 'Unauthorized') {
-          window.location.href = '/frontend/login.html';
+            window.location.href = '/frontend/login.html';
         } else if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
-          Toast.error('Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng.');
+            Toast.error('Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng.');
         } else {
-          Toast.error(`Đã xảy ra lỗi: ${error.message}`);
+            Toast.error(`Đã xảy ra lỗi: ${error.message}`);
         }
 
         // Set giá trị mặc định cho UI khi có lỗi
@@ -621,75 +726,94 @@
         document.getElementById('total-cost').textContent = formatCurrency(0);
         document.getElementById('total-campaigns').textContent = '0';
         document.getElementById('campaignTableBody').innerHTML = `
-          <tr>
-            <td colspan="100%" style="text-align: center; padding: 20px;">
-              Không thể tải dữ liệu. Vui lòng thử lại sau.
-            </td>
-          </tr>
+            <tr>
+                <td colspan="18" style="text-align: center; padding: 20px;">
+                    Không thể tải dữ liệu. Vui lòng thử lại sau.
+                </td>
+            </tr>
         `;
-      }
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-      requireAuth();
-      fetchCampaigns();
-
-      const adTypeFilter = document.getElementById('adTypeFilter');
-      if (adTypeFilter) {
-        adTypeFilter.addEventListener('change', applyFilters);
-      } else {
-        console.error('Element with ID "adTypeFilter" not found.');
-      }
-    });
-
-    document.addEventListener('DOMContentLoaded', function () {
-      const customizeBtn = document.querySelector('.customize-column-btn');
-      const customizeMenu = document.querySelector('.customize-column-menu');
-      const resetBtn = document.getElementById('resetColumns');
-      const applyBtn = document.getElementById('applyColumns');
-
-      // Toggle dropdown
-      customizeBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        customizeMenu.classList.toggle('show');
-      });
-
-      // Close dropdown when clicking outside
-      document.addEventListener('click', function (e) {
-        if (!customizeMenu.contains(e.target) && !customizeBtn.contains(e.target)) {
-          customizeMenu.classList.remove('show');
+    // Thêm hàm để lấy danh sách loại chiến dịch
+    async function fetchCampaignTypes() {
+        try {
+            const response = await fetchWithAuth(`${baseUrl}/campaign-types`);
+            const data = await response.json();
+            
+            if (data && data.campaign_types) {
+                const adTypeSelect = document.querySelector('select[id="adTypeFilter"]');
+                // Xóa options cũ trừ option đầu tiên
+                adTypeSelect.innerHTML = '<option value="">Loại QC</option>';
+                
+                // Thêm các options mới
+                data.campaign_types.forEach(type => {
+                    const option = document.createElement('option');
+                    option.value = type.ten_loai_chien_dich;
+                    option.textContent = type.ten_loai_chien_dich;
+                    adTypeSelect.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching campaign types:', error);
+            Toast.error('Không thể tải danh sách loại chiến dịch');
         }
-      });
+    }
 
-      // Handle column visibility
-      function updateColumnVisibility() {
-        const checkboxes = document.querySelectorAll('.column-option input[type="checkbox"]');
-        checkboxes.forEach(checkbox => {
-          const columnId = checkbox.id.replace('col-', '');
-          const cells = document.querySelectorAll(`.${columnId}-cell`);
-          cells.forEach(cell => {
-            cell.style.display = checkbox.checked ? 'table-cell' : 'none';
-          });
-        });
-      }
+    // Thêm hàm để lấy danh sách khách hàng
+    async function fetchCustomers() {
+        try {
+            console.log('Fetching customers...');
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${baseUrl}/customers`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
 
-      // Reset columns
-      resetBtn.addEventListener('click', function () {
-        const checkboxes = document.querySelectorAll('.column-option input[type="checkbox"]');
-        checkboxes.forEach(checkbox => {
-          checkbox.checked = true;
-        });
-        updateColumnVisibility();
-      });
+            const data = await response.json();
+            console.log('Customers data:', data);
 
-      // Apply changes
-      applyBtn.addEventListener('click', function () {
-        updateColumnVisibility();
-        customizeMenu.classList.remove('show');
-      });
+            if (data && data.customers) {
+                const customerSelect = document.getElementById('customerFilter');
+                // Reset select
+                customerSelect.innerHTML = '<option value="">Tất cả khách hàng</option>';
+                
+                // Thêm options mới
+                data.customers.forEach(customer => {
+                    const option = document.createElement('option');
+                    option.value = customer.ho_va_ten;
+                    option.textContent = customer.ho_va_ten;
+                    customerSelect.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching customers:', error);
+            Toast.error('Không thể tải danh sách khách hàng');
+        }
+    }
 
-      // Initial column setup
-      updateColumnVisibility();
+    // Thêm hàm để kiểm tra token
+    function checkAuthentication() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.log('No token found, redirecting to login');
+            window.location.href = '/frontend/login.html';
+            return false;
+        }
+        return true;
+    }
+
+    // Cập nhật event listener khi trang load
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Page loaded, checking authentication...');
+        if (checkAuthentication()) {
+            console.log('Authentication successful, fetching data...');
+            fetchCampaigns();
+            fetchCustomers(); // Thêm gọi API lấy danh sách khách hàng
+            setupEventListeners();
+        }
     });
   </script>
 </body>

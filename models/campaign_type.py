@@ -86,7 +86,7 @@ class CampaignType:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-                SELECT camp_type_id FROM campaign_type WHERE ten_loai_chien_dich = %s
+                SELECT camp_type_id FROM campaign_type WHERE ten_loai_chien_dich ILIKE %s
             ''', (ten_loai_chien_dich,))
             row = cursor.fetchone()
             return row[0] if row else None
