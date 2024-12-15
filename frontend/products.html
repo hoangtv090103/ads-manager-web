@@ -447,10 +447,10 @@
 
         function updateStats(products) {
             const totalProducts = products.length;
-            const activeProducts = products.filter(p => p.tinh_trang_san_pham === 'Thực chạy').length;
-            const outOfStockProducts = products.filter(p => p.tinh_trang_san_pham === 'Hết hàng').length;
+            const activeProducts = products.filter(p => p.tinh_trang_san_pham === 'Thực chạy' && p.active).length;
+            const outOfStockProducts = products.filter(p => p.tinh_trang_san_pham === 'Hết hàng' && p.active).length;
             const inactiveProducts = products.filter(p => !p.active).length;
-            const errorProducts = products.filter(p => p.tinh_trang_san_pham === 'Lỗi').length;
+            const errorProducts = products.filter(p => p.tinh_trang_san_pham === 'Lỗi' && p.active).length;
 
             // Calculate percentages
             const activePercentage = totalProducts > 0 ? Math.round((activeProducts / totalProducts) * 100) : 0;
