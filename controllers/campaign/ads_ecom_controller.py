@@ -14,14 +14,21 @@ class AdsEcomController(BaseController):
             data = request.form.to_dict()
             files = request.files
 
-            # Validate required fields
-            required_fields = ['ten_tin_quang_cao', 'format_id', 'ads_group_id']
-            for field in required_fields:
-                if field not in data:
-                    return jsonify({
-                        'status': 'error',
-                        'message': f'Missing required field: {field}'
-                    }), 400
+            # Get format name from request
+            format_name = data.get('format_name')
+            if not format_name:
+                return jsonify({
+                    'status': 'error',
+                    'message': 'Thiếu thông tin định dạng quảng cáo'
+                }), 400
+
+            # Get format from database
+            format = AdsFormat.get_by_name(format_name)
+            if not format:
+                return jsonify({
+                    'status': 'error',
+                    'message': f'Không tìm thấy định dạng quảng cáo: {format_name}'
+                }), 404
 
             # Start transaction
             conn = get_db_connection()
@@ -67,7 +74,7 @@ class AdsEcomController(BaseController):
                     RETURNING ads_id
                 """, (
                     ads_id,
-                    data.get('format_id'),
+                    format.format_id,
                     anh_banner_chan_trang,
                     video_banner,
                     anh_thumbnail,
@@ -127,7 +134,7 @@ class AdsEcomController(BaseController):
                         WHERE a.ads_id = %s AND a.active = TRUE
                     """, (ads_id,))
                     row = cursor.fetchone()
-                    
+
                     if not row:
                         return jsonify({
                             'status': 'error',
@@ -173,7 +180,7 @@ class AdsEcomController(BaseController):
                         WHERE a.active = TRUE
                         ORDER BY a.created_at DESC
                     """)
-                    
+
                     ads_list = []
                     for row in cursor.fetchall():
                         ads_list.append({
@@ -217,17 +224,17 @@ class AdsEcomController(BaseController):
                 if 'ten_tin_quang_cao' in data or 'URL_dich' in data:
                     update_fields = []
                     update_values = []
-                    
+
                     if 'ten_tin_quang_cao' in data:
                         update_fields.append("ten_tin_quang_cao = %s")
                         update_values.append(data['ten_tin_quang_cao'])
-                    
+
                     if 'URL_dich' in data:
                         update_fields.append("URL_dich = %s")
                         update_values.append(data['URL_dich'])
-                    
+
                     update_values.append(ads_id)
-                    
+
                     cursor.execute(f"""
                         UPDATE ads 
                         SET {', '.join(update_fields)},

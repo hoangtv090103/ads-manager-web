@@ -1,8 +1,11 @@
-INSERT INTO
-    campaign_type (ten_loai_chien_dich)
-VALUES ('Native Ads'),
-    ('Display Ads'),
-    ('Ecommerce');
+DROP TABLE IF EXISTS ads_format CASCADE;
+DROP TABLE IF EXISTS ad_size_format CASCADE;
+DROP TABLE IF EXISTS price_type CASCADE;
+DROP TABLE IF EXISTS source_status CASCADE;
+DROP TABLE IF EXISTS product_status CASCADE;
+DROP TABLE IF EXISTS ads_group_status CASCADE;
+DROP TABLE IF EXISTS campaign_type CASCADE;
+
 
 INSERT INTO
     ads_zone_size (ten_kich_thuoc)
@@ -169,11 +172,3 @@ INSERT INTO
 VALUES ('Thực chạy'),
     ('Hết hàng'),
     ('Đã tắt');
-
-INSERT INTO
-    ads_group_status (ten_trang_thai)
-VALUES ('Tất cả'),
-    ('Đang chạy'),
-    ('Tạm dừng'),
-    ('Lỗi'),
-    ('Chưa hoàn thành');

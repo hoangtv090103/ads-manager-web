@@ -106,6 +106,18 @@ class AdsFormat:
                 'ten_kich_thuoc'
             ], row)) for row in rows]
 
+    @staticmethod
+    def get_by_name(format_name):
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT * FROM ads_format WHERE format_name ILIKE     %s
+            ''', (format_name,))
+            rows = cursor.fetchone()
+            if not rows:
+                return None
+            return dict(zip([column[0] for column in cursor.description], rows))
+
     def update(self):
         with get_db_connection() as conn:
             cursor = conn.cursor()

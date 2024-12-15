@@ -431,6 +431,12 @@
                             <th style="padding: 12px 16px; text-align: right; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
                                 Video view 3s
                             </th>
+                            <th style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                Trạng thái hiển thị
+                            </th>
+                            <th style="padding: 12px 16px; text-align: left; font-weight: 500; color: #4F4F4F; border-bottom: 1px solid #E0E0E0;">
+                                Vùng quảng cáo
+                            </th>
                         </tr>
                     </thead>
                     <tbody id="adsTable">
@@ -533,6 +539,12 @@
                     <td style="text-align: right;">${formatPercent(ad.ti_le_chuyen_doi)}%</td>
                     <td style="text-align: right;">${formatCurrency(ad.cps)}</td>
                     <td style="text-align: right;">${formatNumber(ad.video_view_3s)}</td>
+                    <td>
+                        <span class="status-badge ${ad.dang_hien_thi ? 'status-active' : 'status-inactive'}">
+                            ${ad.dang_hien_thi ? 'Đang hiển thị' : 'Chưa hiển thị'}
+                        </span>
+                    </td>
+                    <td>${ad.ten_vung_quang_cao || '-'}</td>
                 `;
                 adsTable.appendChild(row);
             });
@@ -585,15 +597,23 @@
                     dropdown.classList.remove('show');
                 }
             });
+
+            // Filter by display status
+            const displayStatusSelect = document.getElementById('displayStatusFilter');
+            displayStatusSelect.addEventListener('change', function(e) {
+                const selectedStatus = e.target.value;
+                const filteredAds = selectedStatus === 'all' ?
+                    originalAds :
+                    originalAds.filter(ad => {
+                        if (selectedStatus === 'displaying') return ad.dang_hien_thi;
+                        if (selectedStatus === 'not_displaying') return !ad.dang_hien_thi;
+                        return true;
+                    });
+                renderAds(filteredAds);
+            });
         }
 
         async function showAdsGroupDropdown(button) {
-            // Remove existing dropdown if any
-            const existingDropdown = document.querySelector('.dropdown-content');
-            if (existingDropdown) {
-                existingDropdown.remove();
-            }
-
             try {
                 const response = await fetchWithAuth(`${baseUrl}/ads-groups`);
                 const data = await response.json();
@@ -612,8 +632,11 @@
                     <div class="dropdown-list" id="adsGroupsList">
                         ${data.ads_groups.length > 0 ? 
                             data.ads_groups.map(group => `
-                                <div class="dropdown-item" onclick="selectAdsGroup('${group.ten_loai_quang_cao}')">
-                                    ${group.ten_nhom}
+                                <div class="dropdown-item" onclick="selectAdsGroup('${group.ten_loai_quang_cao}', ${group.ads_group_id})">
+                                    <div>${group.ten_nhom}</div>
+                                    <div style="font-size: 12px; color: #828282;">
+                                        Loại chiến dịch: ${group.ten_loai_quang_cao}
+                                    </div>
                                 </div>
                             `).join('') :
                             '<div class="dropdown-item">Không có nhóm quảng cáo nào</div>'
@@ -641,7 +664,10 @@
             });
         }
 
-        function selectAdsGroup(adType) {
+        function selectAdsGroup(adType, groupId) {
+            sessionStorage.setItem('groupId', groupId);
+            sessionStorage.setItem('campaignType', adType);
+
             let targetUrl;
             switch(adType) {
                 case 'Ecommerce':
@@ -658,6 +684,21 @@
                     return;
             }
             window.location.href = targetUrl;
+        }
+
+        async function getFormatsByType(campaignType) {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/ad-formats?type=${campaignType}`);
+                if (!response.ok) {
+                    throw new Error('Không thể lấy danh sách định dạng');
+                }
+                const data = await response.json();
+                return data.formats;
+            } catch (error) {
+                console.error('Error fetching formats:', error);
+                Toast.error('Không thể lấy danh sách định dạng');
+                return [];
+            }
         }
 
         function formatNumber(value) {

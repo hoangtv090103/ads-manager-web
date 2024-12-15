@@ -690,10 +690,80 @@
             // Handle form submission
             document.getElementById('createNativeAdForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
+                
                 try {
-                    const formData = new FormData(this);
+                    const formData = new FormData();
                     
-                    const response = await fetchWithAuth(`${baseUrl}/ads/native`, {
+                    // Get basic ad info
+                    const adName = document.querySelector('input[placeholder="Tên tin quảng cáo"]').value;
+                    const targetUrl = document.querySelector('input[type="url"]').value;
+                    
+                    // Get selected format
+                    const selectedFormat = document.querySelector('input[name="ad_format"]:checked');
+                    if (!selectedFormat) {
+                        throw new Error('Vui lòng chọn định dạng quảng cáo');
+                    }
+                    
+                    // Add basic info to formData
+                    formData.append('ten_tin_quang_cao', adName);
+                    formData.append('URL_dich', targetUrl);
+                    formData.append('format_id', selectedFormat.value);
+                    
+                    // Handle file uploads based on format
+                    if (selectedFormat.id === 'native_video') {
+                        const videoFile = document.getElementById('videoUpload').files[0];
+                        const thumbnailFile = document.getElementById('thumbnailUpload').files[0];
+                        const logoFile = document.getElementById('logoUpload').files[0];
+                        
+                        if (videoFile) formData.append('video_banner', videoFile);
+                        if (thumbnailFile) formData.append('anh_thumbnail', thumbnailFile);
+                        if (logoFile) formData.append('anh_banner_chan_trang', logoFile);
+                        
+                        // Get other fields
+                        const brandName = document.querySelector('input[placeholder="Nhập tên brand..."]').value;
+                        const title = document.querySelector('input[placeholder="Nhập tiêu đề quảng cáo..."]').value;
+                        const content = document.querySelector('textarea[placeholder="Nhập nội dung..."]').value;
+                        
+                        formData.append('ten_san_pham', brandName);
+                        formData.append('tieu_de', title);
+                        formData.append('noi_dung', content);
+                        
+                        // Handle CTA if enabled
+                        const ctaEnabled = document.getElementById('ctaToggle').checked;
+                        if (ctaEnabled) {
+                            const ctaText = document.querySelector('.cta-section input[maxlength="25"]').value;
+                            const ctaUrl = document.querySelector('.cta-section input[type="url"]').value;
+                            formData.append('cta_text', ctaText);
+                            formData.append('cta_url', ctaUrl);
+                        }
+                        
+                    } else if (selectedFormat.id === 'native_post_read') {
+                        const brandLogoFile = document.getElementById('brandLogoUpload').files[0];
+                        const adImageFile = document.getElementById('adImageUpload').files[0];
+                        
+                        if (brandLogoFile) formData.append('anh_banner_chan_trang', brandLogoFile);
+                        if (adImageFile) formData.append('anh_thumbnail', adImageFile);
+                        
+                        // Get other fields
+                        const brandName = document.querySelector('input[placeholder="Nhập tên thương hiệu..."]').value;
+                        const title = document.querySelector('input[placeholder="Nhập tiêu đề quảng cáo..."]').value;
+                        const field = document.querySelector('input[placeholder="Nhập tên lĩnh vực"]').value;
+                        
+                        formData.append('ten_san_pham', brandName);
+                        formData.append('tieu_de', title);
+                        formData.append('linh_vuc', field);
+                        
+                        // Handle CTA
+                        const ctaEnabled = document.getElementById('postReadCtaToggle').checked;
+                        if (ctaEnabled) {
+                            const ctaText = document.querySelector('.cta-section input[maxlength="25"]').value;
+                            const ctaUrl = document.querySelector('.cta-section input[type="url"]').value;
+                            formData.append('cta_text', ctaText);
+                            formData.append('cta_url', ctaUrl);
+                        }
+                    }
+                    
+                    const response = await fetchWithAuth(`${baseUrl}/ads-ecom`, {
                         method: 'POST',
                         body: formData
                     });
@@ -702,8 +772,15 @@
                         throw new Error('Không thể tạo tin quảng cáo');
                     }
 
-                    Toast.success('Đã tạo tin quảng cáo thành công!');
-                    window.location.href = '/frontend/ads.html';
+                    const result = await response.json();
+                    
+                    if (result.status === 'success') {
+                        Toast.success('Đã tạo tin quảng cáo thành công!');
+                        window.location.href = '/frontend/ads.html';
+                    } else {
+                        throw new Error(result.message || 'Có lỗi xảy ra');
+                    }
+                    
                 } catch (error) {
                     Toast.error(error.message);
                 }

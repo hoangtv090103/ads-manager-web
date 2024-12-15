@@ -296,6 +296,19 @@
         .specs-table tr:hover {
             background: #F8F9FA;
         }
+
+        .format-item.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .format-item.disabled .format-header {
+            cursor: not-allowed;
+        }
+
+        input[type="checkbox"]:disabled+label {
+            cursor: not-allowed;
+        }
     </style>
 </head>
 
@@ -413,10 +426,10 @@
                     <h2>Định dạng quảng cáo</h2>
                     <div class="ad-format-list">
                         <!-- CatFish Ecom Video -->
-                        <div class="ad-format-item">
+                        <div class="ad-format-item" data-format="CatFish Video Ecom">
                             <div class="ad-format-header">
-                                <input type="checkbox" name="adFormat" id="catfishEcomVideo">
-                                <label for="catfishEcomVideo">CatFish Ecom Video</label>
+                                <input type="checkbox" id="catfishEcomVideo" name="adFormat">
+                                <label for="catfishEcomVideo">CatFish Video Ecom</label>
                             </div>
                             <div class="ad-format-content">
                                 <div class="upload-section">
@@ -461,9 +474,9 @@
                         </div>
 
                         <!-- CatFish Ecom -->
-                        <div class="ad-format-item">
+                        <div class="ad-format-item" data-format="CatFish Ecom">
                             <div class="ad-format-header">
-                                <input type="checkbox" name="adFormat" id="catfishEcom">
+                                <input type="checkbox" id="catfishEcom" name="adFormat">
                                 <label for="catfishEcom">CatFish Ecom</label>
                             </div>
                             <div class="ad-format-content">
@@ -762,14 +775,6 @@
                     </div>
                 </div>
 
-                <div class="form-section">
-                    <h2>Vùng ngoài sản phẩm</h2>
-                    <div class="form-group">
-                        <label>URL đến trang khuyến mại <span class="optional">(không bắt buộc)</span></label>
-                        <input type="text" class="form-control" placeholder="Nhập URL">
-                    </div>
-                </div>
-
                 <div class="form-actions">
                     <button type="submit" class="btn-complete">Hoàn tất</button>
                 </div>
@@ -778,76 +783,155 @@
     </div>
 
     <script>
-        const baseUrl = 'http://localhost:5000/api/v1';
+        const baseUrl = 'http://127.0.0.1:5000/api/v1';
+        let groupId = null;
         document.addEventListener('DOMContentLoaded', function () {
             requireAuth();
+            groupId = sessionStorage.getItem('groupId');
+            if (!groupId) {
+                window.location.href = '/frontend/ads.html';
+                return;
+            }
 
-            // Handle ad format selection
-            const adFormatItems = document.querySelectorAll('.ad-format-item');
-            adFormatItems.forEach(item => {
+            // Xử lý chọn định dạng quảng cáo
+            const formatItems = document.querySelectorAll('.ad-format-item');
+
+            formatItems.forEach(item => {
+                const checkbox = item.querySelector('input[type="checkbox"]');
                 const header = item.querySelector('.ad-format-header');
-                const checkbox = header.querySelector('input[type="checkbox"]');
                 const content = item.querySelector('.ad-format-content');
-                const inputs = content.querySelectorAll('input, textarea');
 
-                header.addEventListener('click', (e) => {
+                if (!checkbox || !header || !content) {
+                    console.error('Missing required elements in format item:', item);
+                    return;
+                }
+
+                header.addEventListener('click', function (e) {
+                    // Nếu đang bị disable thì không làm gì
+                    if (checkbox.disabled && !checkbox.checked) {
+                        return;
+                    }
+
+                    // Toggle checkbox nếu click không phải vào checkbox
                     if (e.target !== checkbox) {
                         checkbox.checked = !checkbox.checked;
                     }
 
+                    // Xử lý khi checkbox được chọn
                     if (checkbox.checked) {
-                        item.classList.add('active');
-                        // Add required attribute to inputs
-                        inputs.forEach(input => {
-                            if (!input.classList.contains('use-default-banner')) {
-                                input.setAttribute('required', '');
+                        // Disable các định dạng khác
+                        formatItems.forEach(otherItem => {
+                            if (otherItem !== item) {
+                                const otherCheckbox = otherItem.querySelector('input[type="checkbox"]');
+                                if (otherCheckbox) {
+                                    otherCheckbox.disabled = true;
+                                    otherCheckbox.checked = false;
+                                    otherItem.classList.remove('active');
+                                    otherItem.classList.add('disabled');
+                                    const otherContent = otherItem.querySelector('.ad-format-content');
+                                    if (otherContent) {
+                                        otherContent.style.display = 'none';
+                                    }
+                                }
                             }
                         });
+
+                        // Hiển thị định dạng được chọn
+                        item.classList.add('active');
+                        content.style.display = 'block';
                     } else {
-                        item.classList.remove('active');
-                        // Remove required attribute from inputs
-                        inputs.forEach(input => {
-                            input.removeAttribute('required');
+                        // Enable lại tất cả các định dạng
+                        formatItems.forEach(otherItem => {
+                            const otherCheckbox = otherItem.querySelector('input[type="checkbox"]');
+                            if (otherCheckbox) {
+                                otherCheckbox.disabled = false;
+                                otherItem.classList.remove('disabled');
+                            }
                         });
+
+                        // Ẩn định dạng hiện tại
+                        item.classList.remove('active');
+                        content.style.display = 'none';
                     }
                 });
             });
 
-            // Handle "Sử dụng mẫu banner có sẵn" toggles
-            const defaultBannerToggles = document.querySelectorAll('.use-default-banner');
-            defaultBannerToggles.forEach(toggle => {
-                toggle.addEventListener('change', function () {
-                    const specsTable = this.closest('.ad-format-content').querySelector('.banner-specs-table');
-                    if (specsTable) {
-                        // Show table when unchecked, hide when checked
-                        specsTable.style.display = this.checked ? 'none' : 'block';
-                    }
-                });
-
-                // Trigger the change event initially to hide tables since toggles are checked by default
-                toggle.dispatchEvent(new Event('change'));
-            });
-        });
-
-        document.getElementById('createAdForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
-            try {
-                const formData = new FormData(this);
-
-                const response = await fetchWithAuth(`${baseUrl}/ads`, {
-                    method: 'POST',
-                    body: JSON.stringify(formData)
-                });
-
-                if (!response.ok) {
-                    throw new Error('Không thể tạo tin quảng cáo');
-                }
-
-                Toast.success('Đã tạo tin quảng cáo thành công!');
-                window.location.href = '/frontend/ads.html';
-            } catch (error) {
-                Toast.error(error.message);
+            // Xử lý submit form
+            const form = document.getElementById('createAdForm');
+            if (!form) {
+                console.error('Form not found');
+                return;
             }
+
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                try {
+                    const formData = new FormData();
+
+                    // Lấy định dạng được chọn
+                    const checkedFormatItem = document.querySelector('.ad-format-item input[type="checkbox"]:checked');
+                    if (!checkedFormatItem) {
+                        throw new Error('Vui lòng chọn định dạng quảng cáo');
+                    }
+
+                    // Lấy label text của checkbox được chọn
+                    const formatLabel = checkedFormatItem.nextElementSibling.textContent.trim();
+                    
+                    // Thêm thông tin cơ bản vào formData
+                    formData.append('ten_tin_quang_cao', adName.value.trim());
+                    formData.append('format_name', formatLabel);
+                    formData.append('ads_group_id', ads_group_id);
+
+                    // Xử lý dữ liệu theo từng định dạng
+                    if (formatLabel === 'CatFish Video Ecom') {
+                        // Xử lý file upload
+                        const bannerFile = document.querySelector('.ad-format-content input[type="file"][accept="image/*"]')?.files[0];
+                        const videoFile = document.querySelector('.ad-format-content input[type="file"][accept="video/*"]')?.files[0];
+                        const thumbnailFile = document.querySelector('.ad-format-content input[type="file"][accept="image/*"]:last-child')?.files[0];
+
+                        if (bannerFile) formData.append('anh_banner_chan_trang', bannerFile);
+                        if (videoFile) formData.append('video_banner', videoFile);
+                        if (thumbnailFile) formData.append('anh_thumbnail', thumbnailFile);
+
+                        // Thêm các tùy chọn
+                        formData.append('su_dung_mau_banner_co_san', document.getElementById('useDefaultBanner')?.checked || false);
+                        formData.append('ten_san_pham', document.getElementById('showProductName')?.checked || false);
+                        formData.append('hien_thi_gia_khuyen_mai', document.getElementById('showDiscount')?.checked || false);
+                        formData.append('hien_thi_freeship_sp', document.getElementById('showFreeship')?.checked || false);
+                    } else if (formatLabel === 'CatFish Ecom') {
+                        const bannerFile = document.querySelector('.ad-format-content input[type="file"][accept="image/*"]')?.files[0];
+                        if (bannerFile) formData.append('anh_banner_chan_trang', bannerFile);
+
+                        formData.append('su_dung_mau_banner_co_san', document.getElementById('useDefaultBanner')?.checked || false);
+                        formData.append('ten_san_pham', document.getElementById('showProductName2')?.checked || false);
+                        formData.append('hien_thi_gia_khuyen_mai', document.getElementById('showDiscount2')?.checked || false);
+                        formData.append('hien_thi_freeship_sp', document.getElementById('showFreeship2')?.checked || false);
+                    }
+
+                    // Gửi request
+                    const response = await fetchWithAuth(`${baseUrl}/ads-ecom`, {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Không thể tạo tin quảng cáo');
+                    }
+
+                    const result = await response.json();
+                    if (result.status === 'success') {
+                        Toast.success('Đã tạo tin quảng cáo thành công!');
+                        window.location.href = '/frontend/ads.html';
+                    } else {
+                        throw new Error(result.message || 'Có lỗi xảy ra');
+                    }
+
+                } catch (error) {
+                    Toast.error(error.message);
+                    console.error('Error creating ad:', error);
+                }
+            });
         });
     </script>
 </body>
