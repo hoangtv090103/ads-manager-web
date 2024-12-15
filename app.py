@@ -151,6 +151,7 @@ api.add_resource(ProductImportController,
 api.add_resource(ProductGroupController,
                  '/product-groups',
                  '/product-groups/<int:group_id>',
+                 '/product-groups/fields',
                  resource_class_kwargs={'decorators': [token_required]}
                  )
 

@@ -13,13 +13,6 @@
     <script src="./js/toast.js"></script>
     <script src="./js/script.js"></script>
     <style>
-        .form-container {
-            background: white;
-            border-radius: 8px;
-            padding: 32px;
-            margin-top: 24px;
-        }
-
         .form-group {
             margin-bottom: 24px;
         }
@@ -48,182 +41,141 @@
             background-color: white;
         }
 
-        .table-container {
+        .products-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
             margin-top: 24px;
-            border: 1px solid #E0E0E0;
-            border-radius: 4px;
         }
 
-        .table-header {
-            background: #F8F9FA;
-            padding: 12px;
-            font-weight: 500;
+        .product-list {
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
+
+        .product-list-header {
+            padding: 16px;
             border-bottom: 1px solid #E0E0E0;
         }
 
-        .table-content {
-            padding: 24px;
-            text-align: center;
-            color: #828282;
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .btn-create {
+        .header-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        #sourceProducts, #selectedProducts {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        .product-list-footer {
+            border-top: 1px solid #E0E0E0;
+            padding: 12px 16px;
+            background: white;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .product-count-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex: 1;
+            color: #4F4F4F;
+            font-size: 14px;
+        }
+
+        .highlight-count {
+            color: #2F80ED;
+            font-weight: 500;
+        }
+
+        .btn-add {
+            background: #27AE60;
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-left: 12px;
+        }
+
+        .btn-add:hover {
+            background: #219653;
+        }
+
+        .product-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #E0E0E0;
+            display: flex;
+            align-items: center;
+        }
+
+        .product-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .product-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .product-name {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .product-price {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .btn-primary {
             background: #0061C1;
             color: white;
             border: none;
             padding: 8px 24px;
             border-radius: 4px;
             cursor: pointer;
-            font-weight: 500;
         }
 
-        .btn-cancel {
+        .btn-secondary {
             background: white;
-            color: #4F4F4F;
-            border: 1px solid #E0E0E0;
+            color: #0061C1;
+            border: 1px solid #0061C1;
             padding: 8px 24px;
             border-radius: 4px;
             cursor: pointer;
-            margin-left: 16px;
-        }
-
-        .form-actions {
-            margin-top: 32px;
-            display: flex;
-            gap: 16px;
-        }
-
-        .product-selection {
-            display: flex;
-            gap: 16px;
-            margin-top: 24px;
-        }
-
-        .product-list {
-            flex: 1;
-            border: 1px solid #E0E0E0;
-            border-radius: 4px;
-            background: white;
-        }
-
-        .list-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            background: #F8F9FA;
-            font-weight: 500;
-        }
-
-        .search-box {
-            padding: 8px;
-            border-bottom: 1px solid #E0E0E0;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #E0E0E0;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        .products {
-            max-height: 300px;
-            overflow-y: auto;
-            padding: 8px;
-        }
-
-        .empty-state {
-            text-align: center;
-            color: #828282;
-            padding: 16px;
-        }
-
-        .product-selection-container {
-            display: flex;
-            gap: 24px;
-            margin-top: 24px;
-        }
-
-        .product-list-wrapper {
-            flex: 1;
-            background: white;
-            border: 1px solid #E0E0E0;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .list-header {
-            background: #F8F9FA;
-            padding: 12px 16px;
-            border-bottom: 1px solid #E0E0E0;
-        }
-
-        .header-title {
-            display: grid;
-            grid-template-columns: 60px 1fr 100px 80px;
-            gap: 16px;
-            font-weight: 500;
-            color: #4F4F4F;
-        }
-
-        .search-box {
-            padding: 12px 16px;
-            border-bottom: 1px solid #E0E0E0;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #E0E0E0;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        .products-list {
-            min-height: 300px;
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 16px;
-        }
-
-        .empty-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 200px;
-            color: #828282;
-        }
-
-        .empty-state img {
-            width: 64px;
-            height: 64px;
-            margin-bottom: 16px;
-        }
-
-        .list-footer {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 16px;
-            background: white;
-            border-top: 1px solid #E0E0E0;
-            color: #4F4F4F;
-            font-size: 14px;
-        }
-
-        .product-item {
-            display: grid;
-            grid-template-columns: 60px 1fr 100px 80px;
-            gap: 16px;
-            padding: 8px;
-            align-items: center;
-            border-bottom: 1px solid #F5F5F5;
-        }
-
-        .product-item:hover {
-            background: #F8F9FA;
         }
     </style>
 </head>
@@ -237,7 +189,7 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            
+
             <span class="logo-text">Ads Manager</span>
         </div>
 
@@ -265,10 +217,6 @@
                 <span>Quản lý đối tượng</span>
             </a>
 
-
-
-            
-
             <a href="/frontend/publishers.html" class="nav-item">
                 <i class="fas fa-users-cog"></i>
                 <span>Danh sách Publisher</span>
@@ -281,126 +229,389 @@
                     <i class="fas fa-chevron-right dropdown-arrow"></i>
                 </div>
                 <div class="submenu">
-                    <a href="/frontend/price-lists.html">• Danh sách bảng giá</a>
+                    <a href="/frontend/price-lists.html">• Danh sách b��ng giá</a>
                     <a href="/frontend/websites.html">• Danh sách website</a>
                     <a href="/frontend/ad-zones.html">• Danh sách vùng QC</a>
                 </div>
             </div>
+
             <a href="/frontend/accounts.html" class="nav-item">
                 <i class="fas fa-user-shield"></i>
                 <span>Quản lý phân quyền</span>
             </a>
+            <div class="nav-group">
+                <div class="nav-item" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Báo cáo</span>
+                    <i class="fas fa-chevron-right dropdown-arrow"></i>
+                </div>
+                <div class="submenu">
+                    <a href="/frontend/website-report.html">• Báo cáo website</a>
+                    <a href="/frontend/zone-report.html">• Báo cáo vùng</a>
+                    <a href="/frontend/publisher-report.html" class="active">• Báo cáo publisher</a>
+                    <a href="/frontend/ad-format-report.html">• Báo cáo định dạng quảng cáo</a>
+                </div>
+            </div>
         </nav>
     </div>
 
-
     <div class="main-content">
-        <div class="breadcrumb">
-            <i class="fas fa-box"></i>
-            <span>/ Quản lý sản phẩm / Tạo nhóm sản phẩm</span>
+        <div class="header-content">
+            <div class="breadcrumb">
+                <i class="fas fa-box"></i>
+                <span>/ Quản lý sản phẩm / Tạo nhóm sản phẩm</span>
+            </div>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-name" id="user-name"></div>
+                    <div class="user-email" id="user-email"></div>
+                </div>
+                <i class="fas fa-user"></i>
+                <div class="user-dropdown">
+                    <div class="dropdown-item" onclick="auth.logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Đăng xuất
+                    </div>
+                </div>
+            </div>
         </div>
 
+        <h1 class="page-title">Tạo nhóm sản phẩm</h1>
+
         <div class="form-container">
-            <h1 style="margin-bottom: 24px;">Tạo nhóm sản phẩm</h1>
+            <div class="form-group">
+                <label class="form-label">Tên nhóm sản phẩm</label>
+                <input type="text" class="form-input" id="groupName" placeholder="Nhập tên nhóm sản phẩm">
+            </div>
 
-            <form id="createProductGroupForm">
-                <div class="form-group">
-                    <label class="form-label">Tên nhóm sản phẩm</label>
-                    <input type="text" class="form-input" name="ten_nhom" placeholder="Nhập tên nhóm sản phẩm">
-                </div>
+            <div class="form-group">
+                <label class="form-label">Nguồn dữ liệu</label>
+                <select class="form-select" id="dataSource" onchange="handleDataSourceChange()">
+                    <option value="">Chọn nguồn dữ liệu</option>
+                </select>
+            </div>
 
-                <div class="form-group">
-                    <label class="form-label">Nguồn dữ liệu</label>
-                    <select class="form-select" name="nguon_du_lieu">
-                        <option value="">Chọn nguồn dữ liệu</option>
-                        <option value="Toyota">Toyota</option>
-                        <option value="Bảo Xuân">Bảo Xuân</option>
-                    </select>
-                </div>
+            <div class="form-group">
+                <label class="form-label">Phân loại theo</label>
+                <select class="form-select" id="classification" onchange="handleClassificationChange()">
+                    <option value="">Chọn phân loại</option>
+                    <option value="ten_san_pham">Tiêu đề</option>
+                    <option value="mo_ta_san_pham">Mô tả</option>
+                    <option value="gia_san_pham">Giá</option>
+                    <option value="gia_uu_dai">Giá ưu đãi</option>
+                    <option value="tinh_trang_con_hang">Tình trạng còn hàng</option>
+                    <option value="lien_ket_hinh_anh">Liên kết hình ảnh</option>
+                </select>
+            </div>
 
-                <div class="form-group">
-                    <label class="form-label">Phân loại theo</label>
-                    <select class="form-select" name="phan_loai">
-                        <option value="">Chọn phân loại</option>
-                    </select>
-                </div>
-
-                <div class="product-selection-container">
-                    <div class="product-list-wrapper">
-                        <div class="list-header">
-                            <div class="header-title">
-                                <span>STT</span>
-                                <span>Loại sản phẩm</span>
-                                <span>Số lượng</span>
-                                <span>Chọn</span>
-                            </div>
-                        </div>
-                        <div class="search-box">
-                            <input type="text" placeholder="Tìm kiếm sản phẩm..." id="product-search">
-                        </div>
-                        <div class="products-list" id="available-products">
-                            <div class="empty-state">
-                                <img src="../assets/no-data.svg" alt="No Data">
-                                <span>Trống</span>
-                            </div>
-                        </div>
-                        <div class="list-footer">
-                            <span>Số loại sản phẩm: 0/0</span>
-                            <span>0</span>
+            <div class="products-container">
+                <div class="product-list">
+                    <div class="product-list-header">
+                        <div class="header-content">
+                            <div class="header-title">Danh sách sản phẩm</div>
                         </div>
                     </div>
-
-                    <div class="product-list-wrapper">
-                        <div class="list-header">
-                            <div class="header-title">
-                                <span>STT</span>
-                                <span>Loại sản phẩm</span>
-                                <span>Số lượng</span>
-                                <span>Chọn</span>
+                    <div id="sourceProducts"></div>
+                    <div class="product-list-footer">
+                        <div class="footer-content">
+                            <div class="product-count-info">
+                                <div>Số sản phẩm: <span id="sourceCount">0</span></div>
                             </div>
-                        </div>
-                        <div class="search-box">
-                            <input type="text" placeholder="Tìm kiếm sản phẩm..." id="selected-product-search">
-                        </div>
-                        <div class="products-list" id="selected-products">
-                            <div class="empty-state">
-                                <img src="../assets/no-data.svg" alt="No Data">
-                                <span>Trống</span>
-                            </div>
-                        </div>
-                        <div class="list-footer">
-                            <span>Số loại sản phẩm: 0/0</span>
-                            <span>0</span>
+                            <button class="btn-add" onclick="handleSelectAll()">
+                                <i class="fas fa-plus"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <div class="form-actions">
-                    <button type="submit" class="btn-create">Tạo nhóm</button>
-                    <button type="button" class="btn-cancel"
-                        onclick="window.location.href='/frontend/product-groups.html'">Huỷ</button>
+                <div class="product-list">
+                    <div class="product-list-header">
+                        <div class="header-content">
+                            <div class="header-title">Sản phẩm đã chọn</div>
+                        </div>
+                    </div>
+                    <div id="selectedProducts"></div>
+                    <div class="product-list-footer">
+                        <div class="footer-content">
+                            <div class="product-count-info">
+                                <div>Số sản phẩm: <span id="selectedCount">0</span></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </form>
+            </div>
+
+            <div class="btn-container">
+                <button class="btn-primary" onclick="saveProductGroup()">Tạo nhóm</button>
+                <button class="btn-secondary" onclick="window.location.href='product-groups.html'">Hủy</button>
+            </div>
         </div>
     </div>
 
-    <script src="./js/script.js"></script>
-
     <script>
         const baseUrl = 'http://127.0.0.1:5000/api/v1';
+        let allProducts = [];
+        let selectedProducts = [];
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             requireAuth();
+            fetchDataSources();
         });
 
-        document.getElementById('createProductGroupForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const data = {
-                ten_nhom: formData.get('ten_nhom'),
-                nguon_du_lieu: formData.get('nguon_du_lieu'),
-                phan_loai: formData.get('phan_loai')
+        async function fetchDataSources() {
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/data-sources`);
+                const result = await response.json();
+
+                const select = document.getElementById('dataSource');
+                result.data.forEach(source => {
+                    const option = document.createElement('option');
+                    option.value = source.source_id;
+                    option.textContent = source.ten_nguon_du_lieu;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error:', error);
+                Toast.error('Không thể tải danh sách nguồn dữ liệu');
+            }
+        }
+
+        async function handleDataSourceChange() {
+            const sourceId = document.getElementById('dataSource').value;
+            if (!sourceId) {
+                allProducts = [];
+                selectedProducts = [];
+                renderSourceProducts();
+                renderSelectedProducts();
+                return;
+            }
+
+            try {
+                const response = await fetchWithAuth(`${baseUrl}/products?source_id=${sourceId}`);
+                const result = await response.json();
+                
+                // Filter products by selected source_id
+                allProducts = result.data.filter(product => product.source_id === parseInt(sourceId));
+                selectedProducts = []; // Reset selected products when changing source
+                
+                renderSourceProducts();
+                renderSelectedProducts();
+            } catch (error) {
+                console.error('Error:', error);
+                Toast.error('Không thể tải danh sách sản phẩm');
+            }
+        }
+
+        function renderSourceProducts() {
+            const container = document.getElementById('sourceProducts');
+            container.innerHTML = '';
+
+            const selectedIds = selectedProducts.map(p => p.product_id);
+            const availableProducts = allProducts.filter(p => !selectedIds.includes(p.product_id));
+            const classification = document.getElementById('classification').value;
+
+            // Create table header
+            const table = document.createElement('table');
+            table.style.width = '100%';
+            table.style.borderCollapse = 'collapse';
+
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            headerRow.innerHTML = `
+                <th style="padding: 8px; text-align: left; border-bottom: 1px solid #E0E0E0;">STT</th>
+                <th style="padding: 8px; text-align: left; border-bottom: 1px solid #E0E0E0;">${getFieldLabel(classification)}</th>
+                <th style="padding: 8px; text-align: center; border-bottom: 1px solid #E0E0E0;">Số lượng</th>
+                <th style="padding: 8px; text-align: center; border-bottom: 1px solid #E0E0E0;">Chọn</th>
+            `;
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            // Create table body
+            const tbody = document.createElement('tbody');
+            if (classification && availableProducts.length > 0) {
+                const groupedProducts = groupProductsByField(availableProducts, classification);
+                let index = 1;
+                
+                Object.entries(groupedProducts).forEach(([value, products]) => {
+                    const row = document.createElement('tr');
+                    const escapedValue = value.replace(/'/g, "\\'");
+                    row.innerHTML = `
+                        <td style="padding: 8px; border-bottom: 1px solid #E0E0E0;">${index}</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #E0E0E0;">${value}</td>
+                        <td style="padding: 8px; text-align: center; border-bottom: 1px solid #E0E0E0;">${products.length}</td>
+                        <td style="padding: 8px; text-align: center; border-bottom: 1px solid #E0E0E0;">
+                            <button onclick="handleGroupSelection('${escapedValue}', '${classification}')" style="background: #27AE60; color: white; border: none; width: 24px; height: 24px; border-radius: 4px; cursor: pointer;">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                    index++;
+                });
+            }
+            table.appendChild(tbody);
+            container.appendChild(table);
+
+            // Update counter
+            document.getElementById('sourceCount').textContent = availableProducts.length;
+        }
+
+        function renderSelectedProducts() {
+            const container = document.getElementById('selectedProducts');
+            container.innerHTML = '';
+            const classification = document.getElementById('classification').value;
+
+            // Create table header
+            const table = document.createElement('table');
+            table.style.width = '100%';
+            table.style.borderCollapse = 'collapse';
+
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            headerRow.innerHTML = `
+                <th style="padding: 8px; text-align: left; border-bottom: 1px solid #E0E0E0;">STT</th>
+                <th style="padding: 8px; text-align: left; border-bottom: 1px solid #E0E0E0;">${getFieldLabel(classification)}</th>
+                <th style="padding: 8px; text-align: center; border-bottom: 1px solid #E0E0E0;">Số lượng</th>
+                <th style="padding: 8px; text-align: center; border-bottom: 1px solid #E0E0E0;">Chọn</th>
+            `;
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            // Create table body
+            const tbody = document.createElement('tbody');
+            if (classification && selectedProducts.length > 0) {
+                const groupedProducts = groupProductsByField(selectedProducts, classification);
+                let index = 1;
+                
+                Object.entries(groupedProducts).forEach(([value, products]) => {
+                    const row = document.createElement('tr');
+                    const escapedValue = value.replace(/'/g, "\\'");
+                    row.innerHTML = `
+                        <td style="padding: 8px; border-bottom: 1px solid #E0E0E0;">${index}</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #E0E0E0;">${value}</td>
+                        <td style="padding: 8px; text-align: center; border-bottom: 1px solid #E0E0E0;">${products.length}</td>
+                        <td style="padding: 8px; text-align: center; border-bottom: 1px solid #E0E0E0;">
+                            <button onclick="handleGroupDeselection('${escapedValue}', '${classification}')" style="background: #EB5757; color: white; border: none; width: 24px; height: 24px; border-radius: 4px; cursor: pointer;">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                    index++;
+                });
+            }
+            table.appendChild(tbody);
+            container.appendChild(table);
+
+            // Update counter
+            document.getElementById('selectedCount').textContent = selectedProducts.length;
+        }
+
+        function groupProductsByField(products, field) {
+            const groups = {};
+            products.forEach(product => {
+                let value = product[field];
+                
+                // Format value based on field type
+                switch(field) {
+                    case 'gia_san_pham':
+                    case 'gia_uu_dai':
+                        value = formatPrice(value);
+                        break;
+                    case 'tinh_trang_con_hang':
+                        value = value ? 'Còn hàng' : 'Hết hàng';
+                        break;
+                    case 'lien_ket_hinh_anh':
+                        if (value && value.length > 40) {
+                            value = value.substring(0, 40) + '...';
+                        }
+                        break;
+                }
+
+                if (!groups[value]) {
+                    groups[value] = [];
+                }
+                groups[value].push(product);
+            });
+            return groups;
+        }
+
+        function handleGroupSelection(value, field) {
+            const productsToAdd = allProducts.filter(p => {
+                const productValue = formatFieldValue(p[field], field);
+                return productValue === value && !selectedProducts.some(sp => sp.product_id === p.product_id);
+            });
+            selectedProducts.push(...productsToAdd);
+            renderSourceProducts();
+            renderSelectedProducts();
+        }
+
+        function handleGroupDeselection(value, field) {
+            selectedProducts = selectedProducts.filter(p => {
+                const productValue = formatFieldValue(p[field], field);
+                return productValue !== value;
+            });
+            renderSourceProducts();
+            renderSelectedProducts();
+        }
+
+        function formatFieldValue(value, field) {
+            switch(field) {
+                case 'gia_san_pham':
+                case 'gia_uu_dai':
+                    return formatPrice(value);
+                case 'tinh_trang_con_hang':
+                    return value ? 'Còn hàng' : 'Hết hàng';
+                case 'lien_ket_hinh_anh':
+                    return value && value.length > 40 ? value.substring(0, 40) + '...' : value;
+                default:
+                    return value?.toString() || '';
+            }
+        }
+
+        function getFieldLabel(field) {
+            const fieldLabels = {
+                'ten_san_pham': 'Tiêu đề',
+                'mo_ta_san_pham': 'Mô tả',
+                'gia_san_pham': 'Giá',
+                'gia_uu_dai': 'Giá ưu đãi',
+                'tinh_trang_con_hang': 'Tình trạng',
+                'lien_ket_hinh_anh': 'Liên kết hình ảnh'
             };
+            return fieldLabels[field] || field;
+        }
+
+        function handleClassificationChange() {
+            renderSourceProducts();
+            renderSelectedProducts();
+        }
+
+        function formatPrice(price) {
+            if (!price) return '0';
+            return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function handleSelectAll() {
+            const availableProducts = allProducts.filter(p => !selectedProducts.some(sp => sp.product_id === p.product_id));
+            selectedProducts.push(...availableProducts);
+            renderSourceProducts();
+            renderSelectedProducts();
+        }
+
+        async function saveProductGroup() {
+            const groupName = document.getElementById('groupName').value;
+            const sourceId = document.getElementById('dataSource').value;
+            const classification = document.getElementById('classification').value;
+
+            if (!groupName || !sourceId || !classification) {
+                Toast.error('Vui lòng điền đầy đủ thông tin');
+                return;
+            }
+
+            if (selectedProducts.length === 0) {
+                Toast.error('Vui lòng chọn ít nhất một sản phẩm');
+                return;
+            }
 
             try {
                 const response = await fetchWithAuth(`${baseUrl}/product-groups`, {
@@ -408,111 +619,27 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify({
+                        ten_nhom: groupName,
+                        source_id: parseInt(sourceId),
+                        phan_loai_theo: classification,
+                        products: selectedProducts.map(p => p.product_id)
+                    })
                 });
 
                 if (!response.ok) {
                     throw new Error('Không thể tạo nhóm sản phẩm');
                 }
 
-                window.location.href = '/frontend/product-groups.html';
+                Toast.success('Tạo nhóm sản phẩm thành công');
+                setTimeout(() => {
+                    window.location.href = 'product-groups.html';
+                }, 1000);
             } catch (error) {
                 console.error('Error:', error);
-                Toast.error(error.message);
-            }
-        });
-    </script>
-
-    <script>
-        let availableProducts = []; // Danh sách sản phẩm có sẵn
-        let selectedProducts = []; // Danh sách sản phẩm được chọn
-
-        function populateAvailableProducts(products) {
-            const container = document.getElementById('available-products');
-            container.innerHTML = ''; // Xóa nội dung cũ
-
-            products.forEach((product, index) => {
-                const item = document.createElement('div');
-                item.className = 'product-item';
-                item.dataset.productId = product.id;
-                item.innerHTML = `
-                    <span>${index + 1}</span>
-                    <span>${product.name}</span>
-                    <button onclick="selectProduct(${product.id})">Chọn</button>
-                `;
-                container.appendChild(item);
-            });
-
-            updateProductCounts();
-        }
-
-        function selectProduct(productId) {
-            const product = availableProducts.find(p => p.id === productId);
-            if (product) {
-                selectedProducts.push(product);
-                availableProducts = availableProducts.filter(p => p.id !== productId);
-                populateAvailableProducts(availableProducts);
-                populateSelectedProducts(selectedProducts);
+                Toast.error('Đã xảy ra lỗi khi tạo nhóm sản phẩm');
             }
         }
-
-        function populateSelectedProducts(products) {
-            const container = document.getElementById('selected-products');
-            container.innerHTML = ''; // Xóa nội dung cũ
-
-            products.forEach((product, index) => {
-                const item = document.createElement('div');
-                item.className = 'product-item';
-                item.dataset.productId = product.id;
-                item.innerHTML = `
-                    <span>${index + 1}</span>
-                    <span>${product.name}</span>
-                    <button onclick="deselectProduct(${product.id})">Bỏ chọn</button>
-                `;
-                container.appendChild(item);
-            });
-
-            if (products.length === 0) {
-                container.innerHTML = '<div class="empty-state">Trống</div>';
-            }
-
-            updateProductCounts();
-        }
-
-        function deselectProduct(productId) {
-            const product = selectedProducts.find(p => p.id === productId);
-            if (product) {
-                availableProducts.push(product);
-                selectedProducts = selectedProducts.filter(p => p.id !== productId);
-                populateAvailableProducts(availableProducts);
-                populateSelectedProducts(selectedProducts);
-            }
-        }
-
-        function updateProductCounts() {
-            document.getElementById('available-product-count').textContent = availableProducts.length;
-            document.getElementById('selected-product-count').textContent = selectedProducts.length;
-            document.getElementById('total-products').textContent = availableProducts.length + selectedProducts.length;
-        }
-
-        // Thêm tìm kiếm
-        document.getElementById('product-search').addEventListener('input', function (e) {
-            const searchText = e.target.value.toLowerCase();
-            const filteredProducts = availableProducts.filter(product =>
-                product.name.toLowerCase().includes(searchText)
-            );
-            populateAvailableProducts(filteredProducts);
-        });
-
-        document.getElementById('selected-product-search').addEventListener('input', function (e) {
-            const searchText = e.target.value.toLowerCase();
-            const selectedItems = document.getElementById('selected-products').querySelectorAll('.product-item');
-
-            selectedItems.forEach(item => {
-                const name = item.querySelector('span:nth-child(2)').textContent.toLowerCase();
-                item.style.display = name.includes(searchText) ? 'flex' : 'none';
-            });
-        });
     </script>
 </body>
 

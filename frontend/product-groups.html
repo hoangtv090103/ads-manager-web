@@ -144,7 +144,7 @@
         <nav class="sidebar-nav">
             <a href="/frontend/campaigns.html" class="nav-item">
                 <i class="fas fa-layer-group"></i>
-                <span>Quản lý chiến dịch</span>
+                <span>Quản lý chi���n dịch</span>
             </a>
 
             <div class="nav-group">
@@ -242,7 +242,7 @@
                     </button>
                     <div class="search-box">
                         <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Tìm kiếm...">
+                        <input type="text" id="searchInput" placeholder="Tìm kiếm theo tên nhóm hoặc nguồn dữ liệu...">
                     </div>
                 </div>
             </div>
@@ -272,10 +272,14 @@
     <script src="./js/script.js"></script>
     <script>
         const baseUrl = 'http://127.0.0.1:5000/api/v1';
+        let allProductGroups = []; // Store all product groups for client-side filtering
 
         document.addEventListener('DOMContentLoaded', function() {
             requireAuth();
             fetchProductGroups();
+
+            // Add event listener for search input
+            document.getElementById('searchInput').addEventListener('input', handleSearch);
         });
 
         async function fetchProductGroups() {
@@ -285,7 +289,8 @@
                     throw new Error('Không thể tải dữ liệu nhóm sản phẩm');
                 }
                 const data = await response.json();
-                renderProductGroups(data);
+                allProductGroups = data.data; // Store all product groups
+                renderProductGroups(data.data);
             } catch (error) {
                 console.error('Error:', error);
                 if (error.message === 'Unauthorized') {
@@ -296,22 +301,50 @@
             }
         }
 
+        function handleSearch(event) {
+            const searchTerm = event.target.value.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                renderProductGroups(allProductGroups);
+                return;
+            }
+
+            const filteredGroups = allProductGroups.filter(group => {
+                const groupName = (group.ten_nhom || '').toLowerCase();
+                const dataSource = (group.nguon_du_lieu || '').toLowerCase();
+                
+                return groupName.includes(searchTerm) || dataSource.includes(searchTerm);
+            });
+
+            renderProductGroups(filteredGroups);
+        }
+
         function renderProductGroups(groups) {
             const tbody = document.getElementById('productGroupsTableBody');
             tbody.innerHTML = '';
 
-            groups.forEach((group, index) => {
+            if (groups.length === 0) {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td style="color: #2F80ED; cursor: pointer;">${group.ten_nhom}</td>
-                    <td>${group.so_luong || 0}</td>
-                    <td>${formatDateTime(group.updated_at)}</td>
-                    <td>${group.nguon_du_lieu || '-'}</td>
-                    <td style="color: #2F80ED;">${group.nhom_qc_dang_chay || ''}</td>
+                    <td colspan="6" style="text-align: center; padding: 20px;">
+                        Không tìm thấy nhóm sản phẩm nào
+                    </td>
                 `;
                 tbody.appendChild(tr);
-            });
+            } else {
+                groups.forEach((group, index) => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td style="color: #2F80ED; cursor: pointer;" onclick="viewProductGroup(${group.productgroup_id})">${group.ten_nhom}</td>
+                        <td>${group.so_luong || 0}</td>
+                        <td>${formatDateTime(group.updated_at)}</td>
+                        <td>${group.nguon_du_lieu || '-'}</td>
+                        <td style="color: #2F80ED;">${group.nhom_qc_dang_chay || ''}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
 
             document.getElementById('total-groups').textContent = groups.length;
         }
@@ -328,33 +361,14 @@
             });
         }
 
-        async function createProductGroup() {
+        function createProductGroup() {
             window.location.href = '/frontend/product-group-create.html';
         }
 
-        async function searchProductGroups(searchTerm) {
-            try {
-                const response = await fetchWithAuth(`${baseUrl}/product-groups?search=${searchTerm}`);
-                if (!response.ok) {
-                    throw new Error('Không thể tìm kiếm nhóm sản phẩm');
-                }
-                const data = await response.json();
-                renderProductGroups(data);
-            } catch (error) {
-                console.error('Error:', error);
-                Toast.error('Đã xảy ra lỗi khi tìm kiếm');
-            }
+        function viewProductGroup(groupId) {
+            // Implement view product group details
+            console.log('View product group:', groupId);
         }
-
-        // Add event listener for search input
-        document.querySelector('.search-box input').addEventListener('input', (e) => {
-            const searchTerm = e.target.value.trim();
-            if (searchTerm.length >= 2) {
-                searchProductGroups(searchTerm);
-            } else if (searchTerm.length === 0) {
-                fetchProductGroups();
-            }
-        });
     </script>
 </body>
 
