@@ -74,6 +74,95 @@
     .dropdown-item:hover {
       background: #F8F9FA;
     }
+
+    .customize-column-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .customize-column-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: white;
+      border: 1px solid #E0E0E0;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .customize-column-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background: white;
+      border: 1px solid #E0E0E0;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      z-index: 1000;
+      width: 300px;
+    }
+
+    .customize-column-menu.show {
+      display: block;
+    }
+
+    .customize-column-menu h3 {
+      margin: 0 0 16px 0;
+      font-size: 16px;
+      color: #333;
+    }
+
+    .customize-column-section {
+      margin-bottom: 16px;
+    }
+
+    .customize-column-section h4 {
+      margin: 0 0 8px 0;
+      font-size: 14px;
+      color: #4F4F4F;
+    }
+
+    .column-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .column-option label {
+      font-size: 14px;
+      color: #4F4F4F;
+      cursor: pointer;
+    }
+
+    .customize-column-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #E0E0E0;
+    }
+
+    .btn-reset {
+      padding: 8px 16px;
+      background: white;
+      border: 1px solid #E0E0E0;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-apply {
+      padding: 8px 16px;
+      background: #0061C1;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
   </style>
 </head>
 
@@ -614,9 +703,7 @@
                 <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #E0E0E0;">
                     ${campaign.ngay_bat_dau} - ${campaign.ngay_ket_thuc}
                 </td>
-                <td style="padding: 12px 16px; text-align: left; border-bottom: 1px solid #E0E0E0;">
-                    ${campaign.ho_va_ten || '-'}
-                </td>
+
             `;
             tbody.appendChild(tr);
         });
@@ -805,14 +892,106 @@
         return true;
     }
 
+    // Thêm các hàm xử lý tùy chỉnh cột
+    function setupColumnCustomization() {
+        const customizeBtn = document.querySelector('.customize-column-btn');
+        const customizeMenu = document.querySelector('.customize-column-menu');
+        const applyBtn = document.getElementById('applyColumns');
+        const resetBtn = document.getElementById('resetColumns');
+
+        // Toggle menu khi click vào nút tùy chỉnh
+        customizeBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            customizeMenu.classList.toggle('show');
+        });
+
+        // Đóng menu khi click ra ngoài
+        document.addEventListener('click', function(e) {
+            if (!customizeMenu.contains(e.target) && !customizeBtn.contains(e.target)) {
+                customizeMenu.classList.remove('show');
+            }
+        });
+
+        // Xử lý khi click nút Apply
+        applyBtn.addEventListener('click', function() {
+            const columns = {
+                'total-cost': document.getElementById('col-total-cost').checked,
+                'views': document.getElementById('col-views').checked,
+                'clicks': document.getElementById('col-clicks').checked,
+                'ctr': document.getElementById('col-ctr').checked,
+                'cpc': document.getElementById('col-cpc').checked,
+                'cpm': document.getElementById('col-cpm').checked,
+                'video-view-3s': document.getElementById('col-video-view-3s').checked,
+                'video-25': document.getElementById('col-video-25').checked,
+                'video-50': document.getElementById('col-video-50').checked,
+                'video-75': document.getElementById('col-video-75').checked,
+                'video-100': document.getElementById('col-video-100').checked,
+                'purchases': document.getElementById('col-purchases').checked,
+                'conversion': document.getElementById('col-conversion').checked,
+                'cps': document.getElementById('col-cps').checked
+            };
+
+            // Lưu trạng thái cột vào localStorage
+            localStorage.setItem('columnSettings', JSON.stringify(columns));
+
+            // Áp dụng trạng thái hiển thị cho các cột
+            Object.entries(columns).forEach(([columnName, isVisible]) => {
+                const cells = document.querySelectorAll(`.${columnName}-cell`);
+                cells.forEach(cell => {
+                    cell.style.display = isVisible ? '' : 'none';
+                });
+            });
+
+            customizeMenu.classList.remove('show');
+            Toast.success('Đã cập nhật cài đặt hiển thị');
+        });
+
+        // Xử lý khi click nút Reset
+        resetBtn.addEventListener('click', function() {
+            // Reset tất cả checkbox về trạng thái mặc định
+            document.querySelectorAll('.column-option input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = true;
+            });
+
+            // Hiển thị lại tất cả các cột
+            document.querySelectorAll('[class$="-cell"]').forEach(cell => {
+                cell.style.display = '';
+            });
+
+            // Xóa cài đặt đã lưu
+            localStorage.removeItem('columnSettings');
+            
+            Toast.success('Đã khôi phục cài đặt mặc định');
+        });
+
+        // Load trạng thái cột đã lưu
+        const savedColumns = localStorage.getItem('columnSettings');
+        if (savedColumns) {
+            const columns = JSON.parse(savedColumns);
+            Object.entries(columns).forEach(([columnName, isVisible]) => {
+                // Set checkbox state
+                const checkbox = document.getElementById(`col-${columnName}`);
+                if (checkbox) {
+                    checkbox.checked = isVisible;
+                }
+                // Set column visibility
+                const cells = document.querySelectorAll(`.${columnName}-cell`);
+                cells.forEach(cell => {
+                    cell.style.display = isVisible ? '' : 'none';
+                });
+            });
+        }
+    }
+
     // Cập nhật event listener khi trang load
     document.addEventListener('DOMContentLoaded', function() {
         console.log('Page loaded, checking authentication...');
         if (checkAuthentication()) {
             console.log('Authentication successful, fetching data...');
             fetchCampaigns();
-            fetchCustomers(); // Thêm gọi API lấy danh sách khách hàng
+            fetchCustomers();
             setupEventListeners();
+            setupColumnCustomization(); // Thêm setup cho tùy chỉnh cột
         }
     });
   </script>
